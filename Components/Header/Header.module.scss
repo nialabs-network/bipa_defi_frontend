@@ -1,0 +1,13 @@
+.header {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 57rem;
+  margin: 0 auto;
+}
+.button {
+  color: white;
+  background-color: rgb(17, 171, 214);
+  border: 2px rgb(24, 171, 204) solid;
+  width: 7rem;
+  overflow: hidden;
+}

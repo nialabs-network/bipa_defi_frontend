@@ -1,0 +1,12 @@
+{
+  "address": "Address",
+  "network": "Network",
+  "go_home": "Go home",
+  "balance": "Balance",
+  "connect_wallet": "Connect wallet",
+  "dashboard": "Dashboard",
+  "swap": "Swap",
+  "stake": "Stake",
+  "hourglass": "Hourglass",
+  "wallet_connect_toast": "Wallet has been connected."
+}
