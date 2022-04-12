@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useAppContext, useWeb3Context } from "../Contexts";
 import storage from "../contracts/storage.abi";
-export default function stake() {
+export default function Stake() {
+  console.error(storage);
   const { web3State } = useWeb3Context();
   function contractConnect() {
     web3State.dispatch({
@@ -49,7 +50,6 @@ export default function stake() {
       <input onChange={handleChange} value={number} type="number" required />
       <button onClick={saveNumber}>Save number</button>
       <button onClick={contractConnect}>Connect contract</button>
-
       <h1>{number}</h1>
       <h1>{blocknumb}</h1>
       <h1>

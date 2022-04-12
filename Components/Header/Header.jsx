@@ -2,8 +2,8 @@ import { useAppContext, useWeb3Context } from "../../Contexts";
 import styles from "./Header.module.scss";
 
 export default function Header() {
-  const { appState } = useAppContext();
   const { web3State } = useWeb3Context();
+  const address = web3State.address;
   console.log("_____________HEADER RENDER____________________");
   return (
     <header>
@@ -12,10 +12,8 @@ export default function Header() {
           className={styles.button}
           onClick={web3State.address ? web3State.disconnect : web3State.connect}
         >
-          {web3State.address
-            ? web3State.address.slice(0, 8) +
-              "..." +
-              web3State.address.slice(37)
+          {address
+            ? address.slice(0, 8) + "..." + address.slice(37)
             : "Connect Wallet"}
         </button>
       </div>

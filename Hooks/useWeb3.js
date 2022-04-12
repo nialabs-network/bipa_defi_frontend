@@ -22,6 +22,7 @@ export const useWeb3 = () => {
    * CONNECTING TO METAMASK
    */
   const connect = useCallback(async (isReconnecting) => {
+    const { contractAbi } = await import("../contracts/storage.abi");
     console.log("__________connect function strikes in_______________");
     appContext.setLoadingState(true, "Connecting...");
     if (window.ethereum) {
@@ -33,6 +34,10 @@ export const useWeb3 = () => {
         });
         const network = await web3Provider.eth.net.getId();
         const balance = await web3Provider.eth.getBalance(address[0]);
+        const contract = new web3Provider.eth.Contract(
+          storage,
+          "0xD86D2267465F53d87A946eE3332B58664D183a0F"
+        );
         console.log("now dispatching");
         dispatch({
           type: WEB3ACTIONS.SET_WEB3_PROVIDER,
@@ -41,6 +46,7 @@ export const useWeb3 = () => {
           address: address[0],
           network,
           balance,
+          contract,
         });
         console.log("dispatched");
         isReconnecting
@@ -49,6 +55,7 @@ export const useWeb3 = () => {
         localStorage.setItem("WEB3_CONNECT_CACHED_PROVIDER", "injected");
         appContext.setLoadingState(false, "");
       } catch (e) {
+        console.error(e);
         toast.error("Open your wallet");
         setTimeout(() => {
           appContext.setLoadingState(false, "");

@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function hourglass() {
+export default function Hourglass() {
   return <div>hourglass</div>;
 }

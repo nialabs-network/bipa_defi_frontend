@@ -1,4 +1,4 @@
-module.exports = [
+const contractAbi = [
   {
     inputs: [
       {
@@ -26,3 +26,4 @@ module.exports = [
     type: "function",
   },
 ];
+export { contractAbi };
