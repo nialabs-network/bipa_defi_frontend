@@ -17,7 +17,6 @@ export const useWeb3 = () => {
     web3State;
   const { t } = useTranslation();
   const appContext = useAppContext();
-  console.log("first render:", appContext.firstRender.current);
   /**
    * CONNECTING TO METAMASK
    */
@@ -39,6 +38,7 @@ export const useWeb3 = () => {
           "0xD86D2267465F53d87A946eE3332B58664D183a0F"
         );
         console.log("now dispatching");
+        console.log(contract);
         dispatch({
           type: WEB3ACTIONS.SET_WEB3_PROVIDER,
           provider,
@@ -86,9 +86,6 @@ export const useWeb3 = () => {
   /**
    * IF CACHE IS THERE, CONNECTION TO THE WALLET IS ESTABLISHED RIGHT AFTER REFRESH
    */
-  useEffect(() => {
-    if (appContext.appState.contract) toast.success("contract loaded");
-  }, [appContext.appState.contract]);
   useEffect(() => {
     console.log("__________reconnect effect_______________");
     console.log("first render:", appContext.firstRender.current);
@@ -147,6 +144,7 @@ export const useWeb3 = () => {
     }
   }, [provider, disconnect]);
   console.log("returning from web3-_------___---");
+  console.log(contract)
   return {
     provider,
     web3Provider,

@@ -33,6 +33,9 @@ export default function Stake() {
       console.log("you should enter a number");
     }
   };
+  function logg() {
+    console.log(web3State);
+  }
   return (
     <div>
       <input onChange={handleChange} value={number} type="number" required />
@@ -42,6 +45,7 @@ export default function Stake() {
       <h1>
         {web3State.contract ? "Contract connected" : "contract not connected"}
       </h1>
+      <button onClick={logg}>LOG IT</button>
     </div>
   );
 }

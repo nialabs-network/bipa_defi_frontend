@@ -8,7 +8,6 @@ function Dapp({ Component, pageProps, Language }) {
   console.log(
     "________________________________app.js__________________________________________"
   );
-
   return (
     <>
       <AppContextProvider Language={Language}>
