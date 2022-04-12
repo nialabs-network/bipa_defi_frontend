@@ -33,6 +33,7 @@ body::-webkit-scrollbar-thumb {
 main {
   margin-left: 16rem;
   padding: 0 2rem;
+  overflow: hidden;
 }
 header {
   margin-left: 16rem;

@@ -10,9 +10,6 @@
   padding: 0;
   display: flex;
   height: 100%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   gap: 1.5rem;
 }
 
@@ -89,15 +86,24 @@
     bottom: 0;
     width: 100vw;
     height: 5rem;
-    flex-direction: row;
+    align-items: center;
   }
 
   .navbarNav {
     flex-direction: row;
+    justify-content: space-between;
+    gap: 0;
+  }
+  .navLink svg {
+    min-width: 2rem;
+    width: 2.5rem;
   }
 
-  .navLink {
-    justify-content: center;
+  .logo,
+  .linkText,
+  .languageDropdown,
+  .socialMediaLinks {
+    display: none;
   }
 }
 
@@ -109,5 +115,10 @@
     height: 100vh;
     box-shadow: 5px 0px 5px 1px #404b7a;
     flex-direction: column;
+    justify-content: flex-start;
+  }
+  .navbarNav {
+    flex-direction: column;
+    align-items: center;
   }
 }
