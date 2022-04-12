@@ -19,6 +19,7 @@ export default function Navigation() {
     dispatch({ type: "SET_LANGUAGE", language: e.target.value });
     console.log("dispatch");
   };
+  console.log(appState.language);
   return (
     <nav
       className={styles.navbar}
@@ -179,7 +180,7 @@ export default function Navigation() {
           onChange={handleLanguageChange}
           value={appState.language}
         >
-          <option>English</option>
+          <option value="en-US">English</option>
           <option value="ko-KR">한국어</option>
         </select>
       </div>

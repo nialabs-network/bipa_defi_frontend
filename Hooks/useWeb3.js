@@ -13,7 +13,8 @@ import { useAppContext } from "../Contexts";
 export const useWeb3 = () => {
   console.log("___________________useWeb3______________________");
   const [web3State, dispatch] = useReducer(web3Reducer, web3InitialState);
-  const { provider, web3Provider, address, balance, network } = web3State;
+  const { provider, web3Provider, address, balance, network, contract } =
+    web3State;
   const { t } = useTranslation();
   const appContext = useAppContext();
   console.log("first render:", appContext.firstRender.current);
@@ -79,6 +80,9 @@ export const useWeb3 = () => {
    * IF CACHE IS THERE, CONNECTION TO THE WALLET IS ESTABLISHED RIGHT AFTER REFRESH
    */
   useEffect(() => {
+    if (appContext.appState.contract) toast.success("contract loaded");
+  }, [appContext.appState.contract]);
+  useEffect(() => {
     console.log("__________reconnect effect_______________");
     console.log("first render:", appContext.firstRender.current);
     if (
@@ -142,7 +146,9 @@ export const useWeb3 = () => {
     address,
     balance,
     network,
+    contract,
     connect,
     disconnect,
+    dispatch,
   };
 };

@@ -1,5 +1,49 @@
 .container {
-  max-width: 57rem;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.23);
+  max-width: 60rem;
+  min-width: 250px;
+  margin: 150px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(7.8px);
+  -webkit-backdrop-filter: blur(7.8px);
+}
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stat {
+  width: 33.3%;
+  min-width: 250px;
+}
+.title,
+.value {
+  width: 100%;
+  text-align: center;
+}
+
+.charts {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+}
+
+.chart {
+  width: 47.917%;
+  min-width: 45%;
+}
+
+@media screen and (max-width: 66.8125rem) {
+  .charts {
+    flex-wrap: wrap;
+  }
+  .chart {
+    width: 100%;
+  }
 }

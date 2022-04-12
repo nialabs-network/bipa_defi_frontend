@@ -12,8 +12,8 @@ body {
   background-color: var(--bg-secondary);
   padding: 0;
   margin: 0;
-  overflow: hidden;
   margin: 0 auto;
+  height: 100vh;
   /* prevent selecting */
   /* user-select: none; */
 }
@@ -32,11 +32,13 @@ body::-webkit-scrollbar-thumb {
 
 main {
   margin-left: 16rem;
+  padding: 0 2rem;
 }
 header {
   margin-left: 16rem;
 }
 
+/* Small screens */
 @media only screen and (max-width: 600px) {
   main {
     margin: 0;

@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { useWeb3 } from "../Hooks";
 import { web3InitialState } from "../Reducers";
-import { useAppContext } from "./AppContext";
-
 /**
  * INITIALIZING NEW CONTEXT WITH AN INITIAL STATE
  *
@@ -40,6 +38,7 @@ function Web3ContextProvider({ children }) {
           address: null,
           balance: null
           network: null,
+          contract: abi
           connect: null,
           disconnect: null 
       */}

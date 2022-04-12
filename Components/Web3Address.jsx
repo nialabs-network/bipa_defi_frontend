@@ -9,6 +9,7 @@ const NETWORKS = {
   42: "Kovan Test Network",
   137: "Polygon Mainnet",
   80001: "Mumbai Test Network",
+  5777: "Ganache Network",
 };
 export function Web3Address() {
   console.log("____________Address__________________");
@@ -32,7 +33,11 @@ export function Web3Address() {
         {t("network")} ID: {web3State.network}
       </h1>
       <h1>
-        {t("balance")}: {web3State.balance}
+        {t("balance")}:{" "}
+        {web3State.balance
+          ? web3State.web3Provider.utils.fromWei(web3State.balance, "ether")
+          : null}{" "}
+        ETH
       </h1>
     </div>
   );

@@ -12,7 +12,11 @@ export default function Header() {
           className={styles.button}
           onClick={web3State.address ? web3State.disconnect : web3State.connect}
         >
-          {web3State.address ? web3State.address : "connect"}
+          {web3State.address
+            ? web3State.address.slice(0, 8) +
+              "..." +
+              web3State.address.slice(37)
+            : "Connect Wallet"}
         </button>
       </div>
     </header>

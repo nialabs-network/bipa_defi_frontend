@@ -6,8 +6,14 @@
 }
 .button {
   color: white;
-  background-color: rgb(17, 171, 214);
-  border: 2px rgb(24, 171, 204) solid;
-  width: 7rem;
+  background-color: #81c9e9;
+  border: 0;
+  margin: 2rem 0;
+  padding: 1rem;
+  width: 10rem;
+  border-radius: 10px;
   overflow: hidden;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
 }

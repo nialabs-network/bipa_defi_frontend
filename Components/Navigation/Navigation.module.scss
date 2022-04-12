@@ -1,11 +1,8 @@
 .navbar {
   position: fixed;
   background-color: var(--bg-primary);
-  top: 0;
-  width: 16rem;
-  height: 100vh;
   display: flex;
-  flex-direction: column;
+  z-index: 10;
 }
 
 .navbarNav {
@@ -85,4 +82,32 @@
 .logo {
   font-size: 2.25rem;
   text-align: center;
+}
+/* Small screens */
+@media only screen and (max-width: 600px) {
+  .navbar {
+    bottom: 0;
+    width: 100vw;
+    height: 5rem;
+    flex-direction: row;
+  }
+
+  .navbarNav {
+    flex-direction: row;
+  }
+
+  .navLink {
+    justify-content: center;
+  }
+}
+
+/* Large screens */
+@media only screen and (min-width: 600px) {
+  .navbar {
+    top: 0;
+    width: 16rem;
+    height: 100vh;
+    box-shadow: 5px 0px 5px 1px #404b7a;
+    flex-direction: column;
+  }
 }

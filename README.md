@@ -10,5 +10,5 @@ language is retrieved from cookies
 persisting connection is retrieved from localStorage
 _/
 
-Alex Yun
+Alex Yun @ NIALABS
 March 29, 2022

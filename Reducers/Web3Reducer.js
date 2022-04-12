@@ -6,6 +6,7 @@ const WEB3ACTIONS = {
   SET_ADDRESS: "SET_ADDRESS",
   SET_NETWORK: "SET_NETWORK",
   RESET_WEB3_PROVIDER: "RESET_WEB3_PROVIDER",
+  LOAD_CONTRACT: "LOAD_CONTRACT",
 };
 /**
  * INITIAL WEB3 STATE
@@ -16,6 +17,7 @@ const web3InitialState = {
   address: null, //when Metamask is injected address is undefined until the specific address is connected
   balance: null,
   network: null,
+  contract: null,
   connect: null, //replaced by web3, but stays the same as default context
   disconnect: null, //replaced by web3, but stays the same as default context
 };
@@ -45,6 +47,8 @@ function web3Reducer(state, action) {
       };
     case WEB3ACTIONS.RESET_WEB3_PROVIDER:
       return web3InitialState;
+    case WEB3ACTIONS.LOAD_CONTRACT:
+      return { ...state, contract: action.contract };
     default:
       throw new Error("CANNOT FIND AN ACTION TYPE!");
   }

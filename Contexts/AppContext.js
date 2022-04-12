@@ -2,7 +2,7 @@ import React, {
   createContext,
   useReducer,
   useContext,
-  useLayoutEffect,
+  useEffect,
   useRef,
 } from "react";
 import { appInitialState, appReducer, APP_ACTIONS } from "../Reducers";
@@ -45,11 +45,11 @@ function AppContextProvider({ children, Language }) {
       loading_msg: message,
     });
   };
-  useLayoutEffect(() => {
+  useEffect(() => {
     console.log("_________________useEffect first paint");
     // firstRender.current? firstRender.current = false: i18n.changeLanguage(appState.language);
     //use the line above before production
-    // 0x664D3ad1FE12c6e1c08DB506e7f9880EBE253d96
+    //
     if (firstRender.current) {
       console.log("setting first render to false");
       firstRender.current = false;
