@@ -3,7 +3,6 @@ import AppLayout from "../Components/Layouts/AppLayout";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
-import { useEffect } from "react";
 
 function Dapp({ Component, pageProps, Language }) {
   console.log(
@@ -33,11 +32,13 @@ function Dapp({ Component, pageProps, Language }) {
 }
 Dapp.getInitialProps = ({ ctx }) => {
   console.log("Server run");
-  if (ctx.req.cookies?.Language) {
+  console.log(ctx.req?.cookies?.Language);
+  if (ctx.req) {
     return {
-      Language: typeof ctx.req.cookies?.Language
-        ? "en-US"
-        : ctx.req.cookies.Language,
+      Language:
+        ctx.req.cookies?.Language === undefined
+          ? "en-US"
+          : ctx.req.cookies.Language,
     };
   } else {
     return {};

@@ -35,7 +35,7 @@ export const useWeb3 = () => {
         const network = await web3Provider.eth.net.getId();
         const balance = await web3Provider.eth.getBalance(address[0]);
         const contract = new web3Provider.eth.Contract(
-          storage,
+          contractAbi,
           "0xD86D2267465F53d87A946eE3332B58664D183a0F"
         );
         console.log("now dispatching");
