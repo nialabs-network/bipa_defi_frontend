@@ -34,10 +34,10 @@ export default function Navigation() {
       >
         {/* DASHBOARD */}
         <li className={styles.navItem}>
-          <Link href="/dashboard">
+          <Link href="/">
             <a
               className={`${styles.navLink}  ${
-                router.pathname === "/dashboard" ? styles.navLinkActive : ""
+                router.pathname === "/" ? styles.navLinkActive : ""
               }`}
             >
               <svg
