@@ -5,8 +5,8 @@ export default function Home() {
   console.log("___________index.js____________");
   return (
     <>
-      <Web3Address />
-      <Web3Button />
+      {/* <Web3Address /> */}
+      {/* <Web3Button /> */}
       <Dashboard />
     </>
   );

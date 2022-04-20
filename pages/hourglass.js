@@ -1,5 +1,4 @@
-import React from "react";
-
-export default function Hourglass() {
-  return <div>hourglass</div>;
+import Hourglass from "../Components/Hourglass/Hourglass";
+export default function HourglassPage() {
+  return <Hourglass />;
 }

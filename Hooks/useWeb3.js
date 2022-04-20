@@ -21,7 +21,6 @@ export const useWeb3 = () => {
    * CONNECTING TO METAMASK
    */
   const connect = useCallback(async (isReconnecting) => {
-    const { contractAbi } = await import("../contracts/storage.abi");
     console.log("__________connect function strikes in_______________");
     appContext.setLoadingState(true, "Connecting...");
     if (window.ethereum) {
@@ -33,12 +32,8 @@ export const useWeb3 = () => {
         });
         const network = await web3Provider.eth.net.getId();
         const balance = await web3Provider.eth.getBalance(address[0]);
-        const contract = new web3Provider.eth.Contract(
-          contractAbi,
-          "0xD86D2267465F53d87A946eE3332B58664D183a0F"
-        );
+        const contract = null;
         console.log("now dispatching");
-        console.log(contract);
         dispatch({
           type: WEB3ACTIONS.SET_WEB3_PROVIDER,
           provider,
@@ -144,7 +139,7 @@ export const useWeb3 = () => {
     }
   }, [provider, disconnect]);
   console.log("returning from web3-_------___---");
-  console.log(contract)
+  console.log(contract);
   return {
     provider,
     web3Provider,

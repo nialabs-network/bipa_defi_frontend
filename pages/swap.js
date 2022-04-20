@@ -1,5 +1,5 @@
-import React from "react";
+import Swap from "../Components/Swap/Swap";
 
-export default function Swap() {
-  return <div>swsdfsdfasfasdfasddfasdfasdfasdfsadfasdfap</div>;
+export default function SwapPage() {
+  return <Swap />;
 }

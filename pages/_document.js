@@ -11,3 +11,8 @@ export default function Document({ __NEXT_DATA__ }) {
     </Html>
   );
 }
+
+Document.getInitialProps = async (props) => {
+  const html = props.renderPage().html;
+  return { html };
+};

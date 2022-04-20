@@ -4,15 +4,21 @@
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   --text-primary: #ffffff;
   --text-secondary: #ececec;
-  --bg-primary: #404b7a;
-  --bg-secondary: #6667ab;
+  --bg-primary: #6667ab;
+  --bg-secondary: #404b7a;
+  /* globally set navbar width */
+  --navbar-width: 16rem;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 body {
   color: #ececec;
-  background-color: var(--bg-secondary);
+  background-color: var(--bg-primary);
   padding: 0;
   margin: 0;
-  margin: 0 auto;
   height: 100vh;
   /* prevent selecting */
   /* user-select: none; */
@@ -20,28 +26,27 @@ body {
 * {
   box-sizing: border-box;
 }
-/* body::-webkit-scrollbar {
-  width: 0.5rem;
-}
-body::-webkit-scrollbar-track {
-  background: #fff;
-}
-body::-webkit-scrollbar-thumb {
-  background: #1e1e24;
-} */
-
 main {
-  margin-left: 16rem;
+  margin-left: var(--navbar-width);
   padding: 0 2rem;
   overflow: hidden;
+  height: 100%;
 }
 header {
-  margin-left: 16rem;
+  padding: 0 2rem;
+  margin-left: var(--navbar-width);
 }
 
 /* Small screens */
 @media only screen and (max-width: 600px) {
-  main {
+  main,
+  header {
     margin: 0;
   }
+}
+.glass {
+  background: #454e80;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid #81c9e9;
 }

@@ -30,8 +30,6 @@ function Dapp({ Component, pageProps, Language }) {
   );
 }
 Dapp.getInitialProps = ({ ctx }) => {
-  console.log("Server run");
-  console.log(ctx.req?.cookies?.Language);
   if (ctx.req) {
     return {
       Language:

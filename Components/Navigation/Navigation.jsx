@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useAppContext } from "../../Contexts";
 import styles from "./Navigation.module.scss";
+import LanguageDropdown from "./LanguageDropdown";
+import SNSLinks from "./SNSLinks";
 
 export default function Navigation() {
   const { appState, dispatch } = useAppContext();
@@ -11,15 +13,7 @@ export default function Navigation() {
     "_____________________________NAV REDNER_________________________________________"
   );
   const { t } = useTranslation();
-  const handleLanguageChange = (e) => {
-    console.log(
-      "_________________________________________click change_______________________________________________________"
-    );
-    document.cookie = `Language=${e.target.value}; Max-Age=${24 * 60 * 60}`; //max age in seconds
-    dispatch({ type: "SET_LANGUAGE", language: e.target.value });
-    console.log("dispatch");
-  };
-  console.log(appState.language);
+
   return (
     <nav
       className={styles.navbar}
@@ -173,43 +167,8 @@ export default function Navigation() {
           </Link>
         </li>
       </ul>
-      <div className={styles.languageDropdown}>
-        <select
-          name="language"
-          id="language"
-          onChange={handleLanguageChange}
-          value={appState.language}
-        >
-          <option value="en-US">English</option>
-          <option value="ko-KR">한국어</option>
-        </select>
-      </div>
-      <div className={styles.socialMediaLinks}>
-        <a href="#">
-          <img
-            src="https://img.icons8.com/small/344/ffffff/instagram-new.png"
-            width={35}
-          />
-        </a>
-        <a href="#">
-          <img
-            src="https://img.icons8.com/small/344/ffffff/twitter.png"
-            width={35}
-          />
-        </a>
-        <a href="#">
-          <img
-            src="https://img.icons8.com/ios/344/ffffff/youtube-play--v1.png"
-            width={35}
-          />
-        </a>
-        <a href="#">
-          <img
-            src="https://img.icons8.com/ios/344/ffffff/medium--v1.png"
-            width={35}
-          />
-        </a>
-      </div>
+      <LanguageDropdown appState={appState} dispatch={dispatch} />
+      <SNSLinks />
     </nav>
   );
 }

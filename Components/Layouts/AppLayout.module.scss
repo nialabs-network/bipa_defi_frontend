@@ -1,3 +1,8 @@
+.container {
+  max-width: 60rem;
+  min-width: 250px;
+  margin: 150px auto;
+}
 .loading {
   position: fixed;
   top: 50%;
@@ -20,4 +25,11 @@
   100% {
     transform: rotate(360deg);
   }
+}
+.footer {
+  background-color: var(--bg-secondary);
+  height: 10vh;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
 }
