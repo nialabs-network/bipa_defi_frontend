@@ -16,7 +16,7 @@ export default function Dashboard() {
         <div className={`${styles.chart} glass`}>
           <h3>Total value locked</h3>
           <p>$29,460,865</p>
-          {/* {typeof window === "undefined" ? null : <Chart />} */}
+          {typeof window === "undefined" ? null : <Chart />}
         </div>
       </section>
     </div>

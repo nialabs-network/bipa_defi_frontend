@@ -10,31 +10,31 @@ import {
 } from "recharts";
 import { useEffect } from "react";
 export default function Chart() {
-  const [binanceData, setBinanceData] = useState([]);
+  const [btcData, setBtcData] = useState([]);
   useEffect(() => {
     console.log("fetching data from binance");
     fetch(
-      "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=6h&limit=30"
+      "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=60"
     )
       .then((response) => response.json())
-      .then((data) => setBinanceData(data));
+      .then((data) => setBtcData(data));
   }, []);
   let parsedData = [];
-  if (binanceData) {
-    parsedData = binanceData.map((hour) => {
+  if (btcData) {
+    parsedData = btcData.map((hour) => {
       const date = new Date(hour[0]);
       return {
-        time: `${date.getHours()}:${date.getMinutes()}`,
-        price: Number(hour[1]),
+        BTCtime: `${date.getHours()}:${date.getMinutes()}`,
+        BTCprice: Number(hour[1]),
       };
     });
   }
   console.log(parsedData);
-  return (
-    <ResponsiveContainer width="100%" heihgt="100%">
-      <AreaChart data={parsedData}>
-        <Area type="monotone" dataKey="price" stroke="#ffffff" />
-        <XAxis dataKey="time" />
+  return !parsedData[0] ? null : (
+    <ResponsiveContainer width="100%" heihgt="80%">
+      <AreaChart data={parsedData} ref={console.log("injecting chart")}>
+        <Area type="monotone" dataKey="BTCprice" stroke="#ffffff" />
+        <XAxis dataKey="BTCtime" />
         <YAxis type="number" domain={["auto", "auto"]} />
         <Tooltip />
       </AreaChart>

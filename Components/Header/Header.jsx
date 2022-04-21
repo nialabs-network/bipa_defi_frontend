@@ -11,8 +11,8 @@ export default function Header() {
       <div className={styles.header}>
         <Button
           value={address ? "Disconnect wallet" : "Connect wallet"}
-          onclick={address ? disconnect : connect}
-          style={{ width: "11rem" }}
+          onclick={address ? () => disconnect() : () => connect(false)}
+          style={{ width: "13rem" }}
         />
       </div>
     </header>

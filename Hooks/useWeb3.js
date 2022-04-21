@@ -44,6 +44,7 @@ export const useWeb3 = () => {
           contract,
         });
         console.log("dispatched");
+        console.log(isReconnecting, "is reconnecting");
         isReconnecting
           ? toast.success("[DEV]Connection is stable")
           : toast.success(t("wallet_connect_toast"));

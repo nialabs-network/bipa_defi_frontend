@@ -3,9 +3,9 @@ import Button from "../Reusables/Button";
 import { useWeb3Context } from "../../Contexts";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { UniswapV2Router02 } from "../../contract/UniswapV2Router02";
-import { ERC20 } from "../../contract/ERC20";
-import { UniswapV2Factory } from "../../contract/UniswapV2Factory";
+import { UniswapRouter } from "../../contract/UniswapRouter";
+// import { SwapWidget } from "@uniswap/widgets";
+// import "@uniswap/widgets/fonts.css";
 export default function Swap() {
   const { web3State } = useWeb3Context();
   const { address, balance, connect, web3Provider, provider } = web3State;
@@ -14,27 +14,27 @@ export default function Swap() {
   const { t } = useTranslation();
   //////////////////////////////////////////////////////////////////////////////////////////////////////////
   ///GANACHE WETH ADDRESS = 0x32e5bEd4d487d45a3fA7233f911Ec1e0Fba2e322
-
   async function swap() {
     console.log("about to swap");
+    //instantiate router
     const router = new web3Provider.eth.Contract(
-      UniswapV2Router02,
-      "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+      UniswapRouter,
+      "0xE592427A0AEce92De3Edee1F18E0157C05861564"
     );
-    const weth = new web3Provider.eth.Contract(
-      ERC20,
-      "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
-    );
-    const factory = new web3Provider.eth.Contract(
-      UniswapV2Factory,
-      "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f"
-    );
-    console.log(factory);
+    console.log(router, "uniswap router");
   }
+
   //////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <section className={`${styles.swapContainer} glass`}>
       <h2>{t("swap")}</h2>
+      {/* {address ? (
+        <SwapWidget
+          provider={web3Provider.currentProvider}
+          jsonRpcEndpoint={provider}
+        />
+      ) : null} */}
+
       <div className={styles.input}>
         <div className={styles.token}>MATIC</div>
         <input

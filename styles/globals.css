@@ -1,13 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap");
 :root {
   font-size: 16px;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Poppins", sans-serif;
   --text-primary: #ffffff;
   --text-secondary: #ececec;
   --bg-primary: #6667ab;
   --bg-secondary: #404b7a;
   /* globally set navbar width */
-  --navbar-width: 16rem;
+  --navbar-width: 20rem;
 }
 * {
   margin: 0;
@@ -16,12 +16,26 @@
 }
 body {
   color: #ececec;
-  background-color: var(--bg-primary);
   padding: 0;
   margin: 0;
-  height: 100vh;
   /* prevent selecting */
   /* user-select: none; */
+}
+body::before {
+  content: "";
+  background-image: linear-gradient(
+      rgba(176, 179, 255, 0.4),
+      rgba(176, 179, 255, 0.4)
+    ),
+    url("../assets/bg.webp");
+  background-size: cover;
+  background-color: rgba(0, 0, 0, 0.25);
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: -100;
 }
 * {
   box-sizing: border-box;
