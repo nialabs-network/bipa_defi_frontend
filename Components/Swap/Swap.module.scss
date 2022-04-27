@@ -1,16 +1,39 @@
 .swapContainer {
-  width: 60%;
+  width: 55%;
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1.3rem;
 }
 .input {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-top: 1rem;
 }
 .token {
   width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-right: 20px;
+  .label {
+    font-size: 1.25rem;
+  }
 }
 .formInput {
   width: 100%;
+  background-color: #2b3252;
+  border-radius: 0.625rem;
+  outline: none;
+  border: none;
+  text-align: right;
+  color: #676c83;
+  font-size: 1.5rem;
+  padding: 10px;
+  &:focus {
+    outline: solid 2px #81c9e9;
+    color: white;
+  }
+}
+.switch {
+  padding: 1.5rem 0 1.5rem 3rem;
 }

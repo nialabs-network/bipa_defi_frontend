@@ -8,5 +8,6 @@
   "swap": "Swap",
   "stake": "Stake",
   "hourglass": "Hourglass",
-  "wallet_connect_toast": "Wallet has been connected."
+  "wallet_connect_toast": "Wallet has been connected.",
+  "trade": "Trade"
 }
