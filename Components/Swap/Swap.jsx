@@ -3,7 +3,7 @@ import Button from "../Reusables/Button";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getPrice } from "./quote";
 import { swap } from "./swap";
 import nasmgLogo from "../../assets/nasmgLogo.webp";
@@ -14,35 +14,39 @@ export default function Swap() {
   const { appState, dispatch, setLoadingState } = useAppContext();
   const { address, balance, connect, web3Provider, provider } = web3State;
   const [token0, setToken0] = useState({
-    ticker: "NASMG",
-    amount: "",
-    logo: nasmgLogo,
-  });
-  const [token1, setToken1] = useState({
+    token: 0,
     ticker: "MATIC",
     amount: "",
     logo: polygonLogo,
   });
+  const [token1, setToken1] = useState({
+    token: 1,
+    ticker: "WETH",
+    amount: "",
+    logo: nasmgLogo,
+  });
   const { t } = useTranslation();
   async function handleSwap() {
-    // swap("0.00001", address, web3Provider);
-  }
-  async function handlePriceChange(e) {
-    if (e.target.value !== "") {
-      setToken0((prevState) => ({ ...prevState, amount: e.target.value }));
-      setToken1((prevState) => ({ ...prevState, amount: 0 }));
-      if (e.target.value > 0) {
-        setLoadingState(true, "fetching price");
-        console.log(e.target.value);
-        const price = await getPrice(e.target.value, web3Provider);
-        setToken1((prevState) => ({ ...prevState, amount: price }));
-      }
+    if (token0.amount > 0 && token0.amount !== "") {
+      setLoadingState(true, "swapping");
+      await swap(token0, token1.amount, address, web3Provider);
       setLoadingState(false, "");
-    } else {
-      setToken0((prevState) => ({ ...prevState, amount: "" }));
-      setToken1((prevState) => ({ ...prevState, amount: "" }));
     }
   }
+  async function handlePriceChange(e) {
+    setToken0((prevState) => ({ ...prevState, amount: e.target.value }));
+    setToken1((prevState) => ({ ...prevState, amount: 0 }));
+  }
+  useEffect(async () => {
+    if (web3Provider) {
+      if (token0.amount > 0 && token0.amount !== "") {
+        setLoadingState(true, "fetching price");
+        const price = await getPrice(token0, web3Provider);
+        setToken1((prevState) => ({ ...prevState, amount: price }));
+        setLoadingState(false, "");
+      }
+    }
+  }, [token0.amount]);
   function handleSwitch() {
     setToken0((prevState) => ({ ...token1, amount: "" }));
     setToken1((prevState) => ({ ...token0, amount: "" }));
