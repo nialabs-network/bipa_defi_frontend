@@ -1,6 +1,8 @@
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import SwapRouterABI from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
-const poolAddress = "0x99D59d73bAd8BE070FeA364717400043490866c9"; //WMATIC/WETH
+import SwapRouterABI from "@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json";
+const poolAddress = "0xc1FF5D622aEBABd51409e01dF4461936b0Eb4E43"; //WMATIC/WETH
+//0xc1FF5D622aEBABd51409e01dF4461936b0Eb4E43 0.03% fee pool
+//0x99D59d73bAd8BE070FeA364717400043490866c9 0.1% fee pool
 const quoterAddress = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
 const swapRouterAddress = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
 
@@ -15,8 +17,6 @@ async function getPoolImmutables(poolContract) {
     poolContract.methods.fee().call(),
   ]);
   const immutables = { token0, token1, fee };
-
-  console.log(immutables);
   return immutables;
 }
 
@@ -31,6 +31,7 @@ async function getSwapRouterContract(web3Provider) {
   return new web3Provider.eth.Contract(SwapRouterABI.abi, swapRouterAddress);
 }
 export {
+  swapRouterAddress,
   quoterAddress,
   getPoolImmutables,
   getPoolContract,
@@ -511,9 +512,10 @@ export {
 // );
 // const pool = await factory.methods
 //   .getPool(
-//     "0xE03489D4E90b22c59c5e23d45DFd59Fc0dB8a025",
-//     "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
+//     "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889", //wmatic
+//     "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa", //weth
 //     3000
 //   )
+//   //0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa
 //   .call();
 // console.log(pool);
