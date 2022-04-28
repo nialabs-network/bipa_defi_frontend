@@ -8,15 +8,26 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  padding: 2.4rem;
+  padding-bottom: 0;
 }
 .stat {
   width: 33.3%;
   min-width: 250px;
 }
-.title,
-.value {
-  width: 100%;
+.title {
   text-align: center;
+  line-height: 1.56;
+  color: #9f9f9f;
+}
+.value {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #fff;
+  margin-top: 1.25rem;
+  margin-bottom: 2.4rem;
 }
 
 .charts {
@@ -24,15 +35,56 @@
   justify-content: center;
   gap: 2.5rem;
 }
-
 .chart {
   padding: 1rem;
   width: 47.917%;
   min-width: 45%;
-  height: 400px;
+  height: 20rem;
+}
+.chartContainer {
+  width: 100%;
+  height: 85%;
 }
 
-@media screen and (max-width: 66.8125rem) {
+@mixin glass {
+  background: rgba(64, 75, 122, 0.7);
+  border-radius: 1rem;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+//small
+@media screen and (max-width: 768px) {
+  .charts {
+    flex-wrap: wrap;
+  }
+  .chart {
+    width: 100%;
+  }
+  .stats {
+    padding: 0;
+    gap: 20px;
+  }
+  .stat {
+    width: 100%;
+    padding: 1.5rem 0;
+  }
+  .value {
+    margin-bottom: 0;
+  }
+  .glassMob {
+    @include glass;
+  }
+}
+//big screen
+@media screen and (min-width: 769px) {
+  .glass {
+    @include glass;
+  }
+}
+
+@media screen and (max-width: 960px) {
   .charts {
     flex-wrap: wrap;
   }

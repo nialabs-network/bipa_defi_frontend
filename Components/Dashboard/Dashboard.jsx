@@ -8,15 +8,19 @@ export default function Dashboard() {
     <div className={styles.dashboardContainer}>
       <Stats styles={styles} />
       <section className={styles.charts}>
-        <div className={`${styles.chart} glass`}>
+        <div className={`${styles.chart} glass`} style={{ border: "none" }}>
           <h3>Total value locked</h3>
           <p>$35,319,355</p>
-          {typeof window === "undefined" ? null : <Chart />}
+          <div className={styles.chartContainer}>
+            {typeof window === "undefined" ? null : <Chart />}
+          </div>
         </div>
-        <div className={`${styles.chart} glass`}>
+        <div className={`${styles.chart} glass`} style={{ border: "none" }}>
           <h3>Total value locked</h3>
           <p>$29,460,865</p>
-          {typeof window === "undefined" ? null : <Chart />}
+          <div className={styles.chartContainer}>
+            {typeof window === "undefined" ? null : <Chart />}
+          </div>
         </div>
       </section>
     </div>

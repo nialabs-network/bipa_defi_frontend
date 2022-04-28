@@ -12,7 +12,9 @@ export default function AppLayout({ children }) {
       <main>
         <div className={styles.container}>{children}</div>
       </main>
-      <footer className={styles.footer}>footer</footer>
+      <footer className={styles.footer}>
+        <div className={styles.banner}>Ad banner</div>
+      </footer>
       {appState.loading ? (
         <div className={styles.loading}>
           <span className={styles.spinner}></span>

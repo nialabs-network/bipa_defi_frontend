@@ -22,7 +22,7 @@ export default function Swap() {
   const [token1, setToken1] = useState({
     token: 1,
     ticker: "WETH",
-    amount: "",
+    amount: "0",
     logo: nasmgLogo,
   });
   const { t } = useTranslation();
@@ -66,6 +66,7 @@ export default function Swap() {
           value={token0.amount}
           onChange={handlePriceChange}
           readOnly={address ? false : true}
+          placeholder="0"
         />
       </div>
       <div className={styles.switch}>
@@ -86,6 +87,7 @@ export default function Swap() {
           className={styles.formInput}
           value={token1.amount}
           readOnly
+          placeholder="0"
         />
       </div>
       <Button
