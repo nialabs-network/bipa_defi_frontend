@@ -9,5 +9,7 @@
   "stake": "Stake",
   "hourglass": "Hourglass",
   "wallet_connect_toast": "Wallet has been connected.",
-  "trade": "Trade"
+  "trade": "Trade",
+  "disconnectWallet": "Disconnect wallet",
+  "connectWallet": "Connect wallet"
 }

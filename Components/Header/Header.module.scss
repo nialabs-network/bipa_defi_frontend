@@ -1,6 +1,31 @@
 .header {
   display: flex;
-  justify-content: flex-end;
+
   max-width: 60rem;
   margin: 0 auto;
+  align-items: center;
+}
+.hamburger {
+  width: 1.8125rem;
+}
+.logoMob {
+  width: 55%;
+}
+//small screens
+@media only screen and (max-width: 768px) {
+  .buttonPC {
+    display: none;
+  }
+  .header {
+    justify-content: space-between;
+  }
+}
+//large screens
+@media only screen and (min-width: 769px) {
+  .buttonMob {
+    display: none;
+  }
+  .header {
+    justify-content: flex-end;
+  }
 }

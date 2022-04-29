@@ -7,11 +7,7 @@ import styles from "./Navigation.module.scss";
 import LanguageDropdown from "./LanguageDropdown";
 import SNSLinks from "./SNSLinks";
 
-import logo from "../../assets/logo.webp";
-import dashboard from "../../assets/dashboard.webp";
-import stake from "../../assets/stake.webp";
-import swap from "../../assets/swap.webp";
-import hourglass from "../../assets/hourglass.webp";
+import { logo, dashboard, stake, swap, hourglass } from "../../assets/exports";
 export default function Navigation() {
   const { appState, dispatch } = useAppContext();
   const router = useRouter();
@@ -22,10 +18,16 @@ export default function Navigation() {
       className={styles.navbar}
       style={appState.loading ? { cursor: "wait" } : null}
     >
-      <div className={styles.logo}>
+      <div className={styles.logo}></div>
+      <div className={styles.logoImg}>
         <Link href="/">
           <a>
-            <Image src={logo.src} width={logo.width} height={logo.height} />
+            <Image
+              src={logo.src}
+              width={logo.width}
+              height={logo.height}
+              className={styles.logoImg}
+            />
           </a>
         </Link>
       </div>
@@ -85,9 +87,10 @@ export default function Navigation() {
             </a>
           </Link>
         </li>
+        <li></li>
       </ul>
       <LanguageDropdown appState={appState} dispatch={dispatch} />
-      <SNSLinks />
+      {/* <SNSLinks /> */}
     </nav>
   );
 }

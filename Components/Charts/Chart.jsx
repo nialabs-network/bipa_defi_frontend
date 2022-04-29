@@ -31,9 +31,20 @@ export default function Chart() {
   }
   console.log(parsedData);
   return !parsedData[0] ? null : (
-    <ResponsiveContainer width="100%" heihgt="80%">
-      <AreaChart data={parsedData} ref={console.log("injecting chart")}>
-        <Area type="monotone" dataKey="BTCprice" stroke="#ffffff" />
+    <ResponsiveContainer>
+      <AreaChart data={parsedData}>
+        <defs>
+          <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <Area
+          type="monotone"
+          dataKey="BTCprice"
+          stroke="#ffffff"
+          fill="url(#colorUv)"
+        />
         <XAxis dataKey="BTCtime" />
         <YAxis type="number" domain={["auto", "auto"]} />
         <Tooltip />

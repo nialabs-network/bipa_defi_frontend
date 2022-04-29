@@ -1,10 +1,18 @@
-export default function Regular({ styles }) {
+import { nasmgLogo } from "../../assets/exports";
+import Image from "next/image";
+export default function Lock({ styles }) {
   return (
     <section className={`${styles.stakingSection} glass`}>
-      <div className={styles.grid}>
+      <span className={styles.label}>BOOST</span>
+      <div className={styles.flex}>
         <div className={styles.logo}>
-          <span>logos here </span>
-          <span> logos here</span>
+          <div className={styles.stakeLogo}>
+            <Image
+              src={nasmgLogo}
+              width={nasmgLogo.width}
+              height={nasmgLogo.height}
+            />
+          </div>
         </div>
         <div className={styles.productTitle}>
           <h4>NASMG Staking</h4>

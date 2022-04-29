@@ -9,5 +9,7 @@
   "stake": "스테이킹",
   "hourglass": "모래시계",
   "wallet_connect_toast": "연결이 되었습니다.",
-  "trade": "todo"
+  "trade": "todo",
+  "disconnectWallet": "todo",
+  "connectWallet": "지갑 연결"
 }

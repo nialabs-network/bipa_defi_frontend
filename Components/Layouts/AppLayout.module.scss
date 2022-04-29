@@ -1,7 +1,7 @@
 .container {
-  max-width: 60rem;
+  max-width: 55rem;
   min-width: 250px;
-  margin: 150px auto;
+  margin: 3.875rem auto;
 }
 .loading {
   position: fixed;
@@ -27,9 +27,22 @@
   }
 }
 .footer {
-  background-color: var(--bg-secondary);
-  height: 10vh;
+  background-color: #b0b3ff;
+  height: 15vh;
   width: 100%;
   position: fixed;
   bottom: 0;
+  margin-left: var(--navbar-width);
+}
+.banner {
+  font-size: 30px;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    margin: 0 auto;
+  }
+  .footer {
+    margin-left: 0;
+  }
 }

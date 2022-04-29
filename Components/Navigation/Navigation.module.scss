@@ -1,6 +1,5 @@
 .navbar {
   position: fixed;
-  background-color: var(--bg-secondary);
   display: flex;
   z-index: 10;
 }
@@ -10,6 +9,12 @@
   display: flex;
   height: 100%;
 }
+.navbarNav li:last-child {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(64, 75, 122, 0.7);
+}
 .navItem {
   width: 100%;
 }
@@ -18,17 +23,17 @@
   display: flex;
   align-items: center;
   height: 4.25rem;
-  color: var(--text-primary);
+  color: var(--text-secondary);
+  background-color: rgba(64, 75, 122, 0.7);
   text-decoration: none;
   transition: 350ms;
-  filter: grayscale(100%) opacity(0.7);
 }
 
 .navLink:hover,
 .navLinkActive {
-  filter: grayscale(0) opacity(1);
-  background: var(--bg-primary);
+  background-color: rgba(255, 255, 255, 0);
   color: var(--text-primary);
+  background-color: transparent;
 }
 
 .linkText {
@@ -37,7 +42,8 @@
 }
 
 .languageDropdown {
-  padding: 0 1rem 0 1rem;
+  padding: 0rem 1rem 7rem 1rem;
+  background-color: rgba(64, 75, 122, 0.7);
 }
 .languageDropdown select {
   width: 100%;
@@ -58,35 +64,19 @@
     line-height: 0;
   }
 }
-.logo {
-  font-size: 2.25rem;
-  text-align: center;
-}
-/* Small screens */
-@media only screen and (max-width: 600px) {
-  .navbar {
-    bottom: 0;
-    width: 100vw;
-    height: 5rem;
-  }
 
-  .navbarNav {
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0;
-    margin: 0;
-  }
+/* Small screens */
+@media only screen and (max-width: 768px) {
+  .logoImg,
   .logo,
-  .linkText,
   .languageDropdown,
-  .socialMediaLinks {
+  .navbarNav {
     display: none;
   }
 }
 
 /* Large screens */
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 768px) {
   .navbar {
     top: 0;
     width: var(--navbar-width);
@@ -97,9 +87,15 @@
   .navbarNav {
     flex-direction: column;
     align-items: center;
-    padding: 0;
   }
   .logo {
-    padding: 3.625rem 1.3125rem;
+    position: absolute;
+    background-color: rgba(64, 75, 122, 0.7);
+    height: 9.5rem;
+    width: var(--navbar-width);
+  }
+  .logoImg {
+    padding: 2rem 0 1.5rem 0;
+    width: 21.25rem;
   }
 }
