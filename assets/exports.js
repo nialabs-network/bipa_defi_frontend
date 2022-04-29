@@ -8,6 +8,9 @@ import logoMob from "./logoMob.webp";
 import hamburger from "./hamburger.webp";
 import nasmgLogo from "./nasmgLogo.webp";
 import diboLogo from "./diboLogo.webp";
+import expandArrow from "./expandArrow.png";
+import copy from "./copy.webp";
+import loading from "./loading.gif";
 
 export {
   logo,
@@ -20,4 +23,7 @@ export {
   hamburger,
   nasmgLogo,
   diboLogo,
+  expandArrow,
+  copy,
+  loading,
 };

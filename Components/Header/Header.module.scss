@@ -19,7 +19,11 @@
   .header {
     justify-content: space-between;
   }
+  .address {
+    display: none;
+  }
 }
+
 //large screens
 @media only screen and (min-width: 769px) {
   .buttonMob {
@@ -27,5 +31,13 @@
   }
   .header {
     justify-content: flex-end;
+  }
+
+  .address {
+    padding-right: 10px;
+    background-image: url("../../assets/copy.webp");
+    background-repeat: no-repeat;
+    background-position: 158px;
+    background-size: 1rem;
   }
 }

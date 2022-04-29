@@ -9,21 +9,60 @@
 }
 .label {
   position: relative;
-  left: -1.5rem;
+  left: -1.525rem;
   display: block;
   background-color: #81c9e9;
-  width: 6rem;
+  width: 7rem;
   padding: 0.1rem 0 0.25rem 0.8rem;
-  border-radius: 10px 0 5px;
+  border-radius: 10px 0 12px;
 }
+
 .flex {
   display: flex;
   align-items: center;
   padding: 1rem 0;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
+.logo {
+  display: flex;
+}
+.stakeLogo {
+  width: 3rem;
+}
+.productTitle {
+  .title {
+    font-size: 18px;
+  }
+  .amount {
+    font-size: 14px;
+    color: #9f9f9f;
+    line-height: 2;
+  }
+}
+
+.productInterest {
+  .interest {
+    font-size: 22px;
+    text-align: center;
+  }
+  .apr {
+    font-size: 14px;
+    color: #7f80b1;
+  }
+}
+
 .productInfo {
   display: flex;
-  justify-content: space-between;
+  padding-right: 1rem;
+  .titles {
+    font-size: 14px;
+    color: #7f80b1;
+    padding-right: 5rem;
+  }
+  .values {
+    font-size: 14px;
+  }
 }
 .title {
   font-weight: 500;
@@ -34,9 +73,106 @@
   width: 100%;
   border-bottom: 4px #cdabef solid;
 }
-.logo {
+.formInput {
+  width: 100%;
+  background-color: #2b3252;
+  border-radius: 0.625rem;
+  outline: none;
+  border: none;
+  text-align: right;
+  color: #676c83;
+  font-size: 1.5rem;
+  padding: 10px;
+  &:focus {
+    outline: solid 2px #81c9e9;
+    color: white;
+  }
+}
+.depositContainer {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  .inputArea {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50%;
+    gap: 1.625rem;
+
+    .depWitButtons {
+      display: flex;
+      justify-content: space-between;
+      background-color: #5d679e;
+      width: 240px;
+      border-radius: 10px;
+      padding: 5px;
+      .button {
+        padding: 9px 23px;
+        border-radius: 5px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+    .depositWalletBal {
+      width: 100%;
+      justify-content: space-between;
+      display: flex;
+    }
+  }
+  .infoArea {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2rem;
+    min-width: 50%;
+    .title {
+      color: #81c9e9;
+    }
+  }
 }
-.stakeLogo {
-  width: 3rem;
+@media screen and (max-width: 1160px) {
+  .depositContainer {
+    flex-direction: column;
+  }
 }
+@media screen and (max-width: 768px) {
+  .stakeLogo {
+    max-width: 2rem;
+  }
+  .period {
+    position: absolute;
+    right: 20px;
+    top: 7px;
+  }
+  .accordion {
+    display: block;
+    width: 100%;
+    position: relative;
+  }
+  .productInfo {
+    padding: 1rem 0 0 0;
+    width: 100%;
+    justify-content: space-between;
+    .titles {
+      padding: 0;
+    }
+    .values {
+      text-align: center;
+    }
+  }
+  .productInterest {
+    .interest {
+      font-size: 16px;
+    }
+  }
+}
+/////////////////////////////accordion closed
+.panel {
+  display: none;
+  overflow: hidden;
+}
+/////////////////////////////////////////accordion open
