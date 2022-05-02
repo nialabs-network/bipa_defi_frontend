@@ -3,9 +3,10 @@ import styles from "./Header.module.scss";
 import Button from "../Reusables/Button";
 import Image from "next/image";
 import Link from "next/link";
-import { wallet, logoMob, hamburger } from "../../assets/exports";
+import { wallet, logoMob, hamburger, copy } from "../../assets/exports";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 export default function Header() {
   const { web3State } = useWeb3Context();
@@ -26,6 +27,13 @@ export default function Header() {
   function openNavBar() {
     console.log("iwill");
   }
+  async function copyAddress() {
+    // if (navigator.clipboard) return;
+    // const clipboard = navigator.clipboard;
+    // return await clipboard.writeText(user.account);
+    await navigator.clipboard.writeText(address);
+    toast.success("Your address is copied");
+  }
   return (
     <header>
       <div className={styles.header}>
@@ -33,8 +41,15 @@ export default function Header() {
           // PC VERSION
           <>
             {address ? (
-              <div className={styles.address}>
-                <Button value={"todo"} />
+              <div className={styles.address} onClick={copyAddress}>
+                <Button
+                  value={`${address.slice(0, 6) + "..." + address.slice(-4)} `}
+                  style={{
+                    backgroundColor: "rgba(129, 201, 233, 0.3)",
+                    textDecoration: "underline",
+                    paddingRight: "40px",
+                  }}
+                />
               </div>
             ) : null}
             <div className={styles.buttonPC}>

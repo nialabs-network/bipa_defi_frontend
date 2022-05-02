@@ -2,6 +2,8 @@ import { useAppContext } from "../../Contexts";
 import Header from "../Header/Header";
 import Navigation from "../Navigation/Navigation";
 import styles from "./AppLayout.module.scss";
+import { loading } from "../../assets/exports";
+import Image from "next/image";
 
 export default function AppLayout({ children }) {
   const { appState } = useAppContext();
@@ -17,7 +19,8 @@ export default function AppLayout({ children }) {
       </footer>
       {appState.loading ? (
         <div className={styles.loading}>
-          <span className={styles.spinner}></span>
+          {/* <span className={styles.spinner}></span> */}
+          <Image src={loading} width={loading.width} height={loading.height} />
           <p>{appState.loading_msg}</p>
         </div>
       ) : null}

@@ -28,8 +28,12 @@ export default function Swap() {
   const { t } = useTranslation();
   async function handleSwap() {
     if (token0.amount > 0 && token0.amount !== "") {
-      setLoadingState(true, "swapping");
-      await swap(token0, token1.amount, address, web3Provider);
+      try {
+        setLoadingState(true, "swapping");
+        await swap(token0, token1.amount, address, web3Provider);
+      } catch (e) {
+        console.log(e);
+      }
       setLoadingState(false, "");
     }
   }
