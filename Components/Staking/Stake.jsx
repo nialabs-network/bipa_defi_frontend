@@ -7,6 +7,8 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
+import { fnLoader } from '../../Utils/WithDynamicLoader';
+
 export default function Stake({ styles }) {
   return (
     <>
@@ -27,6 +29,7 @@ export default function Stake({ styles }) {
                 <div className={styles.stakeLogo}>
                   <Image
                     src={nasmgLogo}
+                    loader={fnLoader}
                     width={nasmgLogo.width}
                     height={nasmgLogo.height}
                   />
@@ -34,6 +37,7 @@ export default function Stake({ styles }) {
                 <div className={styles.stakeLogo}>
                   <Image
                     src={diboLogo}
+                    loader={fnLoader}
                     width={diboLogo.width}
                     height={diboLogo.height}
                   />
@@ -58,7 +62,7 @@ export default function Stake({ styles }) {
               </div>
               <div className={styles.period}>00 Days</div>
               <button className={`${styles.accordion} accordion__button`}>
-                <Image src={expandArrow} width={24} height={24} />
+                <Image src={expandArrow} loader={fnLoader} width={24} height={24} />
               </button>
             </div>
             <AccordionItemPanel>

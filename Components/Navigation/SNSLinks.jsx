@@ -7,29 +7,31 @@ import discord from "../../assets/discord.webp";
 import kakao from "../../assets/kakao.webp";
 import styles from "./Navigation.module.scss";
 import Image from "next/image";
+import { fnLoader } from '../../Utils/WithDynamicLoader';
+
 export default function SNSLinks() {
   return (
     <div className={styles.socialMediaLinks}>
       <a href="#">
-        <Image src={insta.src} width={24} height={24} />
+        <Image src={insta.src} width={24} height={24} loader={fnLoader} />
       </a>
       <a href="#">
-        <Image src={youtube.src} width={24} height={24} />
+        <Image src={youtube.src} width={24} height={24} loader={fnLoader} />
       </a>
       <a href="#">
-        <Image src={twitter.src} width={24} height={24} />
+        <Image src={twitter.src} width={24} height={24} loader={fnLoader} />
       </a>
       <a href="#">
-        <Image src={telegram.src} width={24} height={24} />
+        <Image src={telegram.src} width={24} height={24} loader={fnLoader} />
       </a>
       <a href="#">
-        <Image src={medium.src} width={24} height={24} />
+        <Image src={medium.src} width={24} height={24} loader={fnLoader} />
       </a>{" "}
       <a href="#">
-        <Image src={discord.src} width={24} height={24} />
+        <Image src={discord.src} width={24} height={24} loader={fnLoader} />
       </a>
       <a href="#">
-        <Image src={kakao.src} width={24} height={24} />
+        <Image src={kakao.src} width={24} height={24} loader={fnLoader} />
       </a>
     </div>
   );
