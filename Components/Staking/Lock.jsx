@@ -7,6 +7,8 @@ import {
   AccordionItemButton,
   AccordionItemPanel,
 } from "react-accessible-accordion";
+import { fnLoader } from '../../Utils/WithDynamicLoader';
+
 export default function Lock({ styles }) {
   return (
     <>
@@ -19,6 +21,7 @@ export default function Lock({ styles }) {
                 <div className={styles.stakeLogo}>
                   <Image
                     src={nasmgLogo}
+                    loader={fnLoader}
                     width={nasmgLogo.width}
                     height={nasmgLogo.height}
                   />
@@ -43,7 +46,7 @@ export default function Lock({ styles }) {
               </div>
               <div className={styles.period}>00 Days</div>
               <button className={styles.accordion}>
-                <Image src={expandArrow} width={24} height={24} />
+                <Image src={expandArrow} loader={fnLoader} width={24} height={24} />
               </button>
             </div>
             <AccordionItemPanel>open</AccordionItemPanel>

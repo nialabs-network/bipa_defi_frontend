@@ -6,8 +6,9 @@ import { useAppContext } from "../../Contexts";
 import styles from "./Navigation.module.scss";
 import LanguageDropdown from "./LanguageDropdown";
 import SNSLinks from "./SNSLinks";
-
+import { fnLoader } from '../../Utils/WithDynamicLoader';
 import { logo, dashboard, stake, swap, hourglass } from "../../assets/exports";
+
 export default function Navigation() {
   const { appState, dispatch } = useAppContext();
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function Navigation() {
           <a>
             <Image
               src={logo.src}
+              loader={fnLoader}
               width={logo.width}
               height={logo.height}
               className={styles.logoImg}
@@ -43,7 +45,7 @@ export default function Navigation() {
                 router.pathname === "/" ? styles.navLinkActive : ""
               }`}
             >
-              <Image src={dashboard.src} width={20} height={21} />
+              <Image src={dashboard.src} loader={fnLoader} width={20} height={21} />
               <span className={styles.linkText}>{t("dashboard")}</span>
             </a>
           </Link>
@@ -56,7 +58,7 @@ export default function Navigation() {
                 router.pathname === "/stake" ? styles.navLinkActive : ""
               }`}
             >
-              <Image src={stake.src} width={24} height={30} />
+              <Image src={stake.src} loader={fnLoader} width={24} height={30} />
               <span className={styles.linkText}>{t("stake")}</span>
             </a>
           </Link>
@@ -69,7 +71,7 @@ export default function Navigation() {
                 router.pathname === "/swap" ? styles.navLinkActive : ""
               }`}
             >
-              <Image src={swap.src} width={24} height={26} />
+              <Image src={swap.src} loader={fnLoader} width={24} height={26} />
               <span className={styles.linkText}>{t("swap")}</span>
             </a>
           </Link>
@@ -82,7 +84,7 @@ export default function Navigation() {
                 router.pathname === "/hourglass" ? styles.navLinkActive : ""
               }`}
             >
-              <Image src={hourglass.src} width={29} height={30} />
+              <Image src={hourglass.src} loader={fnLoader} width={29} height={30} />
               <span className={styles.linkText}>{t("hourglass")}</span>
             </a>
           </Link>

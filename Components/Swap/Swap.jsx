@@ -9,6 +9,8 @@ import { swap } from "./swap";
 import nasmgLogo from "../../assets/nasmgLogo.webp";
 import polygonLogo from "../../assets/polygonLogo.webp";
 import replace from "../../assets/replace.webp";
+import { fnLoader } from '../../Utils/WithDynamicLoader';
+
 export default function Swap() {
   const { web3State } = useWeb3Context();
   const { appState, dispatch, setLoadingState } = useAppContext();
@@ -61,7 +63,7 @@ export default function Swap() {
       <p>{t("trade")}</p>
       <div className={styles.input}>
         <div className={styles.token}>
-          <Image src={token0.logo} width={61} height={61} />
+          <Image src={token0.logo} loader={fnLoader} width={61} height={61} />
           <label className={styles.label}>{token0.ticker}</label>
         </div>
         <input
@@ -76,6 +78,7 @@ export default function Swap() {
       <div className={styles.switch}>
         <Image
           src={replace}
+          loader={fnLoader}
           style={{ cursor: "pointer" }}
           onClick={handleSwitch}
         />
@@ -83,7 +86,7 @@ export default function Swap() {
       <p>For (estimated)</p>
       <div className={styles.input}>
         <div className={styles.token}>
-          <Image src={token1.logo} width={58} height={58} />
+          <Image src={token1.logo} loader={fnLoader} width={58} height={58} />
           <label className={styles.label}>{token1.ticker}</label>
         </div>
         <input
