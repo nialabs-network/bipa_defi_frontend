@@ -3,6 +3,7 @@ import styles from "./Header.module.scss";
 import Button from "../Reusables/Button";
 import Image from "next/image";
 import Link from "next/link";
+import { fnLoader } from "../../Utils/WithDynamicLoader";
 import { wallet, logoMob, hamburger, copy } from "../../assets/exports";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,7 +13,6 @@ import Modal from "../Reusables/Modal";
 function HeaderModal() {
   return <div> </div>;
 }
-
 export default function Header(props) {
   const { appState, dispatch } = useAppContext();
   const { web3State } = useWeb3Context();
@@ -79,7 +79,7 @@ export default function Header(props) {
             <span className={styles.hamburger} onClick={openNavBar}>
               <Image
                 src={hamburger}
-                loader={fnLoader}
+                // loader={fnLoader}
                 width={hamburger.width}
                 height={hamburger.height}
               />
@@ -89,7 +89,7 @@ export default function Header(props) {
                 <a>
                   <Image
                     src={logoMob}
-                    loader={fnLoader}
+                    // loader={fnLoader}
                     width={logoMob.width}
                     height={logoMob.height}
                   />
@@ -102,7 +102,7 @@ export default function Header(props) {
                 value={
                   <Image
                     src={wallet}
-                    loader={fnLoader}
+                    // loader={fnLoader}
                     width={40}
                     height={40}
                   />

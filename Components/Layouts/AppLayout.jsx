@@ -5,6 +5,7 @@ import styles from "./AppLayout.module.scss";
 import { loading } from "../../assets/exports";
 import Image from "next/image";
 import { useState } from "react";
+import { fnLoader } from "../../Utils/WithDynamicLoader";
 
 export default function AppLayout({ children }) {
   const { appState } = useAppContext();
@@ -24,7 +25,7 @@ export default function AppLayout({ children }) {
           {/* <span className={styles.spinner}></span> */}
           <Image
             src={loading}
-            loader={fnLoader}
+            // loader={fnLoader}
             width={loading.width}
             height={loading.height}
           />

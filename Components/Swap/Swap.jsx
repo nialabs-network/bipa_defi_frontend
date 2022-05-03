@@ -80,7 +80,7 @@ export default function Swap() {
       <div className={styles.switch}>
         <Image
           src={replace}
-          loader={fnLoader}
+          // loader={fnLoader}
           style={{ cursor: "pointer" }}
           onClick={handleSwitch}
         />
