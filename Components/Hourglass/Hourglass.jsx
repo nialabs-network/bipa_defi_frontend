@@ -21,11 +21,13 @@ export default function Hourglass() {
           <p>$54</p>
         </div>
       </div>
-      <Button
-        value={address ? "Do something" : "Connect wallet"}
-        onclick={address ? null : connect}
-        style={{ width: "100%", margin: "0 auto", marginTop: "2rem" }}
-      />
+      {!address ? (
+        <Button
+          value="Connect wallet"
+          onclick={address ? null : connect}
+          style={{ width: "100%", margin: "0 auto", marginTop: "2rem" }}
+        />
+      ) : null}
     </section>
   );
 }

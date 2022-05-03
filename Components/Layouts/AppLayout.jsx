@@ -4,14 +4,16 @@ import Navigation from "../Navigation/Navigation";
 import styles from "./AppLayout.module.scss";
 import { loading } from "../../assets/exports";
 import Image from "next/image";
-import { fnLoader } from '../../Utils/WithDynamicLoader';
+import { useState } from "react";
+import { fnLoader } from "../../Utils/WithDynamicLoader";
 
 export default function AppLayout({ children }) {
   const { appState } = useAppContext();
+  const [mobNav, setMobNav] = useState(false);
   return (
     <>
-      <Header />
-      <Navigation />
+      <Header mobNav={mobNav} setMobNav={setMobNav} />
+      <Navigation mobNav={mobNav} setMobNav={setMobNav} />
       <main>
         <div className={styles.container}>{children}</div>
       </main>
@@ -21,7 +23,12 @@ export default function AppLayout({ children }) {
       {appState.loading ? (
         <div className={styles.loading}>
           {/* <span className={styles.spinner}></span> */}
-          <Image src={loading} loader={fnLoader} width={loading.width} height={loading.height} />
+          <Image
+            src={loading}
+            // loader={fnLoader}
+            width={loading.width}
+            height={loading.height}
+          />
           <p>{appState.loading_msg}</p>
         </div>
       ) : null}

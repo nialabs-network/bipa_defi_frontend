@@ -47,17 +47,18 @@ function AppContextProvider({ children, Language }) {
   };
   useEffect(() => {
     console.log("_________________useEffect first paint");
-    // firstRender.current? firstRender.current = false: i18n.changeLanguage(appState.language);
-    //use the line above before production
-    //
-    if (firstRender.current) {
-      console.log("setting first render to false");
-      firstRender.current = false;
-    } else {
-      console.log("USE EFFECT FOR LANGUAGE SETTING");
-      toast.info("[DEV]Reload the page for better SEO");
-      i18n.changeLanguage(appState.language);
-    }
+
+    firstRender.current
+      ? (firstRender.current = false)
+      : i18n.changeLanguage(appState.language);
+    // if (firstRender.current) {
+    //   console.log("setting first render to false");
+    //   firstRender.current = false;
+    // } else {
+    //   console.log("USE EFFECT FOR LANGUAGE SETTING");
+    //   toast.info("[DEV]Reload the page for better SEO");
+    //   i18n.changeLanguage(appState.language);
+    // }
   }, [appState.language]);
   console.log(appState, "app state");
   console.log("isloading:", appState.loading);
@@ -75,7 +76,3 @@ function useAppContext() {
 }
 
 export { AppContext, AppContextProvider, useAppContext };
-
-/**
- *
- */

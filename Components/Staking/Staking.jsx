@@ -9,6 +9,7 @@ export default function Staking() {
         <span className={styles.line}></span>
       </div>
       <Stake styles={styles} />
+
       <div className={styles.separator}>
         <h3 className={styles.title}>LOCK</h3>
         <span
@@ -16,7 +17,7 @@ export default function Staking() {
           style={{ borderBottom: "4px #81c9e9 solid" }}
         ></span>
       </div>
-      <Lock styles={styles} />
+      {/* <Lock styles={styles} /> */}
     </section>
   );
 }
