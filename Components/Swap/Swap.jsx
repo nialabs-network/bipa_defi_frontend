@@ -61,7 +61,9 @@ export default function Swap() {
       <p>{t("trade")}</p>
       <div className={styles.input}>
         <div className={styles.token}>
-          <Image src={token0.logo} width={61} height={61} />
+          <div className={styles.img}>
+            <Image src={token0.logo} width={61} height={61} />
+          </div>
           <label className={styles.label}>{token0.ticker}</label>
         </div>
         <input
@@ -83,7 +85,9 @@ export default function Swap() {
       <p>For (estimated)</p>
       <div className={styles.input}>
         <div className={styles.token}>
-          <Image src={token1.logo} width={58} height={58} />
+          <div className={styles.img}>
+            <Image src={token1.logo} width={61} height={61} />
+          </div>
           <label className={styles.label}>{token1.ticker}</label>
         </div>
         <input

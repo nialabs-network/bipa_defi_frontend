@@ -2,11 +2,13 @@ import config from "../languages/config";
 const APP_ACTIONS = {
   SET_LANGUAGE: "SET_LANGUAGE",
   SET_LOADING: "SET_LOADING",
+  SET_APP_WIDTH: "SET_APP_WIDTH",
 };
 const appInitialState = {
   language: config.lng,
   loading: false,
   loading_msg: "Loading...",
+  width: 777,
 };
 function appReducer(state, action) {
   switch (action.type) {
@@ -20,6 +22,11 @@ function appReducer(state, action) {
         ...state,
         loading: action.loading,
         loading_msg: action.loading_msg,
+      };
+    case APP_ACTIONS.SET_APP_WIDTH:
+      return {
+        ...state,
+        width: action.width,
       };
     default:
       return state;

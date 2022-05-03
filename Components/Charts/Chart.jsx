@@ -33,21 +33,19 @@ export default function Chart() {
   return !parsedData[0] ? null : (
     <ResponsiveContainer>
       <AreaChart data={parsedData}>
-        <defs>
-          <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-            <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-          </linearGradient>
-        </defs>
         <Area
           type="monotone"
           dataKey="BTCprice"
-          stroke="#ffffff"
-          fill="url(#colorUv)"
+          stroke="#8884d8"
+          fill="#8884d8"
         />
-        <XAxis dataKey="BTCtime" />
-        <YAxis type="number" domain={["auto", "auto"]} />
-        <Tooltip />
+        <XAxis dataKey="BTCtime" tick={{ fill: "white", fontSize: "15" }} />
+        <YAxis
+          type="number"
+          domain={["auto", "auto"]}
+          tick={{ fill: "white", fontSize: "15" }}
+        />
+        <Tooltip></Tooltip>
       </AreaChart>
     </ResponsiveContainer>
   );

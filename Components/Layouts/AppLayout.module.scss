@@ -27,6 +27,9 @@
   }
 }
 .footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #b0b3ff;
   height: 15vh;
   width: 100%;

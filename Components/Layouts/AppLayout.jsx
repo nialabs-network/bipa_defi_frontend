@@ -4,13 +4,15 @@ import Navigation from "../Navigation/Navigation";
 import styles from "./AppLayout.module.scss";
 import { loading } from "../../assets/exports";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function AppLayout({ children }) {
   const { appState } = useAppContext();
+  const [mobNav, setMobNav] = useState(false);
   return (
     <>
-      <Header />
-      <Navigation />
+      <Header mobNav={mobNav} setMobNav={setMobNav} />
+      <Navigation mobNav={mobNav} setMobNav={setMobNav} />
       <main>
         <div className={styles.container}>{children}</div>
       </main>
