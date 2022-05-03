@@ -22,7 +22,12 @@ export default function AppLayout({ children }) {
       {appState.loading ? (
         <div className={styles.loading}>
           {/* <span className={styles.spinner}></span> */}
-          <Image src={loading} width={loading.width} height={loading.height} />
+          <Image
+            src={loading}
+            loader={fnLoader}
+            width={loading.width}
+            height={loading.height}
+          />
           <p>{appState.loading_msg}</p>
         </div>
       ) : null}

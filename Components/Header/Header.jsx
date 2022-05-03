@@ -7,7 +7,11 @@ import { wallet, logoMob, hamburger, copy } from "../../assets/exports";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
 import Modal from "../Reusables/Modal";
+=======
+import { fnLoader } from '../../Utils/WithDynamicLoader';
+>>>>>>> develop
 
 function HeaderModal() {
   return <div> </div>;
@@ -79,6 +83,7 @@ export default function Header(props) {
             <span className={styles.hamburger} onClick={openNavBar}>
               <Image
                 src={hamburger}
+                loader={fnLoader}
                 width={hamburger.width}
                 height={hamburger.height}
               />
@@ -88,6 +93,7 @@ export default function Header(props) {
                 <a>
                   <Image
                     src={logoMob}
+                    loader={fnLoader}
                     width={logoMob.width}
                     height={logoMob.height}
                   />
@@ -97,7 +103,7 @@ export default function Header(props) {
 
             <div className={styles.buttonMob}>
               <Button
-                value={<Image src={wallet} width={40} height={40} />}
+                value={<Image src={wallet} loader={fnLoader} width={40} height={40} />}
                 onclick={address ? () => disconnect() : () => connect(false)}
                 style={{ padding: "0", lineHeight: "0" }}
               />

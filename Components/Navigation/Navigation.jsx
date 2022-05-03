@@ -6,7 +6,7 @@ import { useAppContext } from "../../Contexts";
 import styles from "./Navigation.module.scss";
 import LanguageDropdown from "./LanguageDropdown";
 import SNSLinks from "./SNSLinks";
-
+import { fnLoader } from "../../Utils/WithDynamicLoader";
 import { logo, dashboard, stake, swap, hourglass } from "../../assets/exports";
 import Button from "../Reusables/Button";
 export default function Navigation(props) {

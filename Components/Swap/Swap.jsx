@@ -9,6 +9,8 @@ import { swap } from "./swap";
 import nasmgLogo from "../../assets/nasmgLogo.webp";
 import polygonLogo from "../../assets/polygonLogo.webp";
 import replace from "../../assets/replace.webp";
+import { fnLoader } from "../../Utils/WithDynamicLoader";
+
 export default function Swap() {
   const { web3State } = useWeb3Context();
   const { appState, dispatch, setLoadingState } = useAppContext();
@@ -78,6 +80,7 @@ export default function Swap() {
       <div className={styles.switch}>
         <Image
           src={replace}
+          loader={fnLoader}
           style={{ cursor: "pointer" }}
           onClick={handleSwitch}
         />
