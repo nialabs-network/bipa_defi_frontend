@@ -3,6 +3,7 @@ import AppLayout from "../Components/Layouts/AppLayout";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
+import Head from "next/head";
 
 function Dapp({ Component, pageProps, Language }) {
   console.log(
@@ -10,6 +11,9 @@ function Dapp({ Component, pageProps, Language }) {
   );
   return (
     <>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       <AppContextProvider Language={Language}>
         <Web3ContextProvider>
           <AppLayout>

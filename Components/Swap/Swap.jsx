@@ -33,6 +33,8 @@ export default function Swap() {
       try {
         setLoadingState(true, "swapping");
         await swap(token0, token1.amount, address, web3Provider);
+        setToken0((prevState) => ({ ...prevState, amount: "" }));
+        setToken1((prevState) => ({ ...prevState, amount: "" }));
       } catch (e) {
         console.log(e);
       }
