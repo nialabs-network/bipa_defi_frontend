@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0",
     "@uniswap/sdk-core": "^3.0.1",
     "@uniswap/v3-sdk": "^3.8.2",
     "i18next": "^21.6.14",

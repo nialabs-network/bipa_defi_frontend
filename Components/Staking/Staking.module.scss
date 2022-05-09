@@ -95,6 +95,7 @@
   flex-wrap: wrap;
   justify-content: center;
   flex-direction: row;
+  max-height: 100vh;
   .inputArea {
     padding: 20px;
     display: flex;
@@ -135,6 +136,9 @@
       color: #81c9e9;
     }
   }
+}
+.accordion_button {
+  transition: 100ms transform linear;
 }
 @media screen and (max-width: 1160px) {
   .depositContainer {

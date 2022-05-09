@@ -12,20 +12,23 @@ import { useEffect } from "react";
 export default function Chart() {
   const [btcData, setBtcData] = useState([]);
   useEffect(() => {
-    console.log("fetching data from binance");
-    fetch(
-      "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=60"
-    )
-      .then((response) => response.json())
-      .then((data) => setBtcData(data));
+    function getMarketData() {
+      console.log("fetching data from binance");
+      fetch(
+        "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=60"
+      )
+        .then((response) => response.json())
+        .then((data) => setBtcData(data));
+    }
+    getMarketData();
   }, []);
   let parsedData = [];
   if (btcData) {
-    parsedData = btcData.map((hour) => {
-      const date = new Date(hour[0]);
+    parsedData = btcData.map((time) => {
+      const date = new Date(time[0]);
       return {
         BTCtime: `${date.getHours()}:${date.getMinutes()}`,
-        BTCprice: Number(hour[1]),
+        BTCprice: Number(time[1]),
       };
     });
   }
