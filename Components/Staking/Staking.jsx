@@ -3,8 +3,7 @@ import Lock from "./Lock";
 import styles from "./Staking.module.scss";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
-import abi from "./abi.js";
-import erc20 from "./erc20.js";
+
 export default function Staking() {
   const { web3State } = useWeb3Context();
   const { appState, setLoadingState } = useAppContext();
@@ -41,24 +40,24 @@ export default function Staking() {
       setLoadingState(false, "");
     }
   }
-  useEffect(async () => {
-    if (address) {
-      const lockContract = new web3Provider.eth.Contract(
-        abi,
-        "0xea006c611c2dCA8bF9c26420fA6b7dB9CCec0670"
-      );
-      setlockcontract(lockContract);
-      console.log(await lockContract.methods.totalLocked().call());
-      const nasmgContract = new web3Provider.eth.Contract(
-        erc20,
-        "0x310Cf9575ea20443e6E82B67d2545FA87557258B"
-      );
-      setNasmgContract(nasmgContract);
-      setLockInfo({
-        nasmgBalance: await nasmgContract.methods.balanceOf(address).call(),
-      });
-    }
-  }, [address]);
+  // useEffect(async () => {
+  //   if (address) {
+  //     const lockContract = new web3Provider.eth.Contract(
+  //       abi,
+  //       "0xfE643327003C6D5397692BFA8c60cba8E3596a5E"
+  //     );
+  //     setlockcontract(lockContract);
+  //     console.log(await lockContract.methods.totalLocked().call());
+  //     const nasmgContract = new web3Provider.eth.Contract(
+  //       erc20,
+  //       "0x310Cf9575ea20443e6E82B67d2545FA87557258B"
+  //     );
+  //     setNasmgContract(nasmgContract);
+  //     setLockInfo({
+  //       nasmgBalance: await nasmgContract.methods.balanceOf(address).call(),
+  //     });
+  //   }
+  // }, [address]);
   return (
     <section className={styles.stakingContainer}>
       <div className={styles.separator}>

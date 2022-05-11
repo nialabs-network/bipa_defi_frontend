@@ -32,14 +32,10 @@ export default function Header(props) {
       setWindowWidth(window.innerWidth);
     });
   }, []);
-  console.log(props.mobNav, "mobnav");
   function openNavBar() {
     props.setMobNav(!props.mobNav);
   }
   async function copyAddress() {
-    // if (navigator.clipboard) return;
-    // const clipboard = navigator.clipboard;
-    // return await clipboard.writeText(user.account);
     await navigator.clipboard.writeText(address);
     toast.success("Your address is copied");
   }

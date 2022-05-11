@@ -9,11 +9,13 @@ import { WEB3ACTIONS, web3InitialState, web3Reducer } from "../Reducers";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../Contexts";
+import abi from "./stakeAbi.js";
+import ERC20 from "./erc20.js";
 
 export const useWeb3 = () => {
   console.log("___________________useWeb3______________________");
   const [web3State, dispatch] = useReducer(web3Reducer, web3InitialState);
-  const { provider, web3Provider, address, balance, network, contract } =
+  const { provider, web3Provider, address, balance, network, contracts } =
     web3State;
   const { t } = useTranslation();
   const appContext = useAppContext();
@@ -32,8 +34,20 @@ export const useWeb3 = () => {
         });
         const network = await web3Provider.eth.net.getId();
         const balance = await web3Provider.eth.getBalance(address[0]);
-        const contract = null;
-        console.log("now dispatching");
+        const contracts = {
+          stake: new web3Provider.eth.Contract(
+            abi,
+            "0x190245f533F53b7f03C7eEC3445c7B4850C70089"
+          ),
+          NASMG: new web3Provider.eth.Contract(
+            ERC20,
+            "0x310Cf9575ea20443e6E82B67d2545FA87557258B"
+          ),
+          DIBO: new web3Provider.eth.Contract(
+            ERC20,
+            "0xb69f5734dF86eA2Ee7531A949d01a11cc2404CfA"
+          ),
+        };
         dispatch({
           type: WEB3ACTIONS.SET_WEB3_PROVIDER,
           provider,
@@ -41,9 +55,8 @@ export const useWeb3 = () => {
           address: address[0],
           network,
           balance,
-          contract,
+          contracts,
         });
-        console.log("dispatched");
         console.log(isReconnecting, "is reconnecting");
         isReconnecting
           ? toast.success("[DEV]Connection is stable")
@@ -140,14 +153,13 @@ export const useWeb3 = () => {
     }
   }, [provider, disconnect]);
   console.log("returning from web3-_------___---");
-  console.log(contract);
   return {
     provider,
     web3Provider,
     address,
     balance,
     network,
-    contract,
+    contracts,
     connect,
     disconnect,
     dispatch,
