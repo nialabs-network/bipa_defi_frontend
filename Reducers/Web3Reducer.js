@@ -17,7 +17,7 @@ const web3InitialState = {
   address: null, //when Metamask is injected address is undefined until the specific address is connected
   balance: null,
   network: null,
-  contract: undefined,
+  contracts: undefined,
   connect: null, //replaced by web3, but stays the same as default context
   disconnect: null, //replaced by web3, but stays the same as default context
 };
@@ -34,7 +34,7 @@ function web3Reducer(state, action) {
         address: action.address,
         network: action.network,
         balance: action.balance,
-        contract: action.contract,
+        contracts: action.contracts,
       };
     case WEB3ACTIONS.SET_ADDRESS:
       return {

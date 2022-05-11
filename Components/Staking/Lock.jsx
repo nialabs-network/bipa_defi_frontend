@@ -148,7 +148,7 @@ export default function Lock({
                 </div>
               </div>
               <Button
-                value="Withdraw"
+                value="Withdraw DIBO"
                 onclick={withdraw}
                 style={{
                   backgroundColor: "transparent",

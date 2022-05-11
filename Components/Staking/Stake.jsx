@@ -9,42 +9,51 @@ import StakingContract from "../../artifacts/Staking.json";
 export default function Stake({ styles, toggle, selected }) {
   const { web3State } = useWeb3Context();
   const { appState, setLoadingState } = useAppContext();
-  const { web3Provider, address, network, balance } = web3State;
-  const [state, setState] = useState({});
+  const { web3Provider, address, contracts } = web3State;
+  const [transactionMode, setTransactionMode] = useState(true); //toggle deposit withdrawal
+  const [blockchainData, setBlockchainData] = useState({});
   const [amount, setAmount] = useState("");
 
-  // useEffect(async () => {
-  //   if (web3Provider) {
-  //     const token = new web3Provider.eth.Contract(
-  //       Token.abi,
-  //       Token.networks[network].address
-  //     );
-  //     const staking = new web3Provider.eth.Contract(
-  //       StakingContract.abi,
-  //       StakingContract.networks[network].address
-  //     );
-  //     let ethBal = Number(web3Provider.utils.fromWei(balance, "ether")).toFixed(
-  //       2
-  //     );
-  //     let stakedBal = await staking.methods.etherBalanceOf(address).call();
-  //     stakedBal = Number(
-  //       web3Provider.utils.fromWei(stakedBal, "ether")
-  //     ).toFixed(2);
-  //     let alltimerewards = await staking.methods.allTimeRewards(address).call();
-  //     alltimerewards = Number(
-  //       web3Provider.utils.fromWei(alltimerewards, "ether")
-  //     ).toFixed(6);
-  //     setState({ token, staking, ethBal, stakedBal, alltimerewards });
-  //   }
-  // }, [address]);
+  useEffect(() => {
+    async function getBlockchainData() {
+      const NASMGbalance = await contracts.NASMG.methods
+        .balanceOf(address)
+        .call();
+      const NASMGDeposited = await contracts.stake.methods
+        .stakingBalance(address)
+        .call();
+      const paidOutRewards = await contracts.stake.methods
+        .paidOutRewards(address)
+        .call();
+      console.log(paidOutRewards);
+      const claimableRewards = await contracts.stake.methods
+        .claimableRewards()
+        .call({ from: address });
+      console.log(claimableRewards, "claimable");
+
+      setBlockchainData({
+        NASMGbalance,
+        NASMGDeposited,
+        paidOutRewards,
+        claimableRewards,
+      });
+    }
+    if (address) {
+      getBlockchainData();
+    }
+  }, [address, amount]);
+  console.log(blockchainData);
+  console.log(transactionMode);
   async function stake() {
+    console.log("stake strike");
     try {
-      if (state.staking) {
+      if (contracts.stake) {
         setLoadingState(true, "Staking");
-        await state.staking.methods.deposit().send({
-          value: web3Provider.utils.toWei(amount, "ether"),
-          from: address,
-        });
+        await contracts.stake.methods
+          .stakeTokens(web3Provider.utils.toWei(amount, "ether"))
+          .send({
+            from: address,
+          });
         setLoadingState(false, "");
         setAmount("");
       }
@@ -54,13 +63,27 @@ export default function Stake({ styles, toggle, selected }) {
     }
   }
   async function unstake() {
-    if (state.staking !== "undefined") {
+    if (contracts.stake) {
       try {
-        await state.staking.methods.withdraw().send({ from: address });
+        await contracts.stake.methods
+          .unstakeTokens(web3Provider.utils.toWei(amount, "ether"))
+          .send({ from: address });
         setAmount("");
       } catch (e) {
         console.log("Error, withdraw: ", e);
       }
+    }
+  }
+  async function claimRewards() {
+    if (contracts.stake) {
+      try {
+        await contracts.stake.methods.claimRewards().send({ from: address });
+      } catch (e) {
+        console.log(e);
+      }
+      setBlockchainData((prevState) => {
+        return { ...prevState, claimableRewards: 0 };
+      });
     }
   }
   return (
@@ -127,15 +150,26 @@ export default function Stake({ styles, toggle, selected }) {
           style={selected !== "stake" ? { display: "none" } : null}
         >
           <div className={styles.inputArea}>
-            {/* <div className={styles.depWitButtons}>
-                <button
-                  className={`${styles.button}`}
-                  style={{ backgroundColor: "#6d76b2" }}
-                >
-                  Deposit
-                </button>
-                <button className={styles.button}>Withdraw</button>
-              </div> */}
+            <div className={styles.depWitButtons}>
+              <button
+                onClick={() => {
+                  setTransactionMode(true);
+                }}
+                className={`${styles.button}`}
+                style={transactionMode ? { backgroundColor: "#6d76b2" } : null}
+              >
+                Deposit
+              </button>
+              <button
+                className={styles.button}
+                style={transactionMode ? null : { backgroundColor: "#6d76b2" }}
+                onClick={() => {
+                  setTransactionMode(false);
+                }}
+              >
+                Withdraw
+              </button>
+            </div>
             <p>0.5% fee for witdrawals within 3 days</p>
             <input
               type="number"
@@ -150,13 +184,30 @@ export default function Stake({ styles, toggle, selected }) {
             <div className={styles.depositWalletBal}>
               <p>Wallet Balance:</p>
               <div>
-                <span style={{ display: "block" }}>ETH</span>
+                <span style={{ display: "block" }}>NASMG</span>
                 <span style={{ display: "block", textAlign: "right" }}>
-                  {state.ethBal}
+                  {web3Provider
+                    ? Number(
+                        web3Provider.utils.fromWei(
+                          blockchainData.NASMGbalance
+                            ? blockchainData.NASMGbalance
+                            : "",
+                          "ether"
+                        )
+                      ).toFixed(2)
+                    : null}
                 </span>
               </div>
             </div>
-            <Button value="Deposit" style={{ margin: "0" }} onclick={stake} />
+            {transactionMode ? (
+              <Button value="Deposit" style={{ margin: "0" }} onclick={stake} />
+            ) : (
+              <Button
+                value="Withdraw"
+                style={{ margin: "0" }}
+                onclick={unstake}
+              />
+            )}
           </div>
 
           <div className={styles.infoArea}>
@@ -172,8 +223,19 @@ export default function Stake({ styles, toggle, selected }) {
                   justifyContent: "space-between",
                 }}
               >
-                <p style={{ color: "lime" }}>{state.stakedBal}</p>
-                <p>ETH</p>
+                <p style={{ color: "lime" }}>
+                  {web3Provider
+                    ? Number(
+                        web3Provider.utils.fromWei(
+                          blockchainData.NASMGDeposited
+                            ? blockchainData.NASMGDeposited
+                            : "",
+                          "ether"
+                        )
+                      ).toFixed(2)
+                    : null}
+                </p>
+                <p>NASMG</p>
               </div>
             </div>
             <div className={styles.rewards}>
@@ -184,13 +246,36 @@ export default function Stake({ styles, toggle, selected }) {
                   justifyContent: "space-between",
                 }}
               >
-                <p style={{ color: "lime" }}>{state.alltimerewards}</p>
-                <p style={{ textAlign: "right" }}>ERC20</p>
+                <p style={{ color: "lime" }}>
+                  {blockchainData.paidOutRewards !== "0"
+                    ? Number(
+                        web3Provider?.utils.fromWei(
+                          blockchainData.paidOutRewards
+                            ? blockchainData.paidOutRewards
+                            : "",
+                          "ether"
+                        )
+                      ).toFixed(3)
+                    : null}
+                  (
+                  {web3Provider
+                    ? Number(
+                        web3Provider.utils.fromWei(
+                          blockchainData.claimableRewards
+                            ? blockchainData.claimableRewards
+                            : "",
+                          "ether"
+                        )
+                      ).toFixed(7)
+                    : null}
+                  )<small> claimable</small>
+                </p>
+                <p style={{ textAlign: "right" }}>NASMG</p>
               </div>
             </div>
             <Button
-              value="Unstake"
-              onclick={unstake}
+              value="Claim Rewards"
+              onclick={claimRewards}
               style={{
                 backgroundColor: "transparent",
                 outline: "solid 2px #81c9e9",
@@ -201,145 +286,6 @@ export default function Stake({ styles, toggle, selected }) {
           </div>
         </div>
       </div>
-      {/* <Accordion allowZeroExpanded>
-          <div
-            className={`${styles.stakingSection} glass`}
-            style={{ border: "3px solid #cdabef" }}
-          >
-            <AccordionItem>
-              <AccordionItemButton>
-                <span
-                  className={styles.label}
-                  style={{ backgroundColor: "#cdabef" }}
-                >
-                  STAKE
-                </span>{" "}
-                <div className={styles.flex}>
-                  <div className={styles.logo}>
-                    <div className={styles.stakeLogo}>
-                      <Image
-                        src={nasmgLogo}
-                        width={nasmgLogo.width}
-                        height={nasmgLogo.height}
-                      />
-                    </div>
-                    <div className={styles.stakeLogo}>
-                      <Image
-                        src={diboLogo}
-                        width={diboLogo.width}
-                        height={diboLogo.height}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.productTitle}>
-                    <p className={styles.title}>NASMG Staking</p>
-                    <p className={styles.amount}>TVL $197,000,000</p>
-                  </div>
-                  <div className={styles.productInterest}>
-                    <p className={styles.interest}>25%</p>
-                    <p className={styles.apr}>APR 22%</p>
-                  </div>
-                  <div className={styles.productInfo}>
-                    <div className={styles.titles}>
-                      <p>Earn</p>
-                      <p style={{ paddingTop: "12px" }}>Balance</p>
-                    </div>
-                    <div className={styles.values}>
-                      <p>KLAY</p> <p style={{ paddingTop: "12px" }}>%0</p>
-                    </div>
-                  </div>
-                  <div className={styles.period}>00 Days</div>
-                  <button className={`${styles.accordion} accordion__button`}>
-                    <Image src={expandArrow} width={24} height={24} />
-                  </button>
-                </div>
-                <AccordionItemPanel>
-                  <span
-                    style={{
-                      border: "solid 1px #6667ab",
-                      width: "100%",
-                      display: "block",
-                      opacity: "0.5",
-                      marginTop: "10px",
-                    }}
-                  ></span>
-                  <div className={styles.depositContainer}>
-                    <div className={styles.inputArea}>
-                      <div className={styles.depWitButtons}>
-                        <button
-                          className={`${styles.button}`}
-                          style={{ backgroundColor: "#6d76b2" }}
-                        >
-                          Deposit
-                        </button>
-                        <button className={styles.button}>Withdraw</button>
-                      </div>
-                      <p>0.5% fee for witdrawals within 3 days</p>
-                      <input
-                        type="text"
-                        className={styles.formInput}
-                        placeholder="0"
-                        style={{ textAlign: "left" }}
-                      />
-                      <div className={styles.depositWalletBal}>
-                        <p>Wallet Balance:</p>
-                        <div>
-                          <span style={{ display: "block" }}>
-                            NASMG - DIBO LP
-                          </span>
-                          <span style={{ display: "block", textAlign: "right" }}>
-                            $0
-                          </span>
-                        </div>
-                      </div>
-                      <Button value="Deposit" style={{ margin: "0" }} />
-                    </div>
-  
-                    <div className={styles.infoArea}>
-                      <div className={styles.apr}>
-                        <p className={styles.title}>APR</p>
-                        <p>70%</p>
-                      </div>
-                      <div className={styles.deposit}>
-                        <p className={styles.title}>Deposit</p>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <p>0</p>
-                          <p>NASMG-DIBO LP</p>
-                        </div>
-                      </div>
-                      <div className={styles.rewards}>
-                        <p className={styles.title}>Earned Rewards</p>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <p>0</p>
-                          <p style={{ textAlign: "right" }}>DIBO</p>
-                        </div>
-                      </div>
-                      <Button
-                        value="Unstake"
-                        style={{
-                          backgroundColor: "transparent",
-                          outline: "solid 2px #81c9e9",
-                          marginBottom: "0px",
-                          marginTop: "0px",
-                        }}
-                      />
-                    </div>
-                  </div>
-                </AccordionItemPanel>
-              </AccordionItemButton>
-            </AccordionItem>
-          </div>
-        </Accordion> */}
     </section>
   );
 }

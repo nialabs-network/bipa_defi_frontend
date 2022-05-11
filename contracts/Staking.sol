@@ -42,7 +42,7 @@ event Withdraw(address indexed user, uint etherAmount, uint depositTime, uint in
     uint userBalance = etherBalanceOf[msg.sender];
     //check user's hodl time
     uint depositTime = block.timestamp - depositStart[msg.sender];
-    //calc interest per second
+    //calc interest per second 
     uint interestPerSecond = 316680170 * (etherBalanceOf[msg.sender] / 1e16);
     uint interest = interestPerSecond * depositTime;
     //calc accrued interest
