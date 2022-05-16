@@ -1,9 +1,77 @@
 .container {
   padding: 1rem;
 }
-
+.pageTitle {
+  text-align: center;
+  padding: 10px;
+  font-weight: normal;
+  font-size: 20px;
+}
 .estimated {
   padding: 2rem;
   display: flex;
   justify-content: space-between;
+  text-align: center;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formInput {
+  width: 100%;
+  background-color: #2b3252;
+  border-radius: 0.625rem;
+  outline: none;
+  border: none;
+  text-align: right;
+  color: #676c83;
+  font-size: 1.5rem;
+  padding: 10px;
+  &:focus {
+    outline: solid 2px #81c9e9;
+    color: white;
+  }
+}
+
+.title {
+  font-weight: normal;
+  color: #b0b3ff;
+}
+
+.value {
+  padding-top: 0.5rem;
+  text-align: center;
+  font-size: 22px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  .label {
+    font-size: 14px;
+    padding-bottom: 10px;
+    color: #b0b3ff;
+  }
+}
+@media screen and (min-width: 769px) {
+  .inputContainer {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 0;
+    padding: 0 3rem;
+    .input {
+      margin-top: 2rem;
+    }
+  }
+  .pageTitle {
+    text-align: left;
+    font-size: 25px;
+  }
+  .estimated {
+    // text-align: center;
+    flex-direction: row;
+  }
+  .value {
+  }
 }

@@ -9,6 +9,7 @@ import { WEB3ACTIONS, web3InitialState, web3Reducer } from "../Reducers";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../Contexts";
+import lockAbi from "./lockAbi.js";
 import abi from "./stakeAbi.js";
 import ERC20 from "./erc20.js";
 
@@ -35,9 +36,21 @@ export const useWeb3 = () => {
         const network = await web3Provider.eth.net.getId();
         const balance = await web3Provider.eth.getBalance(address[0]);
         const contracts = {
+          lock: {
+            30: new web3Provider.eth.Contract(
+              lockAbi,
+              "0x79D1031ef9a7411F37250E0d9B738a56A4adBb12"
+            ),
+            90: new web3Provider.eth.Contract(
+              lockAbi,
+              "0x4C1b0d13094c55cC60AC6aDC9A90B5A5EbFF73E3"
+            ),
+            180: "",
+            265: "",
+          },
           stake: new web3Provider.eth.Contract(
             abi,
-            "0x190245f533F53b7f03C7eEC3445c7B4850C70089"
+            "0x807Ace8374e28e0A780c4A4A304Cc19b841b0b1C"
           ),
           NASMG: new web3Provider.eth.Contract(
             ERC20,
