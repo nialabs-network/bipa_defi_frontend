@@ -15,7 +15,7 @@ export default function Chart() {
     function getMarketData() {
       console.log("fetching data from binance");
       fetch(
-        "https://api.binance.com/api/v3/klines?symbol=USTUSDT&interval=1m&limit=60"
+        "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=60"
       )
         .then((response) => response.json())
         .then((data) => setBtcData(data));

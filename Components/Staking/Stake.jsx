@@ -3,36 +3,28 @@ import Image from "next/image";
 import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
-import Token from "../../artifacts/Token.json";
-import StakingContract from "../../artifacts/Staking.json";
 
-export default function Stake({ styles, toggle, selected }) {
+export default function Stake({ styles, toggle, selected, nasmgBalance }) {
   const { web3State } = useWeb3Context();
   const { appState, setLoadingState } = useAppContext();
   const { web3Provider, address, contracts } = web3State;
-  const [transactionMode, setTransactionMode] = useState(true); //toggle deposit withdrawal
+  const [isDeposit, setIsDeposit] = useState(true); //toggle deposit withdrawal
   const [blockchainData, setBlockchainData] = useState({});
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
     async function getBlockchainData() {
-      const NASMGbalance = await contracts.NASMG.methods
-        .balanceOf(address)
-        .call();
       const NASMGDeposited = await contracts.stake.methods
         .stakingBalance(address)
         .call();
       const paidOutRewards = await contracts.stake.methods
         .paidOutRewards(address)
         .call();
-      console.log(paidOutRewards);
       const claimableRewards = await contracts.stake.methods
         .claimableRewards()
         .call({ from: address });
-      console.log(claimableRewards, "claimable");
 
       setBlockchainData({
-        NASMGbalance,
         NASMGDeposited,
         paidOutRewards,
         claimableRewards,
@@ -42,8 +34,6 @@ export default function Stake({ styles, toggle, selected }) {
       getBlockchainData();
     }
   }, [address, amount]);
-  console.log(blockchainData);
-  console.log(transactionMode);
   async function stake() {
     console.log("stake strike");
     try {
@@ -153,28 +143,29 @@ export default function Stake({ styles, toggle, selected }) {
             <div className={styles.depWitButtons}>
               <button
                 onClick={() => {
-                  setTransactionMode(true);
+                  setIsDeposit(true);
                 }}
                 className={`${styles.button}`}
-                style={transactionMode ? { backgroundColor: "#6d76b2" } : null}
+                style={isDeposit ? { backgroundColor: "#6d76b2" } : null}
               >
                 Deposit
               </button>
               <button
                 className={styles.button}
-                style={transactionMode ? null : { backgroundColor: "#6d76b2" }}
+                style={isDeposit ? null : { backgroundColor: "#6d76b2" }}
                 onClick={() => {
-                  setTransactionMode(false);
+                  setIsDeposit(false);
                 }}
               >
                 Withdraw
               </button>
             </div>
-            <p>0.5% fee for witdrawals within 3 days</p>
+            <p>your amount</p>
             <input
               type="number"
               className={styles.formInput}
               placeholder="0"
+              debounceTimeout={500}
               style={{ textAlign: "left" }}
               value={amount}
               onChange={(e) => {
@@ -188,18 +179,13 @@ export default function Stake({ styles, toggle, selected }) {
                 <span style={{ display: "block", textAlign: "right" }}>
                   {web3Provider
                     ? Number(
-                        web3Provider.utils.fromWei(
-                          blockchainData.NASMGbalance
-                            ? blockchainData.NASMGbalance
-                            : "",
-                          "ether"
-                        )
+                        web3Provider.utils.fromWei(nasmgBalance, "ether")
                       ).toFixed(2)
                     : null}
                 </span>
               </div>
             </div>
-            {transactionMode ? (
+            {isDeposit ? (
               <Button value="Deposit" style={{ margin: "0" }} onclick={stake} />
             ) : (
               <Button
@@ -232,7 +218,7 @@ export default function Stake({ styles, toggle, selected }) {
                             : "",
                           "ether"
                         )
-                      ).toFixed(2)
+                      )
                     : null}
                 </p>
                 <p>NASMG</p>
