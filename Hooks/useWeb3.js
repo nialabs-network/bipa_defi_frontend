@@ -9,10 +9,12 @@ import { WEB3ACTIONS, web3InitialState, web3Reducer } from "../Reducers";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "../Contexts";
-import lockAbi from "./lockAbi.js";
-import abi from "./stakeAbi.js";
-import ERC20 from "./erc20.js";
-
+// import lockAbi from "./lockAbi.js";
+// import abi from "./stakeAbi.js";
+// import ERC20 from "./erc20.js";
+import stakeAbi from "./stakeAbi";
+import erc20 from "./erc20";
+import lockAbi from "./lockAbi";
 export const useWeb3 = () => {
   console.log("___________________useWeb3______________________");
   const [web3State, dispatch] = useReducer(web3Reducer, web3InitialState);
@@ -49,15 +51,15 @@ export const useWeb3 = () => {
             265: "",
           },
           stake: new web3Provider.eth.Contract(
-            abi,
-            "0x807Ace8374e28e0A780c4A4A304Cc19b841b0b1C"
+            stakeAbi,
+            "0x990Ee7d38986A02E6E2d4F48f4b03489B91138e8"
           ),
           NASMG: new web3Provider.eth.Contract(
-            ERC20,
+            erc20,
             "0x310Cf9575ea20443e6E82B67d2545FA87557258B"
           ),
           DIBO: new web3Provider.eth.Contract(
-            ERC20,
+            erc20,
             "0xb69f5734dF86eA2Ee7531A949d01a11cc2404CfA"
           ),
         };
