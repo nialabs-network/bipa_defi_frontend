@@ -4,34 +4,28 @@ import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 
-export default function Stake({
-  styles,
-  toggle,
-  selected,
-  nasmgBalance,
-  allowance,
-}) {
+export default function Stake({ styles, toggle, selected }) {
   const { web3State } = useWeb3Context();
-  const { appState, setLoadingState } = useAppContext();
+  const { setLoadingState } = useAppContext();
   const { web3Provider, address, contracts } = web3State;
   const [isDeposit, setIsDeposit] = useState(true); //toggle deposit withdrawal
   const [blockchainData, setBlockchainData] = useState(null);
+  const [nasmgBalance, setNasmgBalance] = useState("1");
   const [amount, setAmount] = useState("");
-
   useEffect(() => {
     if (address) {
       getBlockchainData();
     }
   }, [address, amount]);
   async function getBlockchainData() {
+    const balance = await contracts.NASMG.methods.balanceOf(address).call();
     const stakingInfo = await contracts.stake.methods
       .stakingInfo(address)
       .call();
-    console.log(stakingInfo, "stakinginfo");
     const claimableRewards = await contracts.stake.methods
       .claimableRewards()
       .call({ from: address });
-
+    setNasmgBalance(balance);
     setBlockchainData({
       stakingInfo,
       claimableRewards,
@@ -64,6 +58,7 @@ export default function Stake({
   async function unstake() {
     if (contracts.stake) {
       try {
+        console.log("unstake");
         await contracts.stake.methods
           .unstakeTokens(web3Provider.utils.toWei(amount, "ether"))
           .send({ from: address });
@@ -76,13 +71,17 @@ export default function Stake({
   async function claimRewards() {
     if (contracts.stake) {
       try {
+        setLoadingState(true, "Claiming rewards");
         await contracts.stake.methods.claimRewards().send({ from: address });
+        setLoadingState(false, "");
       } catch (e) {
         console.log(e);
+        setLoadingState(false, "");
       }
       setBlockchainData((prevState) => {
         return { ...prevState, claimableRewards: 0 };
       });
+      getBlockchainData();
     }
   }
   return (
@@ -174,7 +173,6 @@ export default function Stake({
               type="number"
               className={styles.formInput}
               placeholder="0"
-              debounceTimeout={500}
               style={{ textAlign: "left" }}
               value={amount}
               onChange={(e) => {
@@ -188,9 +186,9 @@ export default function Stake({
                 <span style={{ display: "block", textAlign: "right" }}>
                   {web3Provider
                     ? Number(
-                        web3Provider.utils.fromWei(nasmgBalance, "ether")
-                      ).toFixed(2)
-                    : null}
+                        web3Provider?.utils.fromWei(nasmgBalance, "ether")
+                      ).toFixed(3)
+                    : "N/A"}
                 </span>
               </div>
             </div>
@@ -219,16 +217,16 @@ export default function Stake({
                 }}
               >
                 <p style={{ color: "lime" }}>
-                  {blockchainData
+                  {web3Provider
                     ? Number(
-                        web3Provider.utils.fromWei(
-                          blockchainData.stakingInfo
+                        web3Provider?.utils.fromWei(
+                          blockchainData?.stakingInfo.stakingBalance
                             ? blockchainData.stakingInfo.stakingBalance
                             : "0",
                           "ether"
                         )
                       )
-                    : "Not available"}
+                    : "N/A"}
                 </p>
                 <p>NASMG</p>
               </div>
@@ -242,28 +240,28 @@ export default function Stake({
                 }}
               >
                 <p style={{ color: "lime" }}>
-                  {blockchainData &&
-                  blockchainData.stakingInfo.paidOutRewards !== "0"
+                  {web3Provider &&
+                  blockchainData?.stakingInfo.paidOutRewards !== "0"
                     ? Number(
                         web3Provider?.utils.fromWei(
-                          blockchainData.stakingInfo?.paidOutRewards
+                          blockchainData?.stakingInfo.paidOutRewards
                             ? blockchainData.stakingInfo.paidOutRewards
                             : "",
                           "ether"
                         )
                       ).toFixed(3)
-                    : null}
+                    : ""}
                   (
-                  {blockchainData
+                  {web3Provider
                     ? Number(
-                        web3Provider.utils.fromWei(
-                          blockchainData.claimableRewards
+                        web3Provider?.utils.fromWei(
+                          blockchainData?.claimableRewards
                             ? blockchainData.claimableRewards
                             : "",
                           "ether"
                         )
                       ).toFixed(7)
-                    : null}
+                    : "N/A"}
                   )<small> claimable</small>
                 </p>
                 <p style={{ textAlign: "right" }}>NASMG</p>
