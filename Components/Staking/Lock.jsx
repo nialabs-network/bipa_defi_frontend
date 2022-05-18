@@ -29,7 +29,10 @@ export default function Lock({ styles, toggle, selected }) {
     setLoadingState(true, "Getting data from blockchain...");
     if (selected && selected !== "stake") {
       const balance = await contracts.NASMG.methods.balanceOf(address).call();
-      setNasmgBalance(balance);
+      setNasmgBalance(
+        Math.trunc(Number(web3Provider.utils.fromWei(balance, "ether") * 100)) /
+          100
+      );
       const lockOf = await contracts.lock[selected].methods
         .lockOf(address)
         .call();
@@ -85,10 +88,14 @@ export default function Lock({ styles, toggle, selected }) {
         .send({ from: address });
       setLoadingState(false, "");
       setAmount("");
+      getBlockchainData();
     } catch (e) {
       console.log(e);
       setLoadingState(false, "");
     }
+  }
+  function handleMaxClick() {
+    setAmount(nasmgBalance.toString());
   }
   return (
     <section className={styles.accordion}>
@@ -189,17 +196,24 @@ export default function Lock({ styles, toggle, selected }) {
               <p>0.5% fee for witdrawals within 3 days</p>
 
               {isLock ? (
-                <input
-                  type="number"
-                  className={styles.formInput}
-                  placeholder="0"
-                  value={amount}
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                  }}
-                  style={{ textAlign: "left" }}
-                  disabled={Number(lockOf?.lockedAmount) > 0 ? true : false}
-                />
+                <>
+                  <div style={{ position: "relative", width: "100%" }}>
+                    <input
+                      type="number"
+                      className={styles.formInput}
+                      placeholder="0"
+                      value={amount}
+                      onChange={(e) => {
+                        setAmount(e.target.value);
+                      }}
+                      style={{ textAlign: "left" }}
+                      disabled={Number(lockOf?.lockedAmount) > 0 ? true : false}
+                    />
+                    <button className={styles.maxBut} onClick={handleMaxClick}>
+                      MAX
+                    </button>
+                  </div>
+                </>
               ) : (
                 <input
                   type="number"
@@ -219,11 +233,7 @@ export default function Lock({ styles, toggle, selected }) {
                 <div>
                   <span style={{ display: "block" }}>NASMG</span>
                   <span style={{ display: "block", textAlign: "right" }}>
-                    {web3Provider
-                      ? Number(
-                          web3Provider.utils.fromWei(nasmgBalance, "ether")
-                        ).toFixed(2)
-                      : null}
+                    {nasmgBalance}
                   </span>
                 </div>
               </div>

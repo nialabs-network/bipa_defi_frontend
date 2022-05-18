@@ -1,9 +1,7 @@
 import Stake from "./Stake";
 import Lock from "./Lock";
 import styles from "./Staking.module.scss";
-import { useState, useEffect } from "react";
-import { useAppContext, useWeb3Context } from "../../Contexts";
-import StakingArt from "../../artifacts/Staking.json";
+import { useState } from "react";
 export default function Staking() {
   const [selected, setSelected] = useState("");
 

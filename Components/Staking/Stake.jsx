@@ -12,6 +12,8 @@ export default function Stake({ styles, toggle, selected }) {
   const [blockchainData, setBlockchainData] = useState(null);
   const [nasmgBalance, setNasmgBalance] = useState("1");
   const [amount, setAmount] = useState("");
+  const [stakingBalance, setStakingBalance] = useState("");
+
   useEffect(() => {
     if (address) {
       getBlockchainData();
@@ -25,11 +27,17 @@ export default function Stake({ styles, toggle, selected }) {
     const claimableRewards = await contracts.stake.methods
       .claimableRewards()
       .call({ from: address });
-    setNasmgBalance(balance);
+    setNasmgBalance(
+      Math.trunc(Number(web3Provider.utils.fromWei(balance, "ether") * 100)) /
+        100
+    );
     setBlockchainData({
       stakingInfo,
       claimableRewards,
     });
+    setStakingBalance(
+      web3Provider.utils.fromWei(stakingInfo.stakingBalance, "ether")
+    );
   }
   async function stake() {
     console.log("stake strike");
@@ -84,6 +92,13 @@ export default function Stake({ styles, toggle, selected }) {
       getBlockchainData();
     }
   }
+  function handleMaxClick() {
+    if (isDeposit) {
+      setAmount(nasmgBalance.toString());
+    } else {
+      setAmount(stakingBalance.toString());
+    }
+  }
   return (
     <section className={styles.accordion}>
       <div
@@ -111,11 +126,11 @@ export default function Stake({ styles, toggle, selected }) {
           </div>
           <div className={styles.productTitle}>
             <p className={styles.title}>NASMG Staking</p>
-            <p className={styles.amount}>TVL $197,000,000</p>
+            <p className={styles.amount}>TVL TBD</p>
           </div>
           <div className={styles.productInterest}>
-            <p className={styles.interest}>25%</p>
-            <p className={styles.apr}>APR 22%</p>
+            <p className={styles.interest}>25% TBD</p>
+            <p className={styles.apr}>APR 22% TBD</p>
           </div>
           <div className={styles.productInfo}>
             <div className={styles.titles}>
@@ -123,7 +138,7 @@ export default function Stake({ styles, toggle, selected }) {
               <p style={{ paddingTop: "12px" }}>Balance</p>
             </div>
             <div className={styles.values}>
-              <p>KLAY</p> <p style={{ paddingTop: "12px" }}>%0</p>
+              <p>NASMG</p> <p style={{ paddingTop: "12px" }}>{nasmgBalance}</p>
             </div>
           </div>
           <div className={styles.period}>Flexible</div>
@@ -169,35 +184,67 @@ export default function Stake({ styles, toggle, selected }) {
               </button>
             </div>
             <p>your amount</p>
-            <input
-              type="number"
-              className={styles.formInput}
-              placeholder="0"
-              style={{ textAlign: "left" }}
-              value={amount}
-              onChange={(e) => {
-                setAmount(e.target.value);
-              }}
-            />
+            <div style={{ position: "relative", width: "100%" }}>
+              <input
+                type="number"
+                className={styles.formInput}
+                placeholder="0"
+                style={{ textAlign: "left" }}
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                }}
+              />
+              <button className={styles.maxBut} onClick={handleMaxClick}>
+                MAX
+              </button>
+            </div>
             <div className={styles.depositWalletBal}>
               <p>Wallet Balance:</p>
               <div>
                 <span style={{ display: "block" }}>NASMG</span>
                 <span style={{ display: "block", textAlign: "right" }}>
-                  {web3Provider
-                    ? Number(
-                        web3Provider?.utils.fromWei(nasmgBalance, "ether")
-                      ).toFixed(3)
-                    : "N/A"}
+                  {nasmgBalance}
                 </span>
               </div>
             </div>
+
             {isDeposit ? (
-              <Button value="Deposit" style={{ margin: "0" }} onclick={stake} />
+              <Button
+                value={
+                  Number(nasmgBalance) < Number(amount)
+                    ? "Not enough tokens"
+                    : "Deposit"
+                }
+                style={
+                  Number(nasmgBalance) < Number(amount)
+                    ? {
+                        margin: "0",
+                        cursor: "default",
+                        boxShadow: "none",
+                        backgroundColor: "#bbb",
+                      }
+                    : { margin: "0" }
+                }
+                onclick={stake}
+              />
             ) : (
               <Button
-                value="Withdraw"
-                style={{ margin: "0" }}
+                value={
+                  Number(amount) <= Number(stakingBalance)
+                    ? "Withdraw"
+                    : "Too much to withdraw"
+                }
+                style={
+                  Number(amount) <= Number(stakingBalance)
+                    ? { margin: "0" }
+                    : {
+                        margin: "0",
+                        cursor: "default",
+                        boxShadow: "none",
+                        backgroundColor: "#bbb",
+                      }
+                }
                 onclick={unstake}
               />
             )}
@@ -216,18 +263,7 @@ export default function Stake({ styles, toggle, selected }) {
                   justifyContent: "space-between",
                 }}
               >
-                <p style={{ color: "lime" }}>
-                  {web3Provider
-                    ? Number(
-                        web3Provider?.utils.fromWei(
-                          blockchainData?.stakingInfo.stakingBalance
-                            ? blockchainData.stakingInfo.stakingBalance
-                            : "0",
-                          "ether"
-                        )
-                      )
-                    : "N/A"}
-                </p>
+                <p style={{ color: "lime" }}>{stakingBalance}</p>
                 <p>NASMG</p>
               </div>
             </div>

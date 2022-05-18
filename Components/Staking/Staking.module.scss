@@ -90,6 +90,16 @@
     color: white;
   }
 }
+.maxBut {
+  color: white;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #454e80;
+  padding: 9px 8px 8px 8px;
+  border-radius: 6px;
+  font-size: 17px;
+}
 .depositContainer {
   display: flex;
   flex-wrap: wrap;
