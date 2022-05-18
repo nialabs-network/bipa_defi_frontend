@@ -24,7 +24,6 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
   const { web3Provider, contracts, address } = web3State;
   const { setLoadingState } = useAppContext();
   const [lockOf, setLockOf] = useState(null);
-  console.log(lockOf);
   useEffect(() => {
     async function getBlockchainData() {
       if (selected && selected !== "stake") {
@@ -37,8 +36,8 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
             .claimableRewards()
             .call({ from: address });
         }
-        console.log(lockOf);
-        console.log(claimableRewards);
+        console.log(lockOf, "lockOf");
+        console.log(claimableRewards, "claimable");
         setLockOf({ ...lockOf, claimableRewards });
       }
     }

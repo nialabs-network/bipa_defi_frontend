@@ -4,41 +4,50 @@ import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 
-export default function Stake({ styles, toggle, selected, nasmgBalance }) {
+export default function Stake({
+  styles,
+  toggle,
+  selected,
+  nasmgBalance,
+  allowance,
+}) {
   const { web3State } = useWeb3Context();
   const { appState, setLoadingState } = useAppContext();
   const { web3Provider, address, contracts } = web3State;
   const [isDeposit, setIsDeposit] = useState(true); //toggle deposit withdrawal
-  const [blockchainData, setBlockchainData] = useState({});
+  const [blockchainData, setBlockchainData] = useState(null);
   const [amount, setAmount] = useState("");
 
   useEffect(() => {
-    async function getBlockchainData() {
-      const NASMGDeposited = await contracts.stake.methods
-        .stakingBalance(address)
-        .call();
-      const paidOutRewards = await contracts.stake.methods
-        .paidOutRewards(address)
-        .call();
-      const claimableRewards = await contracts.stake.methods
-        .claimableRewards()
-        .call({ from: address });
-
-      setBlockchainData({
-        NASMGDeposited,
-        paidOutRewards,
-        claimableRewards,
-      });
-    }
     if (address) {
       getBlockchainData();
     }
   }, [address, amount]);
+  async function getBlockchainData() {
+    const stakingInfo = await contracts.stake.methods
+      .stakingInfo(address)
+      .call();
+    console.log(stakingInfo, "stakinginfo");
+    const claimableRewards = await contracts.stake.methods
+      .claimableRewards()
+      .call({ from: address });
+
+    setBlockchainData({
+      stakingInfo,
+      claimableRewards,
+    });
+  }
   async function stake() {
     console.log("stake strike");
     try {
       if (contracts.stake) {
         setLoadingState(true, "Staking");
+        await contracts.NASMG.methods
+          .approve(
+            contracts.stake._address,
+            web3Provider.utils.toWei(amount, "ether")
+          )
+          .send({ from: address });
         await contracts.stake.methods
           .stakeTokens(web3Provider.utils.toWei(amount, "ether"))
           .send({
@@ -210,16 +219,16 @@ export default function Stake({ styles, toggle, selected, nasmgBalance }) {
                 }}
               >
                 <p style={{ color: "lime" }}>
-                  {web3Provider
+                  {blockchainData
                     ? Number(
                         web3Provider.utils.fromWei(
-                          blockchainData.NASMGDeposited
-                            ? blockchainData.NASMGDeposited
-                            : "",
+                          blockchainData.stakingInfo
+                            ? blockchainData.stakingInfo.stakingBalance
+                            : "0",
                           "ether"
                         )
                       )
-                    : null}
+                    : "Not available"}
                 </p>
                 <p>NASMG</p>
               </div>
@@ -233,18 +242,19 @@ export default function Stake({ styles, toggle, selected, nasmgBalance }) {
                 }}
               >
                 <p style={{ color: "lime" }}>
-                  {blockchainData.paidOutRewards !== "0"
+                  {blockchainData &&
+                  blockchainData.stakingInfo.paidOutRewards !== "0"
                     ? Number(
                         web3Provider?.utils.fromWei(
-                          blockchainData.paidOutRewards
-                            ? blockchainData.paidOutRewards
+                          blockchainData.stakingInfo?.paidOutRewards
+                            ? blockchainData.stakingInfo.paidOutRewards
                             : "",
                           "ether"
                         )
                       ).toFixed(3)
                     : null}
                   (
-                  {web3Provider
+                  {blockchainData
                     ? Number(
                         web3Provider.utils.fromWei(
                           blockchainData.claimableRewards
