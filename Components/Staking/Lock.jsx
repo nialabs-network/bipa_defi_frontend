@@ -17,30 +17,33 @@ const periods = {
     interestPerSecond: 100000000,
   },
 };
-export default function Lock({ styles, toggle, selected, nasmgBalance }) {
+export default function Lock({ styles, toggle, selected }) {
   const [amount, setAmount] = useState("");
   const [isLock, setIsLock] = useState(true); //toggle lock and unlock
   const { web3State } = useWeb3Context();
   const { web3Provider, contracts, address } = web3State;
   const { setLoadingState } = useAppContext();
   const [lockOf, setLockOf] = useState(null);
-  useEffect(() => {
-    async function getBlockchainData() {
-      if (selected && selected !== "stake") {
-        const lockOf = await contracts.lock[selected].methods
-          .lockOf(address)
-          .call();
-        let claimableRewards;
-        if (lockOf.lockedAmount > 0) {
-          claimableRewards = await contracts.lock[selected].methods
-            .claimableRewards()
-            .call({ from: address });
-        }
-        console.log(lockOf, "lockOf");
-        console.log(claimableRewards, "claimable");
-        setLockOf({ ...lockOf, claimableRewards });
+  const [nasmgBalance, setNasmgBalance] = useState("1");
+  async function getBlockchainData() {
+    setLoadingState(true, "Getting data from blockchain...");
+    if (selected && selected !== "stake") {
+      const balance = await contracts.NASMG.methods.balanceOf(address).call();
+      setNasmgBalance(balance);
+      const lockOf = await contracts.lock[selected].methods
+        .lockOf(address)
+        .call();
+      let claimableRewards;
+      if (lockOf.lockedAmount > 0) {
+        claimableRewards = await contracts.lock[selected].methods
+          .claimableRewards()
+          .call({ from: address });
       }
+      setLockOf({ ...lockOf, claimableRewards });
     }
+    setLoadingState(false, "");
+  }
+  useEffect(() => {
     if (address) {
       try {
         getBlockchainData();
@@ -48,7 +51,7 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
         console.log(e);
       }
     }
-  }, [address, selected]);
+  }, [address, selected, amount]);
   async function lock(amount) {
     try {
       setLoadingState(true, "Locking");
@@ -57,6 +60,7 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
         .send({ from: address });
       setLoadingState(false, "");
       setAmount("");
+      getBlockchainData();
     } catch (e) {
       console.log(e);
       setLoadingState(false, "");
@@ -277,7 +281,10 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
                 >
                   <p style={{ color: "lime" }}>
                     {lockOf
-                      ? web3Provider.utils.fromWei(lockOf.lockedAmount, "ether")
+                      ? web3Provider?.utils.fromWei(
+                          lockOf.lockedAmount,
+                          "ether"
+                        )
                       : "0"}
                   </p>
                   <p>NASMG</p>
@@ -293,13 +300,13 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
                 >
                   <p style={{ color: "lime" }}>
                     {lockOf
-                      ? web3Provider.utils.fromWei(
+                      ? web3Provider?.utils.fromWei(
                           lockOf.nasmgPaidOutRewards,
                           "ether"
                         )
                       : "0"}{" "}
                     {lockOf
-                      ? web3Provider.utils.fromWei(
+                      ? web3Provider?.utils.fromWei(
                           (
                             periods[key].lockPeriod *
                             periods[key].interestPerSecond *
@@ -325,14 +332,14 @@ export default function Lock({ styles, toggle, selected, nasmgBalance }) {
                 >
                   <p style={{ color: "lime" }}>
                     {lockOf
-                      ? web3Provider.utils.fromWei(
+                      ? web3Provider?.utils.fromWei(
                           lockOf.diboPaidOutRewards,
                           "ether"
                         )
                       : "0"}
                     (
                     {lockOf
-                      ? web3Provider.utils.fromWei(
+                      ? web3Provider?.utils.fromWei(
                           lockOf.claimableRewards
                             ? lockOf.claimableRewards
                             : "0",
