@@ -13,7 +13,19 @@ const periods = {
   90: {
     period: 90,
     interest: "10%",
-    lockPeriod: 900,
+    lockPeriod: 300,
+    interestPerSecond: 100000000,
+  },
+  180: {
+    period: 180,
+    interest: "TBA",
+    lockPeriod: 300,
+    interestPerSecond: 100000000,
+  },
+  365: {
+    period: 365,
+    interest: "TBD",
+    lockPeriod: 400,
     interestPerSecond: 100000000,
   },
 };
@@ -26,25 +38,28 @@ export default function Lock({ styles, toggle, selected }) {
   const [lockOf, setLockOf] = useState(null);
   const [nasmgBalance, setNasmgBalance] = useState("1");
   async function getBlockchainData() {
-    setLoadingState(true, "Getting data from blockchain...");
-    if (selected && selected !== "stake") {
-      const balance = await contracts.NASMG.methods.balanceOf(address).call();
-      setNasmgBalance(
-        Math.trunc(Number(web3Provider.utils.fromWei(balance, "ether") * 100)) /
-          100
-      );
-      const lockOf = await contracts.lock[selected].methods
-        .lockOf(address)
-        .call();
-      let claimableRewards;
-      if (lockOf.lockedAmount > 0) {
-        claimableRewards = await contracts.lock[selected].methods
-          .claimableRewards()
-          .call({ from: address });
+    try {
+      if (selected && selected !== "stake") {
+        const balance = await contracts.NASMG.methods.balanceOf(address).call();
+        setNasmgBalance(
+          Math.trunc(
+            Number(web3Provider.utils.fromWei(balance, "ether") * 100)
+          ) / 100
+        );
+        const lockOf = await contracts.lock[selected].methods
+          .lockOf(address)
+          .call();
+        let claimableRewards;
+        if (lockOf.lockedAmount > 0) {
+          claimableRewards = await contracts.lock[selected].methods
+            .claimableRewards()
+            .call({ from: address });
+        }
+        setLockOf({ ...lockOf, claimableRewards });
       }
-      setLockOf({ ...lockOf, claimableRewards });
+    } catch (e) {
+      console.log(e);
     }
-    setLoadingState(false, "");
   }
   useEffect(() => {
     if (address) {
@@ -54,16 +69,23 @@ export default function Lock({ styles, toggle, selected }) {
         console.log(e);
       }
     }
-  }, [address, selected, amount]);
+  }, [address, selected, amount, isLock]);
   async function lock(amount) {
     try {
+      setLoadingState(true, "Approving");
+      await contracts.NASMG.methods
+        .approve(
+          contracts.lock[selected]._address,
+          web3Provider.utils.toWei(amount, "ether")
+        )
+        .send({ from: address });
       setLoadingState(true, "Locking");
       await contracts.lock[selected].methods
         .lock(web3Provider.utils.toWei(amount, "ether"))
         .send({ from: address });
       setLoadingState(false, "");
       setAmount("");
-      getBlockchainData();
+      document.location.reload();
     } catch (e) {
       console.log(e);
       setLoadingState(false, "");
@@ -75,6 +97,7 @@ export default function Lock({ styles, toggle, selected }) {
       await contracts.lock[selected].methods.withdraw().send({ from: address });
       setLoadingState(false, "");
       setAmount("");
+      document.location.reload();
     } catch (e) {
       console.log(e);
       setLoadingState(false, "");
@@ -82,13 +105,13 @@ export default function Lock({ styles, toggle, selected }) {
   }
   async function claim() {
     try {
-      setLoadingState(true, "Withdrawing");
+      setLoadingState(true, "Claiming rewards");
       await contracts.lock[selected].methods
         .claimDiboRewards()
         .send({ from: address });
       setLoadingState(false, "");
       setAmount("");
-      getBlockchainData();
+      document.location.reload();
     } catch (e) {
       console.log(e);
       setLoadingState(false, "");
@@ -250,9 +273,37 @@ export default function Lock({ styles, toggle, selected }) {
                   />
                 ) : (
                   <Button
-                    value="Lock"
-                    style={{ margin: "0" }}
-                    onclick={() => lock(amount)}
+                    value={
+                      Number(amount) <= 0
+                        ? "Enter the amount"
+                        : Number(amount) > Number(nasmgBalance)
+                        ? "Not enough tokens"
+                        : "Approve & Lock"
+                    }
+                    style={
+                      Number(amount) <= 0
+                        ? {
+                            margin: "0",
+                            cursor: "default",
+                            boxShadow: "none",
+                            backgroundColor: "#bbb",
+                          }
+                        : Number(amount) > Number(nasmgBalance)
+                        ? {
+                            margin: "0",
+                            cursor: "default",
+                            boxShadow: "none",
+                            backgroundColor: "#bbb",
+                          }
+                        : { margin: "0" }
+                    }
+                    onclick={
+                      Number(amount) <= 0
+                        ? null
+                        : Number(amount) > Number(nasmgBalance)
+                        ? null
+                        : () => lock(amount)
+                    }
                   />
                 )
               ) : Number(lockOf?.lockTime) + Number(periods[key].lockPeriod) >
@@ -265,13 +316,26 @@ export default function Lock({ styles, toggle, selected }) {
                     boxShadow: "none",
                     backgroundColor: "#bbb",
                   }}
-                  onclick={withdraw}
+                  onclick={null}
                 />
               ) : (
                 <Button
-                  value="Unlock"
-                  style={{ margin: "0" }}
-                  onclick={withdraw}
+                  value={
+                    Number(lockOf?.lockedAmount) > 0
+                      ? "Unlock & Claim"
+                      : "You have nothing no unlock"
+                  }
+                  style={
+                    Number(lockOf?.lockedAmount) > 0
+                      ? { margin: "0" }
+                      : {
+                          margin: "0",
+                          cursor: "default",
+                          boxShadow: "none",
+                          backgroundColor: "#bbb",
+                        }
+                  }
+                  onclick={Number(lockOf?.lockedAmount) > 0 ? withdraw : null}
                 />
               )}
             </div>
@@ -319,12 +383,14 @@ export default function Lock({ styles, toggle, selected }) {
                       ? web3Provider?.utils.fromWei(
                           (
                             periods[key].lockPeriod *
-                            periods[key].interestPerSecond *
-                            Number(
-                              web3Provider.utils.fromWei(
-                                lockOf.lockedAmount,
-                                "ether"
-                              )
+                            Math.trunc(
+                              periods[key].interestPerSecond *
+                                Number(
+                                  web3Provider.utils.fromWei(
+                                    lockOf.lockedAmount,
+                                    "ether"
+                                  )
+                                )
                             )
                           ).toString(),
                           "ether"
@@ -361,15 +427,36 @@ export default function Lock({ styles, toggle, selected }) {
                   <p style={{ textAlign: "right" }}>DIBO</p>
                 </div>
               </div>
+
               <Button
-                value="Claim DIBO"
-                style={{
-                  backgroundColor: "transparent",
-                  outline: "solid 2px #81c9e9",
-                  marginBottom: "0px",
-                  marginTop: "0px",
-                }}
-                onclick={claim}
+                value={
+                  lockOf?.claimableRewards !== "0" &&
+                  lockOf?.lockedAmount !== "0"
+                    ? "Claim DIBO"
+                    : "Nothing to claim"
+                }
+                style={
+                  lockOf?.claimableRewards !== "0" &&
+                  lockOf?.lockedAmount !== "0"
+                    ? {
+                        backgroundColor: "transparent",
+                        outline: "solid 2px #81c9e9",
+                        marginBottom: "0px",
+                        marginTop: "0px",
+                      }
+                    : {
+                        margin: "0",
+                        cursor: "default",
+                        boxShadow: "none",
+                        backgroundColor: "#bbb",
+                      }
+                }
+                onclick={
+                  lockOf?.claimableRewards !== "0" &&
+                  lockOf?.lockedAmount !== "0"
+                    ? claim
+                    : null
+                }
               />
             </div>
           </div>

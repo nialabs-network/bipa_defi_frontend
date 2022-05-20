@@ -10,7 +10,7 @@ export default function Stake({ styles, toggle, selected }) {
   const { web3Provider, address, contracts } = web3State;
   const [isDeposit, setIsDeposit] = useState(true); //toggle deposit withdrawal
   const [blockchainData, setBlockchainData] = useState(null);
-  const [nasmgBalance, setNasmgBalance] = useState("1");
+  const [nasmgBalance, setNasmgBalance] = useState("0");
   const [amount, setAmount] = useState("");
   const [stakingBalance, setStakingBalance] = useState("");
 
@@ -18,7 +18,7 @@ export default function Stake({ styles, toggle, selected }) {
     if (address) {
       getBlockchainData();
     }
-  }, [address, amount]);
+  }, [address, amount, isDeposit, selected]);
   async function getBlockchainData() {
     const balance = await contracts.NASMG.methods.balanceOf(address).call();
     const stakingInfo = await contracts.stake.methods
@@ -36,20 +36,25 @@ export default function Stake({ styles, toggle, selected }) {
       claimableRewards,
     });
     setStakingBalance(
-      web3Provider.utils.fromWei(stakingInfo.stakingBalance, "ether")
+      Math.trunc(
+        Number(
+          web3Provider.utils.fromWei(stakingInfo.stakingBalance, "ether") * 100
+        )
+      ) / 100
     );
   }
   async function stake() {
     console.log("stake strike");
     try {
       if (contracts.stake) {
-        setLoadingState(true, "Staking");
+        setLoadingState(true, "Approving");
         await contracts.NASMG.methods
           .approve(
             contracts.stake._address,
             web3Provider.utils.toWei(amount, "ether")
           )
           .send({ from: address });
+        setLoadingState(true, "Staking");
         await contracts.stake.methods
           .stakeTokens(web3Provider.utils.toWei(amount, "ether"))
           .send({
@@ -57,6 +62,7 @@ export default function Stake({ styles, toggle, selected }) {
           });
         setLoadingState(false, "");
         setAmount("");
+        document.location.reload();
       }
     } catch (e) {
       console.log(e);
@@ -67,12 +73,16 @@ export default function Stake({ styles, toggle, selected }) {
     if (contracts.stake) {
       try {
         console.log("unstake");
+        setLoadingState(true, "Unstaking");
         await contracts.stake.methods
           .unstakeTokens(web3Provider.utils.toWei(amount, "ether"))
           .send({ from: address });
+        setLoadingState(false, "");
         setAmount("");
+        document.location.reload();
       } catch (e) {
         console.log("Error, withdraw: ", e);
+        setLoadingState(false, "");
       }
     }
   }
@@ -91,6 +101,7 @@ export default function Stake({ styles, toggle, selected }) {
       });
       getBlockchainData();
     }
+    document.location.reload();
   }
   function handleMaxClick() {
     if (isDeposit) {
@@ -214,7 +225,9 @@ export default function Stake({ styles, toggle, selected }) {
                 value={
                   Number(nasmgBalance) < Number(amount)
                     ? "Not enough tokens"
-                    : "Deposit"
+                    : Number(amount) > 0
+                    ? "Approve & Deposit"
+                    : "Enter the amount"
                 }
                 style={
                   Number(nasmgBalance) < Number(amount)
@@ -224,20 +237,42 @@ export default function Stake({ styles, toggle, selected }) {
                         boxShadow: "none",
                         backgroundColor: "#bbb",
                       }
-                    : { margin: "0" }
+                    : Number(amount) > 0
+                    ? { margin: "0" }
+                    : {
+                        margin: "0",
+                        cursor: "default",
+                        boxShadow: "none",
+                        backgroundColor: "#bbb",
+                      }
                 }
-                onclick={stake}
+                onclick={
+                  Number(nasmgBalance) < Number(amount)
+                    ? null
+                    : Number(amount) > 0
+                    ? stake
+                    : null
+                }
               />
             ) : (
               <Button
                 value={
                   Number(amount) <= Number(stakingBalance)
-                    ? "Withdraw"
+                    ? Number(amount) <= 0
+                      ? "Enter the amount"
+                      : "Withdraw"
                     : "Too much to withdraw"
                 }
                 style={
                   Number(amount) <= Number(stakingBalance)
-                    ? { margin: "0" }
+                    ? Number(amount) <= 0
+                      ? {
+                          margin: "0",
+                          cursor: "default",
+                          boxShadow: "none",
+                          backgroundColor: "#bbb",
+                        }
+                      : { margin: "0" }
                     : {
                         margin: "0",
                         cursor: "default",
@@ -296,7 +331,7 @@ export default function Stake({ styles, toggle, selected }) {
                             : "",
                           "ether"
                         )
-                      ).toFixed(7)
+                      ).toFixed(6)
                     : "N/A"}
                   )<small> claimable</small>
                 </p>
@@ -304,14 +339,29 @@ export default function Stake({ styles, toggle, selected }) {
               </div>
             </div>
             <Button
-              value="Claim Rewards"
-              onclick={claimRewards}
-              style={{
-                backgroundColor: "transparent",
-                outline: "solid 2px #81c9e9",
-                marginBottom: "0px",
-                marginTop: "0px",
-              }}
+              value={
+                blockchainData?.claimableRewards !== "0"
+                  ? "Claim Rewards"
+                  : "Nothing to claim"
+              }
+              onclick={
+                blockchainData?.claimableRewards !== "0" ? claimRewards : null
+              }
+              style={
+                blockchainData?.claimableRewards !== "0"
+                  ? {
+                      backgroundColor: "transparent",
+                      outline: "solid 2px #81c9e9",
+                      marginBottom: "0px",
+                      marginTop: "0px",
+                    }
+                  : {
+                      margin: "0",
+                      cursor: "default",
+                      boxShadow: "none",
+                      backgroundColor: "#bbb",
+                    }
+              }
             />
           </div>
         </div>

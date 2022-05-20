@@ -1,35 +1,8 @@
-const lockAbi = [
-  {
-    inputs: [],
-    name: "claimDiboRewards",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
-      },
-    ],
-    name: "lock",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
+const lock180Abi = [
   {
     inputs: [],
     stateMutability: "nonpayable",
     type: "constructor",
-  },
-  {
-    inputs: [],
-    name: "withdraw",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
   {
     inputs: [],
@@ -46,6 +19,13 @@ const lockAbi = [
   },
   {
     inputs: [],
+    name: "claimDiboRewards",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "claimableRewards",
     outputs: [
       {
@@ -55,6 +35,19 @@ const lockAbi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "lock",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -122,5 +115,13 @@ const lockAbi = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [],
+    name: "withdraw",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
-export default lockAbi;
+
+export default lock180Abi;
