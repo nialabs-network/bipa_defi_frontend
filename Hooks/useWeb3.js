@@ -14,7 +14,10 @@ import { useAppContext } from "../Contexts";
 // import ERC20 from "./erc20.js";
 import stakeAbi from "./stakeAbi";
 import erc20 from "./erc20";
-import lockAbi from "./lockAbi";
+import lock30Abi from "./lock30Abi";
+import lock90Abi from "./lock90Abi";
+import lock180Abi from "./lock180Abi";
+import lock365Abi from "./lock365Abi";
 export const useWeb3 = () => {
   console.log("___________________useWeb3______________________");
   const [web3State, dispatch] = useReducer(web3Reducer, web3InitialState);
@@ -40,19 +43,25 @@ export const useWeb3 = () => {
         const contracts = {
           lock: {
             30: new web3Provider.eth.Contract(
-              lockAbi,
-              "0x79D1031ef9a7411F37250E0d9B738a56A4adBb12"
+              lock30Abi,
+              "0x324BA413386767c186bf468262597aEdBa7E9d3a"
             ),
             90: new web3Provider.eth.Contract(
-              lockAbi,
-              "0x4C1b0d13094c55cC60AC6aDC9A90B5A5EbFF73E3"
+              lock90Abi,
+              "0xf4e5227462001e10fbf6b758A3e9aeAf2A67b717"
             ),
-            180: "",
-            265: "",
+            180: new web3Provider.eth.Contract(
+              lock180Abi,
+              "0x4A1353442Cc904A9611c262FbFF330BaEB9eEc2c"
+            ),
+            365: new web3Provider.eth.Contract(
+              lock365Abi,
+              "0xe965FaB40Ed50deEc860cc1f5E7875C595c7eFAB"
+            ),
           },
           stake: new web3Provider.eth.Contract(
             stakeAbi,
-            "0x990Ee7d38986A02E6E2d4F48f4b03489B91138e8"
+            "0xD8f98D0f46cc1e6085b7e2f3117972d9a6b90555"
           ),
           NASMG: new web3Provider.eth.Contract(
             erc20,
@@ -80,7 +89,7 @@ export const useWeb3 = () => {
         appContext.setLoadingState(false, "");
       } catch (e) {
         console.error(e);
-        toast.error("Open your wallet");
+        toast.error("Something went wrong");
         setTimeout(() => {
           appContext.setLoadingState(false, "");
         }, 751);

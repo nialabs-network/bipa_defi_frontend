@@ -32,10 +32,11 @@
   justify-content: center;
   background-color: #b0b3ff;
   height: 15vh;
-  width: 100%;
-  position: fixed;
+  width: calc(100% - var(--navbar-width));
   bottom: 0;
   margin-left: var(--navbar-width);
+  position: absolute;
+  bottom: 0;
 }
 .banner {
   font-size: 30px;
@@ -47,5 +48,6 @@
   }
   .footer {
     margin-left: 0;
+    width: 100%;
   }
 }
