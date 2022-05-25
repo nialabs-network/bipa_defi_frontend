@@ -63,6 +63,9 @@ export default function Navigation(props) {
             </Link>
           </li>
           {/* STAKE */}
+          {/* 
+          
+          */}
           <li
             className={styles.navItem}
             onClick={props.mobNav ? () => props.setMobNav(false) : null}
