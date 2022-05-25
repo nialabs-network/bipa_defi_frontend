@@ -156,6 +156,9 @@
   }
 }
 @media screen and (max-width: 768px) {
+  .accordion_button {
+    margin: 0 auto;
+  }
   .stakeLogo {
     max-width: 2rem;
   }

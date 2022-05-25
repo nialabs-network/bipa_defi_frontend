@@ -66,9 +66,21 @@ contract Staking {
     }
 
     // openzepplin의 Ownable.sol을 사용해도 되지만, 지금처럼 owner 메소드가 별로 없을 경우 아래와 같이 사용해도 괜찮습니다.
-    function setInterest(uint256 _interestInPercents) public {
+    function setInterest(uint256 _interestInPercents) public returns (bool) {
         require(msg.sender == owner, "You are not the owner of the contract");
         require(_interestInPercents < 100, "Interest cannot be 100%");
+        for (uint256 i = 0; i < stakers.length; i++) {
+            if (stakingInfo[stakers[i]].isStaking) {
+                uint256 holdPeriod = block.timestamp -
+                    stakingInfo[stakers[i]].holdStart;
+                uint256 reward = (holdPeriod * interestPerSecond) *
+                    (stakingInfo[stakers[i]].stakingBalance / 1e18);
+                stakingInfo[stakers[i]].totalRewards =
+                    stakingInfo[stakers[i]].totalRewards +
+                    reward;
+                stakingInfo[stakers[i]].holdStart = block.timestamp;
+            }
+        }
         interestPerSecond =
             (1e18 * _interestInPercents) /
             100 /
@@ -76,6 +88,7 @@ contract Staking {
             24 /
             60 /
             60;
+        return true;
         // interestPerSecond 값이 잘못 업데이트 될 가능성은 없나요?
         // interestPerSecond 값이 특정 범위에 속해야 한다면, 코드를 그렇게 작성하는 것이 좋습니다.
         // ex) require(_interestPerSecond < MAX_PER_REWARD, "Reward should be small 100000")
@@ -154,7 +167,8 @@ contract Staking {
 
         if (_stakingInfo.stakingBalance == 0) return _stakingInfo.totalRewards;
 
-        if (_stakingInfo.holdStart > block.timestamp) return 0;
+        if (_stakingInfo.holdStart > block.timestamp)
+            return _stakingInfo.totalRewards;
         if (_stakingInfo.isStaking) {
             uint256 holdPeriod = block.timestamp - _stakingInfo.holdStart;
             uint256 reward = interestPerSecond *

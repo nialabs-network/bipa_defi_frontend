@@ -1,34 +1,67 @@
+import { useState, useEffect } from "react";
+import { useWeb3Context } from "../../Contexts";
+import periods from "../Staking/lockPools";
+import CountUp from "react-countup/";
 export default function Stats({ styles }) {
+  const { web3State } = useWeb3Context();
+  const { web3Provider, address, contracts } = web3State;
+  const [TVL, setTVL] = useState(0);
+  const [nasmgPrice, setNasmgPrice] = useState(0.0010231); //need to get quote from an exchange
+  const [nasmgSupply, setNasmgSupply] = useState(500000000); //fixed supply
+  async function getBlockchainData() {
+    const flexibleStakingTVL = await contracts.stake.methods
+      .totalStaked()
+      .call();
+    setTVL(Number(web3Provider.utils.fromWei(flexibleStakingTVL, "ether")));
+    Object.keys(periods).forEach((key) => {
+      contracts.lock[key].methods
+        .totalValueLocked()
+        .call()
+        .then((res) =>
+          setTVL(
+            (prevState) =>
+              prevState + Number(web3Provider.utils.fromWei(res, "ether"))
+          )
+        );
+    });
+  }
+  useEffect(async () => {
+    address && (await getBlockchainData());
+  }, [address]);
   return (
     <section className={`${styles.stats} ${styles.glass}`}>
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>Market Cap</p>
-        <p className={styles.value}>$53,837,658</p>
+        <p className={styles.value}>
+          $
+          <CountUp end={Math.floor(nasmgPrice * nasmgSupply)} />
+        </p>
       </div>
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>NASMG Price</p>
-        <p className={styles.value}>$52.90</p>
+        <p className={styles.value}>
+          $
+          <CountUp end={nasmgPrice} decimals={6} />
+        </p>
       </div>
-      {/* <div className={`${styles.stat} ${styles.glassMob}`}>
-        <p className={styles.title}>wsNASMG Price</p>
-        <p className={styles.value}>$52.90</p>
-      </div> */}
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>APY</p>
-        <p className={styles.value}>90,210.7%</p>
+        <p className={styles.value}>
+          <CountUp end={90} />%
+        </p>
       </div>
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>Total Value Locked</p>
-        <p className={styles.value}>$30</p>
+        <p className={styles.value}>
+          {address ? (
+            <>
+              <CountUp end={Math.trunc(TVL * 100) / 100} /> NASMG
+            </>
+          ) : (
+            "Connect Wallet"
+          )}
+        </p>
       </div>
-      {/* <div className={`${styles.stat} ${styles.glassMob}`}>
-        <p className={styles.title}>Backing per $NASMG</p>
-        <p className={styles.value}>$30</p>
-      </div>
-      <div className={`${styles.stat} ${styles.glassMob}`}>
-        <p className={styles.title}>Current Index</p>
-        <p className={styles.value}>25.60 NASMG</p>
-      </div> */}
     </section>
   );
 }

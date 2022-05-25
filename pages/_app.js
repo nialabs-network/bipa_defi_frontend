@@ -4,8 +4,9 @@ import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
 import Head from "next/head";
+import { motion } from "framer-motion";
 
-function Dapp({ Component, pageProps, Language }) {
+function Dapp({ Component, pageProps, Language, router }) {
   console.log(
     "________________________________app.js__________________________________________"
   );
@@ -17,7 +18,14 @@ function Dapp({ Component, pageProps, Language }) {
       <AppContextProvider Language={Language}>
         <Web3ContextProvider>
           <AppLayout>
-            <Component {...pageProps} />
+            <motion.div
+              key={router.route}
+              initial="initial"
+              animate="animate"
+              variants={{ initial: { opacity: 0 }, animate: { opacity: 1 } }}
+            >
+              <Component {...pageProps} />
+            </motion.div>
           </AppLayout>
           <ToastContainer
             hideProgressBar

@@ -7,7 +7,7 @@
   font-weight: normal;
   font-size: 20px;
 }
-.estimated {
+.stats {
   padding: 2rem;
   display: flex;
   justify-content: space-between;
@@ -53,6 +53,58 @@
     color: #b0b3ff;
   }
 }
+
+.figuresContainer {
+  padding-top: 3rem;
+  max-width: 500px;
+  margin: 0 auto;
+  .days {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: #81c9e9;
+    padding: 2rem 0;
+  }
+
+  .figure {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 1rem 1rem 1rem;
+    .figureTitle {
+      color: #b0b3ff;
+    }
+  }
+
+  .carouselItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    .img {
+      max-width: 150px;
+    }
+    .carouselTitle {
+      font-size: 14px;
+      padding-left: 1.5rem;
+    }
+    .carouselDesc {
+      font-size: 14px;
+      padding-left: 1.5rem;
+      color: #b0b3ff;
+    }
+  }
+}
+.poolDropdown {
+  width: 100%;
+  font-size: 1rem;
+  border: 0px;
+  border-radius: 0.625rem;
+  outline: none;
+  background-color: #2b3252;
+  color: var(--text-primary);
+  padding: 14.5px 10px;
+}
 @media screen and (min-width: 769px) {
   .inputContainer {
     justify-content: space-between;
@@ -62,16 +114,15 @@
     padding: 0 3rem;
     .input {
       margin-top: 2rem;
+      width: 45%;
     }
   }
   .pageTitle {
     text-align: left;
     font-size: 25px;
   }
-  .estimated {
+  .stats {
     // text-align: center;
     flex-direction: row;
-  }
-  .value {
   }
 }

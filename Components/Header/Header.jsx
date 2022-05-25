@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import Modal from "../Reusables/Modal";
+import { motion } from "framer-motion";
 
 function HeaderModal() {
   return <div> </div>;
@@ -45,7 +46,13 @@ export default function Header(props) {
         content={<HeaderModal />}
         style={{ top: "100px", left: "666px" }}
       />
-      <div className={styles.header}>
+      <motion.div
+        className={styles.header}
+        key={address}
+        initial="initial"
+        animate="animate"
+        variants={{ initial: { opacity: 0 }, animate: { opacity: 1 } }}
+      >
         {isDesktop ? (
           // PC VERSION
           <>
@@ -109,7 +116,7 @@ export default function Header(props) {
             </div>
           </>
         )}
-      </div>
+      </motion.div>
     </header>
   );
 }

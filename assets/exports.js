@@ -11,6 +11,9 @@ import diboLogo from "./diboLogo.webp";
 import expandArrow from "./expandArrow.png";
 import copy from "./copy.webp";
 import loading from "./loading.gif";
+import car from "./car.webp";
+import bag from "./bag.webp";
+import city from "./city.webp";
 
 export {
   logo,
@@ -26,4 +29,7 @@ export {
   expandArrow,
   copy,
   loading,
+  car,
+  bag,
+  city,
 };
