@@ -17,7 +17,7 @@ export default function Hourglass() {
   const [amount, setAmount] = useState("");
   const [target, setTarget] = useState("");
   const [typeOfStake, setTypeOfStake] = useState("staking");
-  ///carousel
+  ///carousel settings
   const settings = {
     dots: false,
     infinite: true,
