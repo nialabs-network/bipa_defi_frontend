@@ -15,6 +15,7 @@ export default function Hourglass() {
   const { address, connect, contracts } = web3State;
   const [sliderValue, setSliderValue] = useState(0);
   const [amount, setAmount] = useState("");
+  const [target, setTarget] = useState("");
   const [typeOfStake, setTypeOfStake] = useState("staking");
   ///carousel
   const settings = {
@@ -24,9 +25,6 @@ export default function Hourglass() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-  function handleAmount(e) {
-    setAmount(e.target.value);
-  }
 
   return (
     <section className={`${styles.container} glass`}>
@@ -62,6 +60,8 @@ export default function Hourglass() {
                 className={styles.poolDropdown}
                 onChange={(e) => {
                   setTypeOfStake(e.target.value);
+                  e.target.value !== "staking" &&
+                    setSliderValue(periods[e.target.value].period);
                 }}
               >
                 <option value={stakingPool.period}>{stakingPool.name}</option>
@@ -79,7 +79,9 @@ export default function Hourglass() {
               <input
                 type="number"
                 className={styles.formInput}
-                onChange={handleAmount}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                }}
                 placeholder="0"
                 value={amount}
               />
@@ -103,20 +105,26 @@ export default function Hourglass() {
               />
             </div>
             <div className={styles.input}>
-              <p className={styles.label}>Something else</p>
+              <p className={styles.label}>Target price</p>
               <input
                 type="number"
                 className={styles.formInput}
                 placeholder="0"
+                value={target}
+                onChange={(e) => {
+                  setTarget(e.target.value);
+                }}
               />
             </div>
           </div>
           <div className={styles.figuresContainer}>
-            <RCSlider
-              max={365}
-              value={sliderValue}
-              onChange={(value) => setSliderValue(value)}
-            />
+            {typeOfStake == "staking" && (
+              <RCSlider
+                max={365}
+                value={sliderValue}
+                onChange={(value) => setSliderValue(value)}
+              />
+            )}
             <p className={styles.days}>{sliderValue} DAYS</p>
             <div className={styles.figures}>
               <div className={styles.figure}>
@@ -147,7 +155,18 @@ export default function Hourglass() {
               <div className={styles.figure}>
                 <p className={styles.figureTitle}>Potential Return</p>
                 <p className={styles.figureValue}>
-                  {Math.trunc(sliderValue * 0.509)}
+                  {(Math.trunc(
+                    ((amount *
+                      ((typeOfStake == "staking"
+                        ? stakingPool.interestPerSecond
+                        : periods[typeOfStake].interestPerSecond) /
+                        10000000000)) /
+                      10000) *
+                      sliderValue *
+                      100
+                  ) /
+                    100) *
+                    target}
                 </p>
               </div>
             </div>
