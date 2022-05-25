@@ -238,7 +238,7 @@ export default function Stake({ styles, toggle, selected }) {
                         backgroundColor: "#bbb",
                       }
                     : Number(amount) > 0
-                    ? { margin: "0" }
+                    ? { margin: "0", backgroundColor: "rgb(205, 171, 239)" }
                     : {
                         margin: "0",
                         cursor: "default",
@@ -272,7 +272,7 @@ export default function Stake({ styles, toggle, selected }) {
                           boxShadow: "none",
                           backgroundColor: "#bbb",
                         }
-                      : { margin: "0" }
+                      : { margin: "0", backgroundColor: "rgb(205, 171, 239)" }
                     : {
                         margin: "0",
                         cursor: "default",
@@ -345,13 +345,13 @@ export default function Stake({ styles, toggle, selected }) {
                   : "Nothing to claim"
               }
               onclick={
-                blockchainData?.claimableRewards !== "0" ? claimRewards : null
+                blockchainData?.claimableRewards == "0" ? null : claimRewards
               }
               style={
                 blockchainData?.claimableRewards !== "0"
                   ? {
                       backgroundColor: "transparent",
-                      outline: "solid 2px #81c9e9",
+                      outline: "solid 2px rgb(205, 171, 239)",
                       marginBottom: "0px",
                       marginTop: "0px",
                     }

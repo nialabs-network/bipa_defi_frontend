@@ -3,32 +3,7 @@ import Button from "../Reusables/Button";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
-const periods = {
-  30: {
-    period: 30,
-    interest: "7%",
-    lockPeriod: 300,
-    interestPerSecond: 100000000,
-  },
-  90: {
-    period: 90,
-    interest: "10%",
-    lockPeriod: 300,
-    interestPerSecond: 100000000,
-  },
-  180: {
-    period: 180,
-    interest: "TBA",
-    lockPeriod: 300,
-    interestPerSecond: 100000000,
-  },
-  365: {
-    period: 365,
-    interest: "TBD",
-    lockPeriod: 400,
-    interestPerSecond: 100000000,
-  },
-};
+import periods from "./lockPools";
 export default function Lock({ styles, toggle, selected }) {
   const [amount, setAmount] = useState("");
   const [isLock, setIsLock] = useState(true); //toggle lock and unlock
