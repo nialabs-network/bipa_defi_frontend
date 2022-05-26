@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
 
+//final testing deploy 20220526
+
 interface IERC20Token {
     function transfer(address to, uint256 amount) external returns (bool);
 
@@ -16,16 +18,16 @@ interface IERC20Token {
 contract Staking {
     IERC20Token private stakingToken;
 
-    uint256 public interestPerSecond = 951293759;
+    uint256 public interestPerSecond = 500000000000000000; //formula (10^18 * interestInPercents / 100) / 365 / 24 / 60 / 60
     address public owner;
     address[] private stakers;
-    uint256 public totalStaked;
+    uint256 public totalValueLocked;
 
     struct StakingInfo {
         address owner;
         uint256 stakingBalance;
         uint256 holdStart;
-        uint256 totalRewards;
+        uint256 accruedRewards;
         uint256 paidOutRewards;
         bool hasStaked;
         bool isStaking;
@@ -44,16 +46,8 @@ contract Staking {
         _;
     }
 
-    event Deposit(
-        address indexed user,
-        uint256 amountDeposited,
-        uint256 timestamp
-    );
-    event Withdraw(
-        address indexed user,
-        uint256 amountWithdrawn,
-        uint256 timestamp
-    );
+    event Deposit(address indexed user, uint256 amount, uint256 timestamp);
+    event Withdraw(address indexed user, uint256 amount, uint256 timestamp);
 
     constructor(address _token) {
         stakingToken = IERC20Token(_token);
@@ -69,14 +63,14 @@ contract Staking {
     function setInterest(uint256 _interestInPercents) public returns (bool) {
         require(msg.sender == owner, "You are not the owner of the contract");
         require(_interestInPercents < 100, "Interest cannot be 100%");
-        for (uint256 i = 0; i < stakers.length; i++) {
+        for (uint8 i = 0; i < stakers.length; i++) {
             if (stakingInfo[stakers[i]].isStaking) {
                 uint256 holdPeriod = block.timestamp -
                     stakingInfo[stakers[i]].holdStart;
                 uint256 reward = (holdPeriod * interestPerSecond) *
                     (stakingInfo[stakers[i]].stakingBalance / 1e18);
-                stakingInfo[stakers[i]].totalRewards =
-                    stakingInfo[stakers[i]].totalRewards +
+                stakingInfo[stakers[i]].accruedRewards =
+                    stakingInfo[stakers[i]].accruedRewards +
                     reward;
                 stakingInfo[stakers[i]].holdStart = block.timestamp;
             }
@@ -107,9 +101,9 @@ contract Staking {
     }
 
     function stakeTokens(uint256 _amount) public runIn {
-        require(_amount > 0, "Amount should be more than 0");
+        require(_amount > 0, "You cannot stake nothing");
         uint256 _senderBalance = stakingToken.balanceOf(msg.sender);
-        require(_senderBalance >= _amount, "Not enough staking asset");
+        require(_senderBalance >= _amount, "You do not have enough tokens");
 
         if (stakingInfo[msg.sender].owner == address(0)) {
             stakingInfo[msg.sender] = StakingInfo(
@@ -128,7 +122,7 @@ contract Staking {
             uint256 holdPeriod = block.timestamp - _stakingInfo.holdStart;
             uint256 reward = (holdPeriod * interestPerSecond) *
                 (_stakingInfo.stakingBalance / 1e18);
-            _stakingInfo.totalRewards = _stakingInfo.totalRewards + reward;
+            _stakingInfo.accruedRewards = _stakingInfo.accruedRewards + reward;
         }
 
         // 외부 컨트랙트의 사용은 항상 주의해야 합니다.
@@ -156,27 +150,29 @@ contract Staking {
         _stakingInfo.hasStaked = true;
 
         //TOTAL VALUE STAKED IN THE CONTRACT
-        totalStaked = totalStaked + _amount;
+        totalValueLocked = totalValueLocked + _amount;
 
         emit Deposit(msg.sender, _amount, block.timestamp);
     }
 
     function claimableRewards() public view returns (uint256) {
         StakingInfo storage _stakingInfo = stakingInfo[msg.sender];
-        if (_stakingInfo.holdStart == 0) return _stakingInfo.totalRewards;
+        if (_stakingInfo.holdStart == 0) return _stakingInfo.accruedRewards;
 
-        if (_stakingInfo.stakingBalance == 0) return _stakingInfo.totalRewards;
+        if (_stakingInfo.stakingBalance == 0)
+            return _stakingInfo.accruedRewards;
 
-        if (_stakingInfo.holdStart > block.timestamp)
-            return _stakingInfo.totalRewards;
+        // if (_stakingInfo.holdStart > block.timestamp)
+        //     return _stakingInfo.accruedRewards;
+
         if (_stakingInfo.isStaking) {
             uint256 holdPeriod = block.timestamp - _stakingInfo.holdStart;
             uint256 reward = interestPerSecond *
                 (_stakingInfo.stakingBalance / 1e18) *
                 holdPeriod;
-            return _stakingInfo.totalRewards + reward;
+            return _stakingInfo.accruedRewards + reward;
         } else {
-            return _stakingInfo.totalRewards;
+            return _stakingInfo.accruedRewards;
         }
     }
 
@@ -188,31 +184,30 @@ contract Staking {
             uint256 reward = interestPerSecond *
                 (_stakingInfo.stakingBalance / 1e18) *
                 holdPeriod;
-            _stakingInfo.totalRewards = _stakingInfo.totalRewards + reward;
+            _stakingInfo.accruedRewards = _stakingInfo.accruedRewards + reward;
             _stakingInfo.paidOutRewards =
                 _stakingInfo.paidOutRewards +
-                _stakingInfo.totalRewards;
+                _stakingInfo.accruedRewards;
 
-            if (_stakingInfo.totalRewards > 0) {
+            if (_stakingInfo.accruedRewards > 0) {
                 bool success = stakingToken.transferFrom(
                     owner,
                     msg.sender,
-                    _stakingInfo.totalRewards
+                    _stakingInfo.accruedRewards
                 );
                 require(
                     success == true,
                     "You could not receive reward. Failed to transfer token."
                 );
-                _stakingInfo.totalRewards = 0;
+                _stakingInfo.accruedRewards = 0;
             }
-
             _stakingInfo.holdStart = block.timestamp;
         } else {
-            if (_stakingInfo.totalRewards > 0) {
+            if (_stakingInfo.accruedRewards > 0) {
                 bool success = stakingToken.transferFrom(
                     owner,
                     msg.sender,
-                    _stakingInfo.totalRewards
+                    _stakingInfo.accruedRewards
                 );
                 require(
                     success == true,
@@ -220,8 +215,8 @@ contract Staking {
                 );
                 _stakingInfo.paidOutRewards =
                     _stakingInfo.paidOutRewards +
-                    _stakingInfo.totalRewards;
-                _stakingInfo.totalRewards = 0;
+                    _stakingInfo.accruedRewards;
+                _stakingInfo.accruedRewards = 0;
             }
             _stakingInfo.holdStart = 0;
         }
@@ -232,17 +227,17 @@ contract Staking {
 
         require(
             _stakingInfo.stakingBalance >= _amount,
-            "cannot unstake more than your balance"
+            "Cannot unstake more than you staked"
         );
         uint256 holdPeriod = block.timestamp - _stakingInfo.holdStart;
         uint256 reward = interestPerSecond *
             (_stakingInfo.stakingBalance / 1e18) *
             holdPeriod;
-        _stakingInfo.totalRewards = _stakingInfo.totalRewards + reward;
+        _stakingInfo.accruedRewards = _stakingInfo.accruedRewards + reward;
         bool success = stakingToken.transfer(msg.sender, _amount);
         require(success == true, "Something went wrong");
         _stakingInfo.stakingBalance = _stakingInfo.stakingBalance - _amount;
-        totalStaked = totalStaked - _amount;
+        totalValueLocked = totalValueLocked - _amount;
         if (_stakingInfo.stakingBalance > 0) {
             _stakingInfo.isStaking = true;
             _stakingInfo.holdStart = block.timestamp;
@@ -251,11 +246,5 @@ contract Staking {
             _stakingInfo.holdStart = 0;
         }
         emit Withdraw(msg.sender, _amount, block.timestamp);
-    }
-
-    // 필요하다면, 스테이킹 풀에서 사용자가 완전히 빠져나가는 경우 데이터는 삭제해 주는 것이 좋습니다.
-    function unstakeToken() public {
-        claimRewards();
-        delete stakingInfo[msg.sender];
     }
 }
