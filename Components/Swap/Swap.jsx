@@ -23,7 +23,7 @@ export default function Swap() {
   });
   const [token1, setToken1] = useState({
     token: 1,
-    ticker: "WETH",
+    ticker: "NASMG",
     amount: "0",
     logo: nasmgLogo,
   });

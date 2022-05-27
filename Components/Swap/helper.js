@@ -1,8 +1,9 @@
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import SwapRouterABI from "@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/SwapRouter.json";
-const poolAddress = "0xc1FF5D622aEBABd51409e01dF4461936b0Eb4E43"; //WMATIC/WETH
+const poolAddress = "0xa52daF14F3948752b8cA863051E1a7C76C935051"; // wmatic/nasmg
 //0xc1FF5D622aEBABd51409e01dF4461936b0Eb4E43 0.03% fee pool
 //0x99D59d73bAd8BE070FeA364717400043490866c9 0.1% fee pool
+//0xa52daF14F3948752b8cA863051E1a7C76C935051 wmatic/nasmg
 const quoterAddress = "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
 const swapRouterAddress = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
 

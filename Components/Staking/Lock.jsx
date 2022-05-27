@@ -124,8 +124,8 @@ export default function Lock({ styles, toggle, selected }) {
               </div>
             </div>
             <div className={styles.productTitle}>
-              <p className={styles.title}>NASMG Staking</p>
-              <p className={styles.amount}>$197,000,000</p>
+              <p className={styles.title}>NASMG + DIBO Lock</p>
+              <p className={styles.amount}>TVL</p>
             </div>
             <div className={styles.productInterest}>
               <p className={styles.interest}>{periods[key].interest}</p>
