@@ -1,8 +1,9 @@
-import { nasmgLogo, diboLogo, expandArrow } from "../../assets/exports";
+import { nasmgLogo, expandArrow } from "../../assets/exports";
 import Image from "next/image";
 import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
+import stakingPool from "./stakingPool";
 
 export default function Stake({ styles, toggle, selected }) {
   const { web3State } = useWeb3Context();
@@ -31,9 +32,13 @@ export default function Stake({ styles, toggle, selected }) {
       Math.trunc(Number(web3Provider.utils.fromWei(balance, "ether") * 100)) /
         100
     );
+    const totalValueLocked = await contracts.stake.methods
+      .totalValueLocked()
+      .call();
     setBlockchainData({
       stakingInfo,
       claimableRewards,
+      totalValueLocked,
     });
     setStakingBalance(
       Math.trunc(
@@ -136,12 +141,24 @@ export default function Stake({ styles, toggle, selected }) {
             </div>
           </div>
           <div className={styles.productTitle}>
-            <p className={styles.title}>NASMG Staking</p>
-            <p className={styles.amount}>TVL TBD</p>
+            <p className={styles.title}>{stakingPool.name}</p>
+            <p className={styles.amount}>
+              TVL:{" "}
+              {web3Provider && blockchainData?.totalValueLocked !== "0"
+                ? Number(
+                    web3Provider?.utils.fromWei(
+                      typeof blockchainData?.totalValueLocked == "undefined"
+                        ? "0"
+                        : blockchainData?.totalValueLocked,
+                      "ether"
+                    )
+                  )
+                : 0}
+            </p>
           </div>
           <div className={styles.productInterest}>
-            <p className={styles.interest}>25% TBD</p>
-            <p className={styles.apr}>APR 22% TBD</p>
+            <p className={styles.interest}>{stakingPool.interest}</p>
+            {/* <p className={styles.apr}>APR 22% TBD</p> */}
           </div>
           <div className={styles.productInfo}>
             <div className={styles.titles}>
@@ -194,7 +211,7 @@ export default function Stake({ styles, toggle, selected }) {
                 Withdraw
               </button>
             </div>
-            <p>your amount</p>
+            <p>You NASMG</p>
             <div style={{ position: "relative", width: "100%" }}>
               <input
                 type="number"
@@ -293,11 +310,21 @@ export default function Stake({ styles, toggle, selected }) {
 
           <div className={styles.infoArea}>
             <div className={styles.apr}>
-              <p className={styles.title}>APR</p>
+              <p
+                className={styles.title}
+                style={{ color: "rgb(205, 171, 239)" }}
+              >
+                APR
+              </p>
               <p>70% (static)</p>
             </div>
             <div className={styles.deposit}>
-              <p className={styles.title}>Deposit</p>
+              <p
+                className={styles.title}
+                style={{ color: "rgb(205, 171, 239)" }}
+              >
+                Deposit
+              </p>
               <div
                 style={{
                   display: "flex",
@@ -309,7 +336,12 @@ export default function Stake({ styles, toggle, selected }) {
               </div>
             </div>
             <div className={styles.rewards}>
-              <p className={styles.title}>Earned Rewards</p>
+              <p
+                className={styles.title}
+                style={{ color: "rgb(205, 171, 239)" }}
+              >
+                Earned Rewards
+              </p>
               <div
                 style={{
                   display: "flex",

@@ -10,50 +10,44 @@ import {
 } from "recharts";
 import { useEffect } from "react";
 import { useWeb3Context } from "../../Contexts";
-export default function Chart({ events }) {
+export default function Chart({ tvl }) {
   const { web3State } = useWeb3Context();
-  const { web3Provider } = web3State;
-  // const [btcData, setBtcData] = useState([]);
-  // useEffect(() => {
-  //   function getMarketData() {
-  //     console.log("fetching data from binance");
-  //     fetch(
-  //       "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=60"
-  //     )
-  //       .then((response) => response.json())
-  //       .then((data) => setBtcData(data));
-  //   }
-  //   getMarketData();
-  // }, []);
-  // let parsedData = [];
-  // if (btcData) {
-  //   parsedData = btcData.map((time) => {
-  //     const date = new Date(time[0]);
-  //     return {
-  //       BTCtime: `${date.getHours()}:${date.getMinutes()}`,
-  //       BTCprice: Number(time[1]),
-  //     };
-  //   });
-  // }
-  // console.log(parsedData);
+  const { web3Provider, contracts, address } = web3State;
+  const [events, setEvents] = useState("");
+  async function getEvents() {
+    const blockNumber = await web3Provider.eth.getBlockNumber();
+    console.log(blockNumber);
+    const events = await contracts.stake.getPastEvents("allEvents", {
+      fromBlock: 26472211,
+      toBlock: "latest",
+    });
+    setEvents(events);
+  }
+  useEffect(() => {
+    address && getEvents();
+  }, [address]);
+  console.log(events);
+
   let parsedData = [];
-  // console.log(events, "events");
-  // if (events) {
-  //   parsedData = events.map((event) => {
-  //     const blockNo = event.blockNumber;
-  //     const amount = Number(
-  //       web3Provider.utils.fromWei(event.returnValues[1], "ether")
-  //     );
-  //     const type = event.event;
-  //     return { blockNo, amount, type };
-  //   });
-  // }
-  return !parsedData[0] ? null : (
+  if (events) {
+    parsedData = events.map((event) => {
+      const blockNo = event.blockNumber;
+      const TVLatm = Number(
+        web3Provider.utils.fromWei(event.returnValues.TVL, "ether")
+      );
+      return { blockNo, TVLatm };
+    });
+  }
+  console.log(events, "events");
+  console.log(parsedData, "parsed");
+  return !parsedData[0] ? (
+    "LOADING..."
+  ) : (
     <ResponsiveContainer>
       <AreaChart data={parsedData}>
         <Area
           type="monotone"
-          dataKey="amount"
+          dataKey="TVLatm"
           stroke="#8884d8"
           fill="#8884d8"
         />

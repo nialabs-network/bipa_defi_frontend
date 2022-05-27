@@ -61,7 +61,7 @@ export const useWeb3 = () => {
           },
           stake: new web3Provider.eth.Contract(
             stakeAbi,
-            "0x019D2cFA949A7e7baB0e33A323Ee0374fb26721D"
+            "0x66AF90f5D40B374E2063f46799c92287cff999a4"
           ),
           NASMG: new web3Provider.eth.Contract(
             erc20,
