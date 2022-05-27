@@ -2,28 +2,23 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-contract NASMGToken {
+//interface for ierc20token
+interface IERC20Token {
+    function transfer(address to, uint256 amount) external returns (bool);
+
+    function balanceOf(address account) external view returns (uint256);
+
     function transferFrom(
         address from,
         address to,
         uint256 amount
-    ) public {}
-
-    function transfer(address to, uint256 amount) public {}
+    ) external returns (bool);
 }
 
-contract DIBOToken {
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public {}
-
-    function transfer(address addr, uint256 amount) public {}
-}
-
-contract Lock {
-    struct User {
+contract Lock30 {
+    //structure for storing all the data related to all the locks
+    struct StakingInfo {
+        address owner;
         uint256 lockedAmount;
         uint256 lockTime;
         uint256 lastClaim;
@@ -31,19 +26,23 @@ contract Lock {
         uint256 diboPaidOutRewards;
     }
 
-    NASMGToken private nasmgToken;
-    DIBOToken private diboToken;
-    uint256 private diboInterestPerSecond = 100000000; //(3%) formula: 10^18 * (interest/100) / 365 / 24 / 60 / 60
-    uint256 private nasmgInterestPerSecond = 100000000; //(3%) formula: 10^18 * (interest/100) / 365 / 24 / 60 / 60
-    address private owner;
-    uint256 public lockPeriod = 300; //30 days
+    IERC20Token private nasmgToken;
+    IERC20Token private diboToken;
+    uint256 private diboInterestPerSecond = 951293759; //(3%) formula: 10^18 * (interest/100) / 365 / 24 / 60 / 60
+    uint256 private nasmgInterestPerSecond = 951293759; //(3%) formula: 10^18 * (interest/100) / 365 / 24 / 60 / 60
+    address public owner;
+    address[] private stakers;
+    uint256 public lockPeriod = 300; //in seconds
     uint256 public totalValueLocked;
 
-    mapping(address => User) public lockOf;
+    mapping(address => StakingInfo) public lockOf;
 
-    constructor() {
-        nasmgToken = NASMGToken(0x310Cf9575ea20443e6E82B67d2545FA87557258B);
-        diboToken = DIBOToken(0xb69f5734dF86eA2Ee7531A949d01a11cc2404CfA);
+    event Deposit(address indexed user, uint256 amount, uint256 timestamp);
+    event Withdraw(address indexed user, uint256 amount, uint256 timestamp);
+
+    constructor(address nasmg, address dibo) {
+        nasmgToken = IERC20Token(nasmg);
+        diboToken = IERC20Token(dibo);
         owner = msg.sender;
     }
 
@@ -56,8 +55,9 @@ contract Lock {
             lockOf[msg.sender].lockedAmount == 0,
             "You have already staked"
         ); //additional lock is not available
-        require(_amount > 0, "You cannot stake 0"); //empty lock is not available
-        lockOf[msg.sender] = User(
+        require(_amount > 0, "You cannot stake nothing"); //empty lock is not available
+        lockOf[msg.sender] = StakingInfo(
+            msg.sender,
             _amount,
             block.timestamp,
             block.timestamp,

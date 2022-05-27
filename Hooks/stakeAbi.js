@@ -15,7 +15,13 @@ const abi = [
       },
     ],
     name: "setInterest",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -55,7 +61,7 @@ const abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "amountDeposited",
+        name: "amount",
         type: "uint256",
       },
       {
@@ -67,13 +73,6 @@ const abi = [
     ],
     name: "Deposit",
     type: "event",
-  },
-  {
-    inputs: [],
-    name: "unstakeToken",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
   {
     inputs: [
@@ -113,7 +112,7 @@ const abi = [
       {
         indexed: false,
         internalType: "uint256",
-        name: "amountWithdrawn",
+        name: "amount",
         type: "uint256",
       },
       {
@@ -192,7 +191,7 @@ const abi = [
       },
       {
         internalType: "uint256",
-        name: "totalRewards",
+        name: "accruedRewards",
         type: "uint256",
       },
       {
@@ -229,7 +228,7 @@ const abi = [
   },
   {
     inputs: [],
-    name: "totalStaked",
+    name: "totalValueLocked",
     outputs: [
       {
         internalType: "uint256",

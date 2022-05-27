@@ -98,7 +98,7 @@ export default function Navigation(props) {
             </Link>
           </li>
           {/* HOURGLASS */}
-          <li
+          {/* <li
             className={styles.navItem}
             onClick={props.mobNav ? () => props.setMobNav(false) : null}
           >
@@ -112,7 +112,7 @@ export default function Navigation(props) {
                 <span className={styles.linkText}>{t("hourglass")}</span>
               </a>
             </Link>
-          </li>
+          </li> */}
           <li></li>
         </ul>
         <LanguageDropdown appState={appState} dispatch={dispatch} />

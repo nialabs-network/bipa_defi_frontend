@@ -280,7 +280,13 @@ export default function Stake({ styles, toggle, selected }) {
                         backgroundColor: "#bbb",
                       }
                 }
-                onclick={unstake}
+                onclick={
+                  Number(amount) <= Number(stakingBalance)
+                    ? Number(amount) <= 0
+                      ? null
+                      : unstake
+                    : null
+                }
               />
             )}
           </div>
