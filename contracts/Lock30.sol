@@ -2,7 +2,6 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-//interface for ierc20token
 interface IERC20Token {
     function transfer(address to, uint256 amount) external returns (bool);
 
@@ -16,7 +15,6 @@ interface IERC20Token {
 }
 
 contract Lock30 {
-    //structure for storing all the data related to all the locks
     struct StakingInfo {
         address owner;
         uint256 lockedAmount;
@@ -28,17 +26,27 @@ contract Lock30 {
 
     IERC20Token private nasmgToken;
     IERC20Token private diboToken;
-    uint256 private diboInterestPerSecond = 951293759; //(3%) formula: 10^18 * (interest/100) / 365 / 24 / 60 / 60
-    uint256 private nasmgInterestPerSecond = 951293759; //(3%) formula: 10^18 * (interest/100) / 365 / 24 / 60 / 60
+    uint256 private diboInterestPerSecond = 11574074075; //formula: 10^18 * (interest/100) / lockPeriod
+    uint256 private nasmgInterestPerSecond = 4822530865; //formula: 10^18 * (interest/100) / lockPeriod
     address public owner;
     address[] private stakers;
-    uint256 public lockPeriod = 300; //in seconds
+    uint256 public lockPeriod = 2592000; //in seconds
     uint256 public totalValueLocked;
 
     mapping(address => StakingInfo) public lockOf;
 
-    event Deposit(address indexed user, uint256 amount, uint256 timestamp);
-    event Withdraw(address indexed user, uint256 amount, uint256 timestamp);
+    event Deposit(
+        address indexed user,
+        uint256 amount,
+        uint256 timestamp,
+        uint256 totalValueLocked
+    );
+    event Withdraw(
+        address indexed user,
+        uint256 amount,
+        uint256 timestamp,
+        uint256 totalValueLocked
+    );
 
     constructor(address nasmg, address dibo) {
         nasmgToken = IERC20Token(nasmg);
@@ -46,16 +54,26 @@ contract Lock30 {
         owner = msg.sender;
     }
 
-    // function changeInterest(uint _interestPerSecond) public {
-    //     require(msg.sender == owner, "you are not the owner");
-    // }
+    function setDiboInterest(uint256 _newInterest) public returns (bool) {
+        require(msg.sender == owner, "You are not the owner of the contract");
+        require(_newInterest > 0, "Interest should be more than 0");
+        diboInterestPerSecond = _newInterest;
+        return true;
+    }
+
+    function setNasmgInterest(uint256 _newInterest) public returns (bool) {
+        require(msg.sender == owner, "You are not the owner of the contract");
+        require(_newInterest > 0, "Interest should be more than 0");
+        nasmgInterestPerSecond = _newInterest;
+        return true;
+    }
 
     function lock(uint256 _amount) public {
         require(
             lockOf[msg.sender].lockedAmount == 0,
             "You have already staked"
-        ); //additional lock is not available
-        require(_amount > 0, "You cannot stake nothing"); //empty lock is not available
+        );
+        require(_amount > 0, "You cannot stake nothing");
         lockOf[msg.sender] = StakingInfo(
             msg.sender,
             _amount,
@@ -63,9 +81,10 @@ contract Lock30 {
             block.timestamp,
             lockOf[msg.sender].nasmgPaidOutRewards,
             lockOf[msg.sender].diboPaidOutRewards
-        ); //create user instance and set all the data needed
-        nasmgToken.transferFrom(msg.sender, address(this), _amount); //send tokens from user to the contract
-        totalValueLocked = totalValueLocked + _amount; //total value locked
+        );
+        nasmgToken.transferFrom(msg.sender, address(this), _amount);
+        totalValueLocked = totalValueLocked + _amount;
+        emit Deposit(msg.sender, _amount, block.timestamp, totalValueLocked);
     }
 
     function withdraw() public {
@@ -84,8 +103,6 @@ contract Lock30 {
         lockOf[msg.sender].nasmgPaidOutRewards =
             lockOf[msg.sender].nasmgPaidOutRewards +
             reward;
-
-        // //calculating outstanding dibo
         uint256 diboPeriod = lockOf[msg.sender].lockTime +
             lockPeriod -
             lockOf[msg.sender].lastClaim;
@@ -102,6 +119,12 @@ contract Lock30 {
         }
         nasmgToken.transfer(msg.sender, lockOf[msg.sender].lockedAmount);
         totalValueLocked = totalValueLocked - lockOf[msg.sender].lockedAmount;
+        emit Withdraw(
+            msg.sender,
+            lockOf[msg.sender].lockedAmount,
+            block.timestamp,
+            totalValueLocked
+        );
         lockOf[msg.sender].lockedAmount = 0;
     }
 
@@ -113,7 +136,6 @@ contract Lock30 {
         );
         uint256 period;
         if (block.timestamp >= lockOf[msg.sender].lockTime + lockPeriod) {
-            //if period is over
             period =
                 (lockOf[msg.sender].lockTime + lockPeriod) -
                 lockOf[msg.sender].lastClaim;
@@ -137,7 +159,6 @@ contract Lock30 {
         require(lockOf[msg.sender].lockedAmount > 0);
         uint256 period;
         if (block.timestamp >= lockOf[msg.sender].lockTime + lockPeriod) {
-            //if period is over
             period =
                 (lockOf[msg.sender].lockTime + lockPeriod) -
                 lockOf[msg.sender].lastClaim;
@@ -154,9 +175,5 @@ contract Lock30 {
             claimableReward = 0;
         }
         return claimableReward;
-    }
-
-    function blocktime() public view returns (uint256) {
-        return block.timestamp;
     }
 }

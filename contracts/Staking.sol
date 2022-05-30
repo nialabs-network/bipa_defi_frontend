@@ -16,7 +16,7 @@ interface IERC20Token {
 contract Staking {
     IERC20Token private stakingToken;
 
-    uint256 public interestPerSecond = 4756468797; //formula (10^18 * interestInPercents / 100) / 365 / 24 / 60 / 60
+    uint256 public interestPerSecond = 4756468798; //formula (10^18 * interestInPercents / 100) / 365 / 24 / 60 / 60
     address public owner;
     address[] private stakers;
     uint256 public totalValueLocked;
@@ -67,29 +67,22 @@ contract Staking {
         stopped = _stopped;
     }
 
-    // openzepplin의 Ownable.sol을 사용해도 되지만, 지금처럼 owner 메소드가 별로 없을 경우 아래와 같이 사용해도 괜찮습니다.
-    function setInterest(uint256 _interestInPercents) public returns (bool) {
+    function setInterest(uint256 _newInterest) public returns (bool) {
         require(msg.sender == owner, "You are not the owner of the contract");
-        require(_interestInPercents < 100, "Interest cannot be 100%");
-        for (uint8 i = 0; i < stakers.length; i++) {
-            if (stakingInfo[stakers[i]].isStaking) {
-                uint256 holdPeriod = block.timestamp -
-                    stakingInfo[stakers[i]].holdStart;
-                uint256 reward = (holdPeriod * interestPerSecond) *
-                    (stakingInfo[stakers[i]].stakingBalance / 1e18);
-                stakingInfo[stakers[i]].accruedRewards =
-                    stakingInfo[stakers[i]].accruedRewards +
-                    reward;
-                stakingInfo[stakers[i]].holdStart = block.timestamp;
-            }
-        }
-        interestPerSecond =
-            (1e18 * _interestInPercents) /
-            100 /
-            365 /
-            24 /
-            60 /
-            60;
+        require(_newInterest > 0, "Interset should be more than 0");
+        // for (uint8 i = 0; i < stakers.length; i++) {
+        //     if (stakingInfo[stakers[i]].isStaking) {
+        //         uint256 holdPeriod = block.timestamp -
+        //             stakingInfo[stakers[i]].holdStart;
+        //         uint256 reward = (holdPeriod * interestPerSecond) *
+        //             (stakingInfo[stakers[i]].stakingBalance / 1e18);
+        //         stakingInfo[stakers[i]].accruedRewards =
+        //             stakingInfo[stakers[i]].accruedRewards +
+        //             reward;
+        //         stakingInfo[stakers[i]].holdStart = block.timestamp;
+        //     }
+        // }
+        interestPerSecond = _newInterest;
         return true;
     }
 

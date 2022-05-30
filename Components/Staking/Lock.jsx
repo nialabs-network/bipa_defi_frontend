@@ -129,15 +129,15 @@ export default function Lock({ styles, toggle, selected }) {
             </div>
             <div className={styles.productInterest}>
               <p className={styles.interest}>{periods[key].interest}</p>
-              <p className={styles.apr}>APR 22%</p>
+              <p className={styles.apr}></p>
             </div>
             <div className={styles.productInfo}>
               <div className={styles.titles}>
                 <p>Earn</p>
-                <p>Balance</p>
+                <p>Interest</p>
               </div>
               <div className={styles.values}>
-                <p>KLAY</p> <p>%0</p>
+                <p>DIBO</p> <p>{periods[key].diboInterest}</p>
               </div>
             </div>
             <div className={styles.period}>
@@ -191,7 +191,7 @@ export default function Lock({ styles, toggle, selected }) {
                   Withdraw
                 </button>
               </div>
-              <p>0.5% fee for witdrawals within 3 days</p>
+              <p>your NASMG</p>
 
               {isLock ? (
                 <>
@@ -317,8 +317,8 @@ export default function Lock({ styles, toggle, selected }) {
 
             <div className={styles.infoArea}>
               <div className={styles.apr}>
-                <p className={styles.title}>APR</p>
-                <p>70%</p>
+                <p className={styles.title}>Interest</p>
+                <p>{periods[key].interest}</p>
               </div>
               <div className={styles.deposit}>
                 <p className={styles.title}>Total Locked</p>
@@ -355,21 +355,23 @@ export default function Lock({ styles, toggle, selected }) {
                         )
                       : "0"}{" "}
                     {lockOf
-                      ? web3Provider?.utils.fromWei(
-                          (
-                            periods[key].lockPeriod *
-                            Math.trunc(
-                              periods[key].interestPerSecond *
-                                Number(
-                                  web3Provider.utils.fromWei(
-                                    lockOf.lockedAmount,
-                                    "ether"
+                      ? Number(
+                          web3Provider?.utils.fromWei(
+                            (
+                              periods[key].lockPeriod *
+                              Math.trunc(
+                                periods[key].interestPerSecond *
+                                  Number(
+                                    web3Provider.utils.fromWei(
+                                      lockOf.lockedAmount,
+                                      "ether"
+                                    )
                                   )
-                                )
-                            )
-                          ).toString(),
-                          "ether"
-                        )
+                              )
+                            ).toString(),
+                            "ether"
+                          )
+                        ).toFixed(6)
                       : "0"}
                     <small>estimated</small>
                   </p>
@@ -383,19 +385,23 @@ export default function Lock({ styles, toggle, selected }) {
                 >
                   <p style={{ color: "lime" }}>
                     {lockOf
-                      ? web3Provider?.utils.fromWei(
-                          lockOf.diboPaidOutRewards,
-                          "ether"
-                        )
+                      ? Number(
+                          web3Provider?.utils.fromWei(
+                            lockOf.diboPaidOutRewards,
+                            "ether"
+                          )
+                        ).toFixed(6)
                       : "0"}
                     (
                     {lockOf
-                      ? web3Provider?.utils.fromWei(
-                          lockOf.claimableRewards
-                            ? lockOf.claimableRewards
-                            : "0",
-                          "ether"
-                        )
+                      ? Number(
+                          web3Provider?.utils.fromWei(
+                            lockOf.claimableRewards
+                              ? lockOf.claimableRewards
+                              : "0",
+                            "ether"
+                          )
+                        ).toFixed(6)
                       : "0"}
                     )<small>claimable</small>
                   </p>

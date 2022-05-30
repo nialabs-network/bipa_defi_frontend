@@ -1,21 +1,81 @@
 const lock90Abi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "address",
+        name: "nasmg",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "dibo",
+        type: "address",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
   {
-    inputs: [],
-    name: "blocktime",
-    outputs: [
+    anonymous: false,
+    inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        indexed: false,
         internalType: "uint256",
-        name: "",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "totalValueLocked",
         type: "uint256",
       },
     ],
-    stateMutability: "view",
-    type: "function",
+    name: "Deposit",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "totalValueLocked",
+        type: "uint256",
+      },
+    ],
+    name: "Withdraw",
+    type: "event",
   },
   {
     inputs: [],
@@ -61,6 +121,11 @@ const lock90Abi = [
     name: "lockOf",
     outputs: [
       {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "lockedAmount",
         type: "uint256",
@@ -100,6 +165,57 @@ const lock90Abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_newInterest",
+        type: "uint256",
+      },
+    ],
+    name: "setDiboInterest",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_newInterest",
+        type: "uint256",
+      },
+    ],
+    name: "setNasmgInterest",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

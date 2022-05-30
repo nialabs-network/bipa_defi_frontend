@@ -33,7 +33,8 @@
 .charts {
   display: flex;
   justify-content: center;
-  gap: 2.5rem;
+  gap: 2.2rem;
+  flex-wrap: wrap;
 }
 .chart {
   padding: 1rem;

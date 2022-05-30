@@ -1,8 +1,8 @@
 const stakingPool = {
   name: "NASMG Staking",
   period: "staking",
-  interest: "~15%",
+  interest: "15%",
   lockPeriod: undefined,
-  interestPerSecond: 9512931759,
+  interestPerSecond: 4756468798,
 };
 export default stakingPool;
