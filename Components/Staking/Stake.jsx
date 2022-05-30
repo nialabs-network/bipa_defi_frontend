@@ -211,7 +211,7 @@ export default function Stake({ styles, toggle, selected }) {
                 Withdraw
               </button>
             </div>
-            <p>You NASMG</p>
+            <p>your NASMG</p>
             <div style={{ position: "relative", width: "100%" }}>
               <input
                 type="number"
@@ -316,7 +316,7 @@ export default function Stake({ styles, toggle, selected }) {
               >
                 APR
               </p>
-              <p>70% (static)</p>
+              <p>{stakingPool.interest}</p>
             </div>
             <div className={styles.deposit}>
               <p

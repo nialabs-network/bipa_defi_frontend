@@ -122,7 +122,7 @@ const abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_interestInPercents",
+        name: "_newInterest",
         type: "uint256",
       },
     ],

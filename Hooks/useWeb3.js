@@ -44,28 +44,28 @@ export const useWeb3 = () => {
           lock: {
             30: new web3Provider.eth.Contract(
               lock30Abi,
-              "0x324BA413386767c186bf468262597aEdBa7E9d3a"
+              "0x1bF88c5Dc2963A6Ff3957A7EDc734c3336D23787"
             ),
             90: new web3Provider.eth.Contract(
               lock90Abi,
-              "0xf4e5227462001e10fbf6b758A3e9aeAf2A67b717"
+              "0x08cEE33A9FaAC6Fc2a8BA1ce82C02975a1cDF9Ee"
             ),
             180: new web3Provider.eth.Contract(
               lock180Abi,
-              "0x4A1353442Cc904A9611c262FbFF330BaEB9eEc2c"
+              "0xF56f0026FCa271e04A2CB3CDc428580A4b718c43"
             ),
             365: new web3Provider.eth.Contract(
               lock365Abi,
-              "0xe965FaB40Ed50deEc860cc1f5E7875C595c7eFAB"
+              "0x8Aa7a21A3C4A44B9384f77283A1Af5b433fF32b2"
             ),
           },
           stake: new web3Provider.eth.Contract(
             stakeAbi,
-            "0x66AF90f5D40B374E2063f46799c92287cff999a4"
+            "0xd9357C15908e72cb0aEfd67A8635AdEEd07D330F"
           ),
           NASMG: new web3Provider.eth.Contract(
             erc20,
-            "0x310Cf9575ea20443e6E82B67d2545FA87557258B"
+            "0xA69f3a35Cd1b3C8695BC43434435f8fc02119BD1"
           ),
           DIBO: new web3Provider.eth.Contract(
             erc20,

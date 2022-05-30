@@ -10,36 +10,46 @@ import {
 } from "recharts";
 import { useEffect } from "react";
 import { useWeb3Context } from "../../Contexts";
-export default function Chart({ tvl }) {
+export default function Chart({ period }) {
   const { web3State } = useWeb3Context();
   const { web3Provider, contracts, address } = web3State;
   const [events, setEvents] = useState("");
   async function getEvents() {
     const blockNumber = await web3Provider.eth.getBlockNumber();
     console.log(blockNumber);
-    const events = await contracts.stake.getPastEvents("allEvents", {
-      fromBlock: 26472211,
-      toBlock: "latest",
-    });
+    let events;
+    if (period !== "stake") {
+      events = await contracts.lock[period].getPastEvents("allEvents", {
+        fromBlock: 26523870,
+        toBlock: "latest",
+      });
+    } else {
+      events = await contracts.stake.getPastEvents("allEvents", {
+        fromBlock: 26523870,
+        toBlock: "latest",
+      });
+    }
     setEvents(events);
   }
   useEffect(() => {
     address && getEvents();
   }, [address]);
-  console.log(events);
 
   let parsedData = [];
   if (events) {
     parsedData = events.map((event) => {
       const blockNo = event.blockNumber;
       const TVLatm = Number(
-        web3Provider.utils.fromWei(event.returnValues.TVL, "ether")
+        period !== "stake"
+          ? web3Provider.utils.fromWei(
+              event.returnValues.totalValueLocked,
+              "ether"
+            )
+          : web3Provider.utils.fromWei(event.returnValues.TVL, "ether")
       );
       return { blockNo, TVLatm };
     });
   }
-  console.log(events, "events");
-  console.log(parsedData, "parsed");
   return !parsedData[0] ? (
     "LOADING..."
   ) : (

@@ -14,7 +14,7 @@ interface IERC20Token {
     ) external returns (bool);
 }
 
-contract Lock90 {
+contract Lock365 {
     struct StakingInfo {
         address owner;
         uint256 lockedAmount;
@@ -26,11 +26,11 @@ contract Lock90 {
 
     IERC20Token private nasmgToken;
     IERC20Token private diboToken;
-    uint256 private diboInterestPerSecond = 19290123457; //(15%)formula: 10^18 * (interest/100) / lockPeriod
-    uint256 private nasmgInterestPerSecond = 5787037038; //(4.5%)formula: 10^18 * (interest/100) / lockPeriod
+    uint256 private diboInterestPerSecond = 31709791984; //formula: 10^18 * (interest/100) / lockPeriod
+    uint256 private nasmgInterestPerSecond = 8219178083; //formula: 10^18 * (interest/100) / lockPeriod
     address public owner;
     address[] private stakers;
-    uint256 public lockPeriod = 7776000;
+    uint256 public lockPeriod = 31536000;
     uint256 public totalValueLocked;
 
     mapping(address => StakingInfo) public lockOf;

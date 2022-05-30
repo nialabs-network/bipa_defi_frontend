@@ -8,32 +8,41 @@ import periods from "../Staking/lockPools";
 export default function Dashboard() {
   const { web3State } = useWeb3Context();
   const { address, contracts, web3Provider } = web3State;
-  const [TVL, setTVL] = useState(0);
+  const [stakeTVL, setStakeTVL] = useState(0);
+  const [lockTVLs, setLockTVLs] = useState(periods);
 
-  async function getBlockchainData() {
-    const flexibleStakingTVL = await contracts.stake.methods
+  function getBlockchainData() {
+    contracts.stake.methods
       .totalValueLocked()
-      .call();
-    setTVL(Number(web3Provider.utils.fromWei(flexibleStakingTVL, "ether")));
-    // Object.keys(periods).forEach((key) => {
-    //   contracts.lock[key].methods
-    //     .totalValueLocked()
-    //     .call()
-    //     .then((res) =>
-    //       setTVL(
-    //         (prevState) =>
-    //           prevState + Number(web3Provider.utils.fromWei(res, "ether"))
-    //       )
-    //     );
-    // });
+      .call()
+      .then((res) =>
+        setStakeTVL(Number(web3Provider.utils.fromWei(res, "ether")))
+      );
+    Object.keys(periods).forEach((period) => {
+      contracts.lock[period].methods
+        .totalValueLocked()
+        .call()
+        .then((res) =>
+          setLockTVLs((prevState) => {
+            return {
+              ...prevState,
+              [`${period}`]: {
+                ...prevState[period],
+                TVL: Number(web3Provider.utils.fromWei(res, "ether")),
+              },
+            };
+          })
+        )
+        .catch((e) => console.error(e));
+    });
   }
   useEffect(async () => {
-    address && (await getBlockchainData());
+    address && getBlockchainData();
   }, [address]);
 
   return (
     <div className={styles.dashboardContainer}>
-      <Stats styles={styles} tvl={TVL} />
+      <Stats styles={styles} tvl={stakeTVL} />
       <section className={styles.charts}>
         <div className={`${styles.chart} glass`} style={{ border: "none" }}>
           <h3>Total value locked</h3>
@@ -43,12 +52,33 @@ export default function Dashboard() {
           </div>
         </div>
         <div className={`${styles.chart} glass`} style={{ border: "none" }}>
-          <h3>Total value locked</h3>
-          <p>$29,460,865</p>
+          <h3>TVL (Flexible)</h3>
+          <p>{stakeTVL} NASMG</p>
+
           <div className={styles.chartContainer}>
-            {typeof window === "undefined" ? null : <Chart tvl={TVL} />}
+            {typeof window === "undefined" ? null : (
+              <Chart tvl={stakeTVL} period="stake" />
+            )}
           </div>
         </div>
+        {Object.keys(periods).map((period) => {
+          return (
+            <div
+              className={`${styles.chart} glass`}
+              style={{ border: "none" }}
+              key={period}
+            >
+              <h3>TVL ({period} days)</h3>
+              <p>{lockTVLs[period].TVL} NASMG</p>
+
+              <div className={styles.chartContainer}>
+                {typeof window === "undefined" ? null : (
+                  <Chart tvl={lockTVLs[period].TVL} period={period} />
+                )}
+              </div>
+            </div>
+          );
+        })}
       </section>
     </div>
   );
