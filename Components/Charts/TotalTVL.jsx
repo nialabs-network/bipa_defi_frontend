@@ -11,8 +11,12 @@ import { useWeb3Context } from "../../Contexts";
 export default function TotalTVL({ events, poolEvents }) {
   console.log(events, "initial");
   if (typeof localStorage !== "undefined") {
-    events = JSON.parse(localStorage.getItem("stakeEvents"));
-    events = events.concat(JSON.parse(localStorage.getItem("poolEvents")));
+    events = localStorage.getItem("stakeEvents")
+      ? JSON.parse(localStorage.getItem("stakeEvents"))
+      : events;
+    events = localStorage.getItem("poolEvents")
+      ? events.concat(JSON.parse(localStorage.getItem("poolEvents")))
+      : events.concat(poolEvents);
   } else {
     events = events.concat(poolEvents);
   }
