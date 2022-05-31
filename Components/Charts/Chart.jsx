@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useEffect } from "react";
 import { useWeb3Context } from "../../Contexts";
-export default function Chart({ period }) {
+export default function Chart({ period, color }) {
   const { web3State } = useWeb3Context();
   const { web3Provider, contracts, address } = web3State;
   const [events, setEvents] = useState("");
@@ -55,12 +55,7 @@ export default function Chart({ period }) {
   ) : (
     <ResponsiveContainer>
       <AreaChart data={parsedData}>
-        <Area
-          type="monotone"
-          dataKey="TVLatm"
-          stroke="#8884d8"
-          fill="#8884d8"
-        />
+        <Area type="monotone" dataKey="TVLatm" stroke={color} fill={color} />
         <XAxis dataKey="blockNo" tick={{ fill: "white", fontSize: "15" }} />
         <YAxis
           type="number"

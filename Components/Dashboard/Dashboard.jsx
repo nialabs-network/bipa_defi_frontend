@@ -45,6 +45,7 @@ export default function Dashboard() {
         toBlock: "latest",
       });
       eventRef.current = [...stakeEvents];
+      localStorage.setItem("stakeEvents", JSON.stringify(eventRef.current));
       setEvents(eventRef.current);
     } catch (e) {
       console.log(e);
@@ -67,6 +68,7 @@ export default function Dashboard() {
           }
         );
         poolEventsArr = poolEventsArr.concat(poolEvents);
+        localStorage.setItem("poolEvents", JSON.stringify(poolEventsArr));
         setPoolEvents(poolEventsArr);
       });
   }, [address, eventRef.current.length]);
@@ -105,7 +107,11 @@ export default function Dashboard() {
 
               <div className={styles.chartContainer}>
                 {typeof window === "undefined" ? null : (
-                  <Chart tvl={lockTVLs[period].TVL} period={period} />
+                  <Chart
+                    tvl={lockTVLs[period].TVL}
+                    period={period}
+                    color={periods[period].color}
+                  />
                 )}
               </div>
             </div>
