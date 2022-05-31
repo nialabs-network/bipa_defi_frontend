@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useWeb3Context } from "../../Contexts";
 import Chart from "../Charts/Chart";
+import TotalTVL from "../Charts/TotalTVL";
 import styles from "./Dashboard.module.scss";
 import Stats from "./Stats";
 import periods from "../Staking/lockPools";
@@ -11,6 +12,7 @@ export default function Dashboard() {
   const [stakeTVL, setStakeTVL] = useState(0);
   const [lockTVLs, setLockTVLs] = useState(periods);
   const [events, setEvents] = useState([]);
+  const eventRef = useRef();
   const [totalArr, setTotalArr] = useState([]);
   async function getBlockchainData() {
     contracts.stake.methods
@@ -38,40 +40,30 @@ export default function Dashboard() {
     });
 
     try {
-      const allEvents = [];
-      const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: 26523870,
+      const stakeEvents = await contracts.stake.getPastEvents("Deposit", {
+        fromBlock: 26522870,
         toBlock: "latest",
       });
-      allEvents.push(...stakeEvents);
-      console.log(allEvents, "all events once");
+      eventRef.current = [...stakeEvents];
       Object.keys(periods).forEach(async (period) => {
         const poolEvents = await contracts.lock[period].getPastEvents(
-          "allEvents",
+          "Deposit",
           {
-            fromBlock: 26523870,
+            fromBlock: 26522870,
             toBlock: "latest",
           }
         );
-        allEvents.push(...poolEvents);
-        // allEvents.push(...poolEvents);
-        // console.log(allEvents, "allevents 2");
-        // allEvents.push(...poolEvents);
-        // allEvents.sort((a, b) => {
-        //   return a.blockNumber - b.blockNumber;
-        // });
+        console.log(...poolEvents, "pppp");
+        eventRef.current = [...eventRef.current, ...poolEvents];
+        eventRef.current.sort((a, b) => {
+          return a.blockNumber - b.blockNumber;
+        });
+        setEvents(eventRef.current);
       });
-      console.log(allEvents, "all events");
-      // totalArr.push(allEvents);
-      // console.log("total data", totalArr);
-      // callData();
-      // console.log(Object.assign(allEvents, ...totalArr));
-      // setEvents(allEvents);
     } catch (e) {
       console.log(e);
     }
   }
-  console.log("render");
   useEffect(async () => {
     address && (await getBlockchainData());
   }, [address]);
@@ -84,7 +76,9 @@ export default function Dashboard() {
           <h3>Total value locked</h3>
           <p>$35,319,355</p>
           <div className={styles.chartContainer}>
-            {/* {typeof window === "undefined" ? null : <Chart />} */}
+            {typeof window === "undefined" ? null : (
+              <TotalTVL events={events} />
+            )}
           </div>
         </div>
         <div className={`${styles.chart} glass`} style={{ border: "none" }}>
