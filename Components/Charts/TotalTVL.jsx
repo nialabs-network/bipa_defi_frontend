@@ -9,7 +9,13 @@ import {
 } from "recharts";
 import { useWeb3Context } from "../../Contexts";
 export default function TotalTVL({ events, poolEvents }) {
-  events = events.concat(poolEvents);
+  console.log(events, "initial");
+  if (typeof localStorage !== "undefined") {
+    events = JSON.parse(localStorage.getItem("stakeEvents"));
+    events = events.concat(JSON.parse(localStorage.getItem("poolEvents")));
+  } else {
+    events = events.concat(poolEvents);
+  }
   events.sort((a, b) => {
     return a.blockNumber - b.blockNumber;
   });
@@ -25,11 +31,11 @@ export default function TotalTVL({ events, poolEvents }) {
           total +
           Number(
             events[i].returnValues.amount
-              ? web3Provider.utils.fromWei(
+              ? web3Provider?.utils.fromWei(
                   events[i].returnValues.amount,
                   "ether"
                 )
-              : web3Provider.utils.fromWei(
+              : web3Provider?.utils.fromWei(
                   events[i].returnValues.amount,
                   "ether"
                 )
@@ -40,7 +46,7 @@ export default function TotalTVL({ events, poolEvents }) {
           total -
           Number(
             events[i].returnValues.amount
-              ? web3Provider.utils.fromWei(
+              ? web3Provider?.utils.fromWei(
                   events[i].returnValues.amount,
                   "ether"
                 )

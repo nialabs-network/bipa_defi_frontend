@@ -6,6 +6,7 @@ const periods = {
     diboInterest: "3%",
     lockPeriod: 2592000,
     interestPerSecond: 4822530865,
+    color: "#9A86A4",
   },
   90: {
     name: "90 days Lock",
@@ -14,6 +15,7 @@ const periods = {
     diboInterest: "15%",
     lockPeriod: 7776000,
     interestPerSecond: 5787037038,
+    color: "#B1BCE6",
   },
   180: {
     name: "180 days Lock",
@@ -22,6 +24,7 @@ const periods = {
     diboInterest: "40%",
     lockPeriod: 15552000,
     interestPerSecond: 6944444445,
+    color: "#8CC0DE",
   },
   365: {
     name: "365 days Lock",
@@ -30,6 +33,7 @@ const periods = {
     diboInterest: "100%",
     lockPeriod: 31536000,
     interestPerSecond: 8219178083,
+    color: "#B689C0",
   },
 };
 export default periods;
