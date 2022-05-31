@@ -12,8 +12,8 @@ export default function Dashboard() {
   const [stakeTVL, setStakeTVL] = useState(0);
   const [lockTVLs, setLockTVLs] = useState(periods);
   const [events, setEvents] = useState([]);
-  const eventRef = useRef();
-  const [totalArr, setTotalArr] = useState([]);
+  const [poolEvents, setPoolEvents] = useState([]);
+  const eventRef = useRef([]);
   async function getBlockchainData() {
     contracts.stake.methods
       .totalValueLocked()
@@ -40,26 +40,12 @@ export default function Dashboard() {
     });
 
     try {
-      const stakeEvents = await contracts.stake.getPastEvents("Deposit", {
+      const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
         fromBlock: 26522870,
         toBlock: "latest",
       });
       eventRef.current = [...stakeEvents];
-      Object.keys(periods).forEach(async (period) => {
-        const poolEvents = await contracts.lock[period].getPastEvents(
-          "Deposit",
-          {
-            fromBlock: 26522870,
-            toBlock: "latest",
-          }
-        );
-        console.log(...poolEvents, "pppp");
-        eventRef.current = [...eventRef.current, ...poolEvents];
-        eventRef.current.sort((a, b) => {
-          return a.blockNumber - b.blockNumber;
-        });
-        setEvents(eventRef.current);
-      });
+      setEvents(eventRef.current);
     } catch (e) {
       console.log(e);
     }
@@ -68,6 +54,22 @@ export default function Dashboard() {
     address && (await getBlockchainData());
   }, [address]);
 
+  useEffect(() => {
+    let poolEventsArr = [];
+    console.log("pool events effect");
+    address &&
+      Object.keys(periods).forEach(async (period) => {
+        const poolEvents = await contracts.lock[period].getPastEvents(
+          "allEvents",
+          {
+            fromBlock: 26522870,
+            toBlock: "latest",
+          }
+        );
+        poolEventsArr = poolEventsArr.concat(poolEvents);
+        setPoolEvents(poolEventsArr);
+      });
+  }, [address, eventRef.current.length]);
   return (
     <div className={styles.dashboardContainer}>
       <Stats styles={styles} tvl={stakeTVL} />
@@ -77,7 +79,7 @@ export default function Dashboard() {
           <p>$35,319,355</p>
           <div className={styles.chartContainer}>
             {typeof window === "undefined" ? null : (
-              <TotalTVL events={events} />
+              <TotalTVL events={events} poolEvents={poolEvents} />
             )}
           </div>
         </div>

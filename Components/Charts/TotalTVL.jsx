@@ -8,36 +8,46 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useWeb3Context } from "../../Contexts";
-export default function TotalTVL({ events }) {
-  console.log(events);
+export default function TotalTVL({ events, poolEvents }) {
+  events = events.concat(poolEvents);
+  events.sort((a, b) => {
+    return a.blockNumber - b.blockNumber;
+  });
+  console.log(events, "eventts");
   const { web3State } = useWeb3Context();
   const { web3Provider, contracts, address } = web3State;
   let parsedData = [];
   if (events) {
     let total = 0;
     for (let i = 0; i < events.length; i++) {
-      if ((events[i].event = "Deposit")) {
+      if (events[i].event === "Deposit") {
         total =
           total +
           Number(
-            events[i].returnValues.totalValueLocked
+            events[i].returnValues.amount
               ? web3Provider.utils.fromWei(
-                  events[i].returnValues.totalValueLocked,
+                  events[i].returnValues.amount,
                   "ether"
                 )
-              : web3Provider.utils.fromWei(events[i].returnValues.TVL, "ether")
+              : web3Provider.utils.fromWei(
+                  events[i].returnValues.amount,
+                  "ether"
+                )
           );
       }
-      if ((events[i].event = "Withdraw")) {
+      if (events[i].event === "Withdraw") {
         total =
-          total +
+          total -
           Number(
-            events[i].returnValues.totalValueLocked
+            events[i].returnValues.amount
               ? web3Provider.utils.fromWei(
-                  events[i].returnValues.totalValueLocked,
+                  events[i].returnValues.amount,
                   "ether"
                 )
-              : web3Provider.utils.fromWei(events[i].returnValues.TVL, "ether")
+              : web3Provider.utils.fromWei(
+                  events[i].returnValues.amount,
+                  "ether"
+                )
           );
       }
       parsedData.unshift({
@@ -58,7 +68,7 @@ export default function TotalTVL({ events }) {
     //   return { blockNo, TVLatm };
     // });
   }
-  console.log(parsedData, "parsed data");
+  console.log(parsedData.reverse(), "parsed data");
   return !parsedData[0] ? (
     "LOADING..."
   ) : (
