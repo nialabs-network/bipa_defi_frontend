@@ -10,8 +10,9 @@ export default function Dashboard() {
   const { address, contracts, web3Provider } = web3State;
   const [stakeTVL, setStakeTVL] = useState(0);
   const [lockTVLs, setLockTVLs] = useState(periods);
-
-  function getBlockchainData() {
+  const [events, setEvents] = useState([]);
+  const [totalArr, setTotalArr] = useState([]);
+  async function getBlockchainData() {
     contracts.stake.methods
       .totalValueLocked()
       .call()
@@ -35,9 +36,44 @@ export default function Dashboard() {
         )
         .catch((e) => console.error(e));
     });
+
+    try {
+      const allEvents = [];
+      const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
+        fromBlock: 26523870,
+        toBlock: "latest",
+      });
+      allEvents.push(...stakeEvents);
+      console.log(allEvents, "all events once");
+      Object.keys(periods).forEach(async (period) => {
+        const poolEvents = await contracts.lock[period].getPastEvents(
+          "allEvents",
+          {
+            fromBlock: 26523870,
+            toBlock: "latest",
+          }
+        );
+        allEvents.push(...poolEvents);
+        // allEvents.push(...poolEvents);
+        // console.log(allEvents, "allevents 2");
+        // allEvents.push(...poolEvents);
+        // allEvents.sort((a, b) => {
+        //   return a.blockNumber - b.blockNumber;
+        // });
+      });
+      console.log(allEvents, "all events");
+      // totalArr.push(allEvents);
+      // console.log("total data", totalArr);
+      // callData();
+      // console.log(Object.assign(allEvents, ...totalArr));
+      // setEvents(allEvents);
+    } catch (e) {
+      console.log(e);
+    }
   }
+  console.log("render");
   useEffect(async () => {
-    address && getBlockchainData();
+    address && (await getBlockchainData());
   }, [address]);
 
   return (
@@ -79,6 +115,7 @@ export default function Dashboard() {
             </div>
           );
         })}
+        {/* <Chart tvl={lockTVLs[period].TVL} period={period} /> */}
       </section>
     </div>
   );
