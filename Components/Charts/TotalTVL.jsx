@@ -9,7 +9,6 @@ import {
 } from "recharts";
 import { useWeb3Context } from "../../Contexts";
 export default function TotalTVL({ events, poolEvents }) {
-  console.log(events, "initial");
   if (typeof localStorage !== "undefined") {
     events = localStorage.getItem("stakeEvents")
       ? JSON.parse(localStorage.getItem("stakeEvents"))
@@ -23,7 +22,6 @@ export default function TotalTVL({ events, poolEvents }) {
   events.sort((a, b) => {
     return a.blockNumber - b.blockNumber;
   });
-  console.log(events, "eventts");
   const { web3State } = useWeb3Context();
   const { web3Provider, contracts, address } = web3State;
   let parsedData = [];
@@ -78,7 +76,7 @@ export default function TotalTVL({ events, poolEvents }) {
     //   return { blockNo, TVLatm };
     // });
   }
-  console.log(parsedData.reverse(), "parsed data");
+  parsedData.reverse();
   return !parsedData[0] ? (
     "LOADING..."
   ) : (
