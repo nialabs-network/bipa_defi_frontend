@@ -7,9 +7,6 @@ import Head from "next/head";
 import { motion } from "framer-motion";
 
 function Dapp({ Component, pageProps, Language, router }) {
-  console.log(
-    "________________________________app.js__________________________________________"
-  );
   return (
     <>
       <Head>

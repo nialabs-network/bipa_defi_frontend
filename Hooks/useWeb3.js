@@ -19,7 +19,6 @@ import lock90Abi from "./lock90Abi";
 import lock180Abi from "./lock180Abi";
 import lock365Abi from "./lock365Abi";
 export const useWeb3 = () => {
-  console.log("___________________useWeb3______________________");
   const [web3State, dispatch] = useReducer(web3Reducer, web3InitialState);
   const { provider, web3Provider, address, balance, network, contracts } =
     web3State;
@@ -29,7 +28,6 @@ export const useWeb3 = () => {
    * CONNECTING TO METAMASK
    */
   const connect = useCallback(async (isReconnecting) => {
-    console.log("__________connect function strikes in_______________");
     appContext.setLoadingState(true, "Connecting...");
     if (window.ethereum) {
       try {
@@ -81,10 +79,6 @@ export const useWeb3 = () => {
           balance,
           contracts,
         });
-        console.log(isReconnecting, "is reconnecting");
-        isReconnecting
-          ? toast.success("[DEV]Connection is stable")
-          : toast.success(t("wallet_connect_toast"));
         localStorage.setItem("WEB3_CONNECT_CACHED_PROVIDER", "injected");
         appContext.setLoadingState(false, "");
       } catch (e) {
@@ -102,7 +96,6 @@ export const useWeb3 = () => {
    * DISCONNECTING FROM METAMASK
    */
   const disconnect = useCallback(async () => {
-    console.log("__________disconnect function strikes in_______________");
     if (window.ethereum) {
       localStorage.removeItem("WEB3_CONNECT_CACHED_PROVIDER");
       if (provider?.disconnect && typeof provider.disconnect === "function") {
@@ -116,27 +109,17 @@ export const useWeb3 = () => {
       console.error("window is not defined");
     }
   }, [provider]);
-  /**
-   * IF CACHE IS THERE, CONNECTION TO THE WALLET IS ESTABLISHED RIGHT AFTER REFRESH
-   */
+
   useEffect(() => {
-    console.log("__________reconnect effect_______________");
-    console.log("first render:", appContext.firstRender.current);
     if (
       window.ethereum &&
       localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
     ) {
-      const isReconnecting = true;
-      connect(isReconnecting);
+      connect(true); //isReconnecting = true
     }
   }, []);
   //EIP-1193 events handler
   useEffect(() => {
-    console.log("__________account change effect_______________");
-    console.log(
-      "first render acc change effect:",
-      appContext.firstRender.current
-    );
     if (provider?.on) {
       const handleAccountChange = (accounts) => {
         if (accounts.length > 0) {
@@ -176,7 +159,6 @@ export const useWeb3 = () => {
       };
     }
   }, [provider, disconnect]);
-  console.log("returning from web3-_------___---");
   return {
     provider,
     web3Provider,

@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
 import { useWeb3Context } from "../../Contexts";
-import periods from "../Staking/lockPools";
 import CountUp from "react-countup/";
-export default function Stats({ styles, tvl }) {
+export default function Stats({ styles, allPoolsTVL }) {
   const { web3State } = useWeb3Context();
-  const { web3Provider, address, contracts } = web3State;
-  const [nasmgPrice, setNasmgPrice] = useState(0.0010231); //need to get quote from an exchange
-  const [nasmgSupply, setNasmgSupply] = useState(500000000); //fixed supply
+  const { address } = web3State;
+  const nasmgPrice = 0.0010231; //need to get quote from an exchange
+  const nasmgSupply = 500000000; //fixed supply
   return (
     <section className={`${styles.stats} ${styles.glass}`}>
       <div className={`${styles.stat} ${styles.glassMob}`}>
@@ -24,9 +22,9 @@ export default function Stats({ styles, tvl }) {
         </p>
       </div>
       <div className={`${styles.stat} ${styles.glassMob}`}>
-        <p className={styles.title}>APY</p>
+        <p className={styles.title}>APR</p>
         <p className={styles.value}>
-          <CountUp end={90} />%
+          <CountUp end={100} />%
         </p>
       </div>
       <div className={`${styles.stat} ${styles.glassMob}`}>
@@ -34,7 +32,7 @@ export default function Stats({ styles, tvl }) {
         <p className={styles.value}>
           {address ? (
             <>
-              <CountUp end={Math.trunc(tvl * 100) / 100} /> NASMG
+              <CountUp end={Math.trunc(allPoolsTVL * 100) / 100} /> NASMG
             </>
           ) : (
             "Connect Wallet"

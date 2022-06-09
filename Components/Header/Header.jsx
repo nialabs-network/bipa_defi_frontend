@@ -19,7 +19,6 @@ export default function Header(props) {
   const { web3State } = useWeb3Context();
   const { t } = useTranslation();
   const { address, connect, disconnect } = web3State;
-  console.log("_____________HEADER RENDER____________________");
   const [windowWidth, setWindowWidth] = useState(1024);
   const isDesktop = windowWidth > 768;
   useEffect(() => {
