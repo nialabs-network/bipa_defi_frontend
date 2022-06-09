@@ -33,7 +33,7 @@ export default function Swap() {
     if (token0.amount > 0 && token0.amount !== "") {
       try {
         setLoadingState(true, "swapping");
-        await swap(token0, token1.amount, address, web3Provider);
+        await swap(token0, address, web3Provider);
         setToken0((prevState) => ({ ...prevState, amount: "" }));
         setToken1((prevState) => ({ ...prevState, amount: "" }));
       } catch (e) {
