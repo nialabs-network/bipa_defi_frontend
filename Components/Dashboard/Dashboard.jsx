@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useWeb3Context } from "../../Contexts";
-import Chart from "../Charts/Chart";
 import TotalTVL from "../Charts/TotalTVL";
 import styles from "./Dashboard.module.scss";
 import Stats from "./Stats";
@@ -10,10 +9,10 @@ import {
   Area,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
 export default function Dashboard() {
   const { web3State } = useWeb3Context();
   const { address, contracts, web3Provider } = web3State;
@@ -22,9 +21,17 @@ export default function Dashboard() {
   const [events, setEvents] = useState([]);
   const [poolEvents, setPoolEvents] = useState([]);
   const [eachPoolEvents, setEachPoolEvents] = useState([]);
+  const [priceFeed, setPriceFeed] = useState({});
   const eventRef = useRef([]);
+
   let parsedData = [];
   let chartData = [];
+
+  const tvl = Object.keys(lockTVLs)
+    .map((period) => lockTVLs[period])
+    .reduce((prevVal, curVal) => prevVal + curVal.TVL, 0);
+  console.log(stakeTVL, "stake TVL");
+  console.log(lockTVLs, "lockTVL");
   async function getBlockchainData() {
     contracts.stake.methods
       .totalValueLocked()
@@ -64,12 +71,61 @@ export default function Dashboard() {
   }
   useEffect(async () => {
     address && (await getBlockchainData());
+    const client = new ApolloClient({
+      uri: "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
+      cache: new InMemoryCache(),
+    });
+    client
+      .query({
+        query: gql`
+          {
+            poolDayDatas(
+              first: 30
+              orderBy: date
+              where: {
+                pool: "0x45dda9cb7c25131df268515131f647d726f50608"
+                date_gt: ${
+                  Math.round(new Date().getTime() / 1000) - 30 * 24 * 60 * 60
+                }
+              }
+            ) {
+              date
+              token0Price
+              token1Price
+            }
+          }
+        `,
+      })
+      .then((res) => {
+        const feed = res.data.poolDayDatas.map((item) => {
+          const date = new Date(item.date * 1000);
+          var months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+          return {
+            time: `${date.getDate()} ${months[date.getMonth()]}`,
+            price: item.token0Price.slice(0, item.token0Price.indexOf(".")),
+          };
+        });
+        setPriceFeed(feed);
+        localStorage.setItem("priceFeed", JSON.stringify(feed));
+      });
   }, [address]);
-
+  console.log(priceFeed);
   useEffect(() => {
     let poolEventsArr = [];
     let eachPoolEvents = [];
-    console.log("pool events effect");
     address &&
       Object.keys(periods).forEach(async (period) => {
         const poolEvents = await contracts.lock[period].getPastEvents(
@@ -87,6 +143,7 @@ export default function Dashboard() {
       });
   }, [address, eventRef.current.length]);
 
+  //
   if (eachPoolEvents.length == 4) {
     if (events.length > 0) {
       eachPoolEvents.forEach((pool) =>
@@ -95,7 +152,7 @@ export default function Dashboard() {
             blockNumber: event.blockNumber,
             pool: pool.period,
             TVL: Number(
-              web3Provider.utils.fromWei(
+              web3Provider?.utils.fromWei(
                 event.returnValues.totalValueLocked,
                 "ether"
               )
@@ -108,7 +165,7 @@ export default function Dashboard() {
         parsedEvents = events.map((event) => {
           const blockNumber = event.blockNumber;
           const TVL = Number(
-            web3Provider.utils.fromWei(event.returnValues.TVL, "ether")
+            web3Provider?.utils.fromWei(event.returnValues.TVL, "ether")
           );
           return { blockNumber, TVL };
         });
@@ -123,7 +180,6 @@ export default function Dashboard() {
       parsedData.sort((a, b) => {
         return a.blockNumber - b.blockNumber;
       });
-      console.log(parsedData, "parseddata");
       parsedData.forEach((item, index) => {
         let slicedReversed = chartData.slice(0, index).reverse();
         chartData.push({
@@ -160,101 +216,84 @@ export default function Dashboard() {
               : 0,
         });
       });
-      console.log(chartData, "chart datta");
-      // let parsedEvents = [];
-      // if (events) {
-      //   parsedEvents = events.map((event) => {
-      //     const blockNumber = event.blockNumber;
-      //     const TVL = Number(
-      //       web3Provider.utils.fromWei(event.returnValues.TVL, "ether")
-      //     );
-      //     return { blockNumber, TVL };
-      //   });
-      //   console.log(parsedEvents, "ppppppppppppppppppppp");
-      // }
     }
   }
   if (events)
     return (
       <div className={styles.dashboardContainer}>
-        <Stats styles={styles} tvl={stakeTVL} />
+        <div>graphql query</div>
+        <Stats styles={styles} allPoolsTVL={stakeTVL + tvl} />
         <section className={styles.charts}>
           <div className={`${styles.chart} glass`} style={{ border: "none" }}>
             <h3>Total value locked</h3>
-            <p>$35,319,355</p>
+            <p>
+              $
+              {priceFeed.length > 0
+                ? priceFeed[priceFeed.length - 1].price
+                : null}
+            </p>
             <div className={styles.chartContainer}>
-              {typeof window === "undefined" ? null : (
-                <TotalTVL events={events} poolEvents={poolEvents} />
-              )}
+              <TotalTVL
+                priceFeed={
+                  typeof localStorage !== "undefined"
+                    ? JSON.parse(localStorage.getItem("priceFeed"))
+                    : priceFeed
+                }
+              />
             </div>
           </div>
           <div className={`${styles.chart} glass`} style={{ border: "none" }}>
             <h3>TVL (Flexible)</h3>
-            <p>{stakeTVL} NASMG</p>
+            <p>{stakeTVL + tvl} NASMG</p>
 
             <div className={styles.chartContainer}>
-              {typeof window === "undefined" ? null : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    width={500}
-                    height={400}
-                    data={chartData}
-                    margin={{
-                      top: 10,
-                      right: 30,
-                      left: 0,
-                      bottom: 0,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="blockNumber"
-                      tick={{ fill: "white", fontSize: "15" }}
-                    />
-                    <YAxis tick={{ fill: "white", fontSize: "15" }} />
-                    <Tooltip />
-                    <Area
-                      type="monotone"
-                      dataKey="365"
-                      stackId="1"
-                      stroke="#B689C0"
-                      fill="#B689C0"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="180"
-                      stackId="1"
-                      stroke="#8884d8"
-                      fill="#8884d8"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="90"
-                      stackId="1"
-                      stroke="#82ca9d"
-                      fill="#82ca9d"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="30"
-                      stackId="1"
-                      stroke="#ffc658"
-                      fill="#ffc658"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="staking"
-                      stackId="1"
-                      stroke="#aaf6d8"
-                      fill="#aaf6d8"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              )}
+              <ResponsiveContainer>
+                <AreaChart data={chartData}>
+                  <XAxis
+                    dataKey="blockNumber"
+                    tick={{ fill: "white", fontSize: "15" }}
+                  />
+                  <YAxis tick={{ fill: "white", fontSize: "15" }} />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="365"
+                    stackId="1"
+                    stroke="#B689C0"
+                    fill="#B689C0"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="180"
+                    stackId="1"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="90"
+                    stackId="1"
+                    stroke="#82ca9d"
+                    fill="#82ca9d"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="30"
+                    stackId="1"
+                    stroke="#ffc658"
+                    fill="#ffc658"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="staking"
+                    stackId="1"
+                    stroke="#aaf6d8"
+                    fill="#aaf6d8"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </div>
           </div>
-
-          {/* <Chart tvl={lockTVLs[period].TVL} period={period} /> */}
         </section>
       </div>
     );

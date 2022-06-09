@@ -8,7 +8,7 @@ const appInitialState = {
   language: config.lng,
   loading: false,
   loading_msg: "Loading...",
-  width: 777,
+  width: undefined,
 };
 function appReducer(state, action) {
   switch (action.type) {

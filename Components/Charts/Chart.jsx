@@ -15,17 +15,15 @@ export default function Chart({ period, color }) {
   const { web3Provider, contracts, address } = web3State;
   const [events, setEvents] = useState("");
   async function getEvents() {
-    const blockNumber = await web3Provider.eth.getBlockNumber();
-    console.log(blockNumber);
     let events;
     if (period !== "stake") {
       events = await contracts.lock[period].getPastEvents("allEvents", {
-        fromBlock: 26523870,
+        fromBlock: 26524000,
         toBlock: "latest",
       });
     } else {
       events = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: 26523870,
+        fromBlock: 26524000,
         toBlock: "latest",
       });
     }

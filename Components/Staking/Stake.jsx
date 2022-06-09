@@ -4,6 +4,7 @@ import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import stakingPool from "./stakingPool";
+import { motion } from "framer-motion";
 
 export default function Stake({ styles, toggle, selected }) {
   const { web3State } = useWeb3Context();

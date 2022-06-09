@@ -125,7 +125,18 @@ export default function Lock({ styles, toggle, selected }) {
             </div>
             <div className={styles.productTitle}>
               <p className={styles.title}>NASMG + DIBO Lock</p>
-              <p className={styles.amount}>TVL</p>
+              <p className={styles.amount}>
+                TVL:{" "}
+                {console.log(
+                  address &&
+                    contracts.lock[key].methods
+                      .totalValueLocked()
+                      .call()
+                      .then((res) => {
+                        return res;
+                      })
+                )}
+              </p>
             </div>
             <div className={styles.productInterest}>
               <p className={styles.interest}>{periods[key].interest}</p>
