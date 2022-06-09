@@ -4,45 +4,17 @@ import { useAppContext, useWeb3Context } from "../../Contexts";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { getPrice } from "./quote";
-import { swap } from "./swap";
+import { getPrice, swap } from "./quote";
+// import { swap } from "./swap";
 import nasmgLogo from "../../assets/nasmgLogo.webp";
 import polygonLogo from "../../assets/polygonLogo.webp";
 import replace from "../../assets/replace.webp";
 import { fnLoader } from "../../Utils/WithDynamicLoader";
-import { Fetcher, Pair, TokenAmount, WETH, Route } from "@uniswap/sdk";
 
 export default function Swap() {
   const { web3State } = useWeb3Context();
-  const { appState, dispatch, setLoadingState } = useAppContext();
-  const { address, balance, connect, web3Provider, provider } = web3State;
-
-  const tokenAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
-  const NASMGAddress = "0xD247C2163D39263a1Ab2391Ad106c534aa3d2A48";
-  const WMATICAddress = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
-
-  useEffect(async () => {
-    const DAI = await Fetcher.fetchTokenData(1, tokenAddress);
-    const NASMG = await Fetcher.fetchTokenData(137, NASMGAddress); //token
-    const WMATIC = await Fetcher.fetchTokenData(137, WMATICAddress); // token
-    async function getPair() {
-      console.log(NASMG);
-      console.log(WMATIC);
-      console.log(DAI);
-      let pair;
-      try {
-        // pair = await Fetcher.fetchPairData(NASMG, WMATIC);
-        pair = await Fetcher.fetchPairData(DAI, WETH[1]);
-      } catch (e) {
-        console.log(e);
-      }
-      // const pair = await Fetcher.fetchPairData(DAI, WETH[1]);
-      console.log(pair);
-      // const route = new Route([pair], WETH[DAI.chainId]);
-      // console.log(route.midPrice.toSignificant(6)); // 201.306
-    }
-    await getPair();
-  }, []);
+  const { setLoadingState } = useAppContext();
+  const { address, balance, connect, web3Provider } = web3State;
 
   const [token0, setToken0] = useState({
     token: 0,
