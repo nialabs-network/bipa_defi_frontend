@@ -436,12 +436,16 @@ async function swap(token0, address, web3Provider) {
   const WMATIC = await Fetcher.fetchTokenData(137, WMATICAddress);
   const pair = await Fetcher.fetchPairData(NASMG, WMATIC);
   const route = new Route([pair], token0.ticker == "NASMG" ? NASMG : WMATIC);
+  console.log(route, "route");
   const amountIn = web3Provider.utils.toWei(token0.amount, "ether");
+  const gasPrice = await web3Provider.eth.getGasPrice();
+  console.log(gasPrice);
   const trade = new Trade(
     route,
     new TokenAmount(token0.ticker === "NASMG" ? NASMG : WMATIC, amountIn),
     TradeType.EXACT_INPUT
   );
+  console.log(trade, "trade");
   const slippageTolerance = new Percent("50", "10000");
 
   const amountOutMin = web3Provider.utils.toWei(
@@ -452,20 +456,26 @@ async function swap(token0, address, web3Provider) {
     token0.ticker === "NASMG" ? NASMG.address : WMATIC.address,
     token0.ticker === "NASMG" ? WMATIC.address : NASMG.address,
   ];
+  console.log(path, "path");
   const to = address;
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20;
   const value = web3Provider.utils.toWei(
     trade.inputAmount.toSignificant(),
     "ether"
   );
-  if (token0.ticker === "WMATIC") {
+  console.log(value);
+  if (token0.ticker === "MATIC") {
+    console.log("swapping wmatic");
     await routerContract.methods
       .swapExactETHForTokens(amountOutMin, path, to, deadline)
-      .send({ from: address, value: value, gasPrice: 21000 });
+      .send({ from: address, value: value, gasPrice });
   }
   if (token0.ticker === "NASMG") {
     console.log("you are about to swap nasmg");
-    console.log(token0.amount);
+    console.log(token0);
+    await routerContract.methods
+      .swapExactTokensForETH(amountIn, amountOutMin, path, address, deadline)
+      .send({ from: address, gasPrice });
   }
 }
 
