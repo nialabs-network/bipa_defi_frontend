@@ -59,7 +59,7 @@ export default function Dashboard() {
 
     try {
       const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: 26522870,
+        fromBlock: 29418106,
         toBlock: "latest",
       });
       eventRef.current = [...stakeEvents];
@@ -131,7 +131,7 @@ export default function Dashboard() {
         const poolEvents = await contracts.lock[period].getPastEvents(
           "allEvents",
           {
-            fromBlock: 26522870,
+            fromBlock: 29418106,
             toBlock: "latest",
           }
         );
