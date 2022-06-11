@@ -50,6 +50,8 @@ export default function Stake({ styles, toggle, selected }) {
     );
   }
   async function stake() {
+    const gasPrice = await web3Provider.eth.getGasPrice();
+    console.log(gasPrice, "gas price before stake");
     console.log("stake strike");
     try {
       if (contracts.stake) {
@@ -59,7 +61,7 @@ export default function Stake({ styles, toggle, selected }) {
             contracts.stake._address,
             web3Provider.utils.toWei(amount, "ether")
           )
-          .send({ from: address });
+          .send({ from: address, gasPrice });
         setLoadingState(true, "Staking");
         await contracts.stake.methods
           .stakeTokens(web3Provider.utils.toWei(amount, "ether"))
@@ -76,13 +78,14 @@ export default function Stake({ styles, toggle, selected }) {
     }
   }
   async function unstake() {
+    const gasPrice = await web3Provider.eth.getGasPrice();
     if (contracts.stake) {
       try {
         console.log("unstake");
         setLoadingState(true, "Unstaking");
         await contracts.stake.methods
           .unstakeTokens(web3Provider.utils.toWei(amount, "ether"))
-          .send({ from: address });
+          .send({ from: address, gasPrice });
         setLoadingState(false, "");
         setAmount("");
         document.location.reload();

@@ -42,32 +42,32 @@ export const useWeb3 = () => {
           lock: {
             30: new web3Provider.eth.Contract(
               lock30Abi,
-              "0x1bF88c5Dc2963A6Ff3957A7EDc734c3336D23787"
+              process.env.NEXT_PUBLIC_LOCK30_ADDRESS
             ),
             90: new web3Provider.eth.Contract(
               lock90Abi,
-              "0x08cEE33A9FaAC6Fc2a8BA1ce82C02975a1cDF9Ee"
+              process.env.NEXT_PUBLIC_LOCK90_ADDRESS
             ),
             180: new web3Provider.eth.Contract(
               lock180Abi,
-              "0xF56f0026FCa271e04A2CB3CDc428580A4b718c43"
+              process.env.NEXT_PUBLIC_LOCK180_ADDRESS
             ),
             365: new web3Provider.eth.Contract(
               lock365Abi,
-              "0x8Aa7a21A3C4A44B9384f77283A1Af5b433fF32b2"
+              process.env.NEXT_PUBLIC_LOCK365_ADDRESS
             ),
           },
           stake: new web3Provider.eth.Contract(
             stakeAbi,
-            "0xd9357C15908e72cb0aEfd67A8635AdEEd07D330F"
+            process.env.NEXT_PUBLIC_STAKING_ADDRESS
           ),
           NASMG: new web3Provider.eth.Contract(
             erc20,
-            "0xA69f3a35Cd1b3C8695BC43434435f8fc02119BD1"
+            process.env.NEXT_PUBLIC_NASMG_ADDRESS
           ),
           DIBO: new web3Provider.eth.Contract(
             erc20,
-            "0xb69f5734dF86eA2Ee7531A949d01a11cc2404CfA"
+            process.env.NEXT_PUBLIC_DIBO_ADDRESS
           ),
         };
         dispatch({

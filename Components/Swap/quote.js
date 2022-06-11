@@ -41,6 +41,20 @@ import {
 } from "quickswap-sdk";
 const NASMGAddress = "0xD247C2163D39263a1Ab2391Ad106c534aa3d2A48";
 const WMATICAddress = "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270";
+const USDCAddress = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
+async function getMaticPrice(web3Provider) {
+  const USDC = await Fetcher.fetchTokenData(137, USDCAddress); //token
+  const WMATIC = await Fetcher.fetchTokenData(137, WMATICAddress); // token
+  const pair = await Fetcher.fetchPairData(WMATIC, USDC);
+  const route = new Route([pair], WMATIC);
+  const trade = new Trade(
+    route,
+    new TokenAmount(WMATIC, web3Provider.utils.toWei("1", "ether")),
+    TradeType.EXACT_INPUT
+  );
+  console.log(trade.outputAmount.toSignificant(6));
+  return trade.outputAmount.toSignificant(6);
+}
 async function getPrice(token, web3Provider) {
   const NASMG = await Fetcher.fetchTokenData(137, NASMGAddress); //token
   const WMATIC = await Fetcher.fetchTokenData(137, WMATICAddress); // token
@@ -436,10 +450,8 @@ async function swap(token0, address, web3Provider) {
   const WMATIC = await Fetcher.fetchTokenData(137, WMATICAddress);
   const pair = await Fetcher.fetchPairData(NASMG, WMATIC);
   const route = new Route([pair], token0.ticker == "NASMG" ? NASMG : WMATIC);
-  console.log(route, "route");
   const amountIn = web3Provider.utils.toWei(token0.amount, "ether");
   const gasPrice = await web3Provider.eth.getGasPrice();
-  console.log(gasPrice);
   const trade = new Trade(
     route,
     new TokenAmount(token0.ticker === "NASMG" ? NASMG : WMATIC, amountIn),
@@ -479,4 +491,4 @@ async function swap(token0, address, web3Provider) {
   }
 }
 
-export { getPrice, swap };
+export { getPrice, swap, getMaticPrice };

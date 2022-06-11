@@ -46,6 +46,8 @@ export default function Lock({ styles, toggle, selected }) {
     }
   }, [address, selected, amount, isLock]);
   async function lock(amount) {
+    const gasPrice = await web3Provider.eth.getGasPrice();
+    console.log(gasPrice, "gasprice before lock");
     try {
       setLoadingState(true, "Approving");
       await contracts.NASMG.methods
@@ -53,11 +55,11 @@ export default function Lock({ styles, toggle, selected }) {
           contracts.lock[selected]._address,
           web3Provider.utils.toWei(amount, "ether")
         )
-        .send({ from: address });
+        .send({ from: address, gasPrice });
       setLoadingState(true, "Locking");
       await contracts.lock[selected].methods
         .lock(web3Provider.utils.toWei(amount, "ether"))
-        .send({ from: address });
+        .send({ from: address, gasPrice });
       setLoadingState(false, "");
       setAmount("");
       document.location.reload();
