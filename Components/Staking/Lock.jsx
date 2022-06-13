@@ -1,7 +1,7 @@
 import { nasmgLogo, diboLogo, expandArrow } from "../../assets/exports";
 import Button from "../Reusables/Button";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import periods from "./lockPools";
 export default function Lock({ styles, toggle, selected }) {
@@ -37,11 +37,22 @@ export default function Lock({ styles, toggle, selected }) {
       console.log(e);
     }
   }
+
   useEffect(() => {
     if (address) {
       try {
         getBlockchainData();
         allowanceCheck();
+        Object.keys(periods).forEach((key) => {
+          contracts.lock[key].methods
+            .totalValueLocked()
+            .call()
+            .then(
+              (res) =>
+                (document.getElementById(key).innerText =
+                  "TVL: " + web3Provider.utils.fromWei(res, "ether"))
+            );
+        });
       } catch (e) {
         console.log(e);
       }
@@ -126,7 +137,6 @@ export default function Lock({ styles, toggle, selected }) {
       );
     }
   }
-  console.log(currentAllowance, "current allowance", selected);
   return (
     <section className={styles.accordion}>
       {Object.keys(periods).map((key) => (
@@ -157,18 +167,7 @@ export default function Lock({ styles, toggle, selected }) {
             </div>
             <div className={styles.productTitle}>
               <p className={styles.title}>NASMG + DIBO Lock</p>
-              <p className={styles.amount}>
-                TVL:{" "}
-                {console.log(
-                  address &&
-                    contracts.lock[key].methods
-                      .totalValueLocked()
-                      .call()
-                      .then((res) => {
-                        return res;
-                      })
-                )}
-              </p>
+              <p className={styles.amount} id={key}></p>
             </div>
             <div className={styles.productInterest}>
               <p className={styles.interest}>{periods[key].interest}</p>
