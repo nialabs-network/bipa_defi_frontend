@@ -30,8 +30,7 @@ export default function Dashboard() {
   const tvl = Object.keys(lockTVLs)
     .map((period) => lockTVLs[period])
     .reduce((prevVal, curVal) => prevVal + curVal.TVL, 0);
-  console.log(stakeTVL, "stake TVL");
-  console.log(lockTVLs, "lockTVL");
+
   async function getBlockchainData() {
     contracts.stake.methods
       .totalValueLocked()
@@ -58,8 +57,9 @@ export default function Dashboard() {
     });
 
     try {
+      const currentBlock = await web3Provider.eth.getBlockNumber();
       const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: 29418106,
+        fromBlock: currentBlock - 9000,
         toBlock: "latest",
       });
       eventRef.current = [...stakeEvents];
@@ -128,10 +128,11 @@ export default function Dashboard() {
     let eachPoolEvents = [];
     address &&
       Object.keys(periods).forEach(async (period) => {
+        const currentBlock = await web3Provider.eth.getBlockNumber();
         const poolEvents = await contracts.lock[period].getPastEvents(
           "allEvents",
           {
-            fromBlock: 29418106,
+            fromBlock: currentBlock - 9000,
             toBlock: "latest",
           }
         );

@@ -27,7 +27,7 @@ export const useWeb3 = () => {
   /**
    * CONNECTING TO METAMASK
    */
-  const connect = useCallback(async (isReconnecting) => {
+  const connect = useCallback(async () => {
     appContext.setLoadingState(true, "Connecting...");
     if (window.ethereum) {
       try {
@@ -83,13 +83,14 @@ export const useWeb3 = () => {
         appContext.setLoadingState(false, "");
       } catch (e) {
         console.error(e);
-        toast.error("Something went wrong");
+        toast.error("Something went wrong. Check you wallet.");
         setTimeout(() => {
           appContext.setLoadingState(false, "");
         }, 751);
       }
     } else {
-      console.error("window is not defined");
+      appContext.setLoadingState(false, "");
+      toast.error("Your browser does not support Metamask");
     }
   }, []);
   /**
@@ -115,7 +116,7 @@ export const useWeb3 = () => {
       window.ethereum &&
       localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER")
     ) {
-      connect(true); //isReconnecting = true
+      connect(); //isReconnecting = true
     }
   }, []);
   //EIP-1193 events handler

@@ -12,6 +12,7 @@ export default function Lock({ styles, toggle, selected }) {
   const { setLoadingState } = useAppContext();
   const [lockOf, setLockOf] = useState(null);
   const [nasmgBalance, setNasmgBalance] = useState("1");
+  const [currentAllowance, setCurrentAllowance] = useState("");
   async function getBlockchainData() {
     try {
       if (selected && selected !== "stake") {
@@ -40,22 +41,32 @@ export default function Lock({ styles, toggle, selected }) {
     if (address) {
       try {
         getBlockchainData();
+        allowanceCheck();
       } catch (e) {
         console.log(e);
       }
     }
   }, [address, selected, amount, isLock]);
+  async function approve() {
+    const gasPrice = await web3Provider.eth.getGasPrice();
+    setLoadingState(true, "Approving");
+    try {
+      await contracts.NASMG.methods
+        .approve(
+          contracts.lock[selected]._address,
+          web3Provider.utils.toWei(amount + 1000, "ether")
+        )
+        .send({ from: address, gasPrice });
+    } catch (e) {
+      console.log(e);
+      setLoadingState(false, "");
+    }
+    setLoadingState(false, "");
+  }
   async function lock(amount) {
     const gasPrice = await web3Provider.eth.getGasPrice();
     console.log(gasPrice, "gasprice before lock");
     try {
-      setLoadingState(true, "Approving");
-      await contracts.NASMG.methods
-        .approve(
-          contracts.lock[selected]._address,
-          web3Provider.utils.toWei(amount, "ether")
-        )
-        .send({ from: address, gasPrice });
       setLoadingState(true, "Locking");
       await contracts.lock[selected].methods
         .lock(web3Provider.utils.toWei(amount, "ether"))
@@ -81,11 +92,12 @@ export default function Lock({ styles, toggle, selected }) {
     }
   }
   async function claim() {
+    const gasPrice = await web3Provider.eth.getGasPrice();
     try {
       setLoadingState(true, "Claiming rewards");
       await contracts.lock[selected].methods
         .claimDiboRewards()
-        .send({ from: address });
+        .send({ from: address, gasPrice });
       setLoadingState(false, "");
       setAmount("");
       document.location.reload();
@@ -97,6 +109,24 @@ export default function Lock({ styles, toggle, selected }) {
   function handleMaxClick() {
     setAmount(nasmgBalance.toString());
   }
+
+  async function allowanceCheck() {
+    if (selected) {
+      let spenderAddress = undefined;
+      if (selected == "stake") {
+        spenderAddress = contracts[selected]._address;
+      } else {
+        spenderAddress = contracts.lock[selected]._address;
+      }
+      const allowance = await contracts.NASMG.methods
+        .allowance(address, spenderAddress)
+        .call();
+      setCurrentAllowance(
+        Number(web3Provider.utils.fromWei(allowance, "ether"))
+      );
+    }
+  }
+  console.log(currentAllowance, "current allowance", selected);
   return (
     <section className={styles.accordion}>
       {Object.keys(periods).map((key) => (
@@ -259,14 +289,14 @@ export default function Lock({ styles, toggle, selected }) {
                       backgroundColor: "#bbb",
                     }}
                   />
-                ) : (
+                ) : currentAllowance >= amount ? (
                   <Button
                     value={
                       Number(amount) <= 0
                         ? "Enter the amount"
                         : Number(amount) > Number(nasmgBalance)
                         ? "Not enough tokens"
-                        : "Approve & Lock"
+                        : "Lock"
                     }
                     style={
                       Number(amount) <= 0
@@ -292,6 +322,12 @@ export default function Lock({ styles, toggle, selected }) {
                         ? null
                         : () => lock(amount)
                     }
+                  />
+                ) : (
+                  <Button
+                    value={"Approve"}
+                    onclick={approve}
+                    style={{ margin: "0" }}
                   />
                 )
               ) : Number(lockOf?.lockTime) + Number(periods[key].lockPeriod) >

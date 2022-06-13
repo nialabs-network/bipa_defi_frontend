@@ -40,12 +40,6 @@ export default function Navigation(props) {
           className={styles.navbarNav}
           style={appState.loading ? { pointerEvents: "none" } : null}
         >
-          {appState.width < 769 ? (
-            <Button
-              value="Connect"
-              style={{ height: "100px", width: "80%", margin: "20px auto" }}
-            />
-          ) : null}
           {/* DASHBOARD */}
           <li
             className={styles.navItem}

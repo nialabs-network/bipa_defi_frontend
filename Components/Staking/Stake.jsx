@@ -4,7 +4,6 @@ import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import stakingPool from "./stakingPool";
-import { motion } from "framer-motion";
 
 export default function Stake({ styles, toggle, selected }) {
   const { web3State } = useWeb3Context();
@@ -15,10 +14,12 @@ export default function Stake({ styles, toggle, selected }) {
   const [nasmgBalance, setNasmgBalance] = useState("0");
   const [amount, setAmount] = useState("");
   const [stakingBalance, setStakingBalance] = useState("");
+  const [currentAllowance, setCurrentAllowance] = useState("0");
 
   useEffect(() => {
     if (address) {
       getBlockchainData();
+      allowanceCheck();
     }
   }, [address, amount, isDeposit, selected]);
   async function getBlockchainData() {
@@ -55,18 +56,12 @@ export default function Stake({ styles, toggle, selected }) {
     console.log("stake strike");
     try {
       if (contracts.stake) {
-        setLoadingState(true, "Approving");
-        await contracts.NASMG.methods
-          .approve(
-            contracts.stake._address,
-            web3Provider.utils.toWei(amount, "ether")
-          )
-          .send({ from: address, gasPrice });
         setLoadingState(true, "Staking");
         await contracts.stake.methods
           .stakeTokens(web3Provider.utils.toWei(amount, "ether"))
           .send({
             from: address,
+            gasPrice,
           });
         setLoadingState(false, "");
         setAmount("");
@@ -74,6 +69,23 @@ export default function Stake({ styles, toggle, selected }) {
       }
     } catch (e) {
       console.log(e);
+      setLoadingState(false, "");
+    }
+  }
+  async function approve() {
+    if (contracts.stake) {
+      const gasPrice = await web3Provider.eth.getGasPrice();
+      setLoadingState(true, "Approving");
+      try {
+        await contracts.NASMG.methods
+          .approve(
+            contracts.stake._address,
+            web3Provider.utils.toWei(amount + 10000, "ether")
+          )
+          .send({ from: address, gasPrice });
+      } catch (e) {
+        setLoadingState(false, "");
+      }
       setLoadingState(false, "");
     }
   }
@@ -96,10 +108,13 @@ export default function Stake({ styles, toggle, selected }) {
     }
   }
   async function claimRewards() {
+    const gasPrice = await web3Provider.eth.getGasPrice();
     if (contracts.stake) {
       try {
         setLoadingState(true, "Claiming rewards");
-        await contracts.stake.methods.claimRewards().send({ from: address });
+        await contracts.stake.methods
+          .claimRewards()
+          .send({ from: address, gasPrice });
         setLoadingState(false, "");
       } catch (e) {
         console.log(e);
@@ -117,6 +132,23 @@ export default function Stake({ styles, toggle, selected }) {
       setAmount(nasmgBalance.toString());
     } else {
       setAmount(stakingBalance.toString());
+    }
+  }
+
+  async function allowanceCheck() {
+    if (selected) {
+      let spenderAddress = undefined;
+      if (selected == "stake") {
+        spenderAddress = contracts[selected]._address;
+      } else {
+        spenderAddress = contracts.lock[selected]._address;
+      }
+      const allowance = await contracts.NASMG.methods
+        .allowance(address, spenderAddress)
+        .call();
+      setCurrentAllowance(
+        Number(web3Provider.utils.fromWei(allowance, "ether"))
+      );
     }
   }
   return (
@@ -242,39 +274,50 @@ export default function Stake({ styles, toggle, selected }) {
             </div>
 
             {isDeposit ? (
-              <Button
-                value={
-                  Number(nasmgBalance) < Number(amount)
-                    ? "Not enough tokens"
-                    : Number(amount) > 0
-                    ? "Approve & Deposit"
-                    : "Enter the amount"
-                }
-                style={
-                  Number(nasmgBalance) < Number(amount)
-                    ? {
-                        margin: "0",
-                        cursor: "default",
-                        boxShadow: "none",
-                        backgroundColor: "#bbb",
-                      }
-                    : Number(amount) > 0
-                    ? { margin: "0", backgroundColor: "rgb(205, 171, 239)" }
-                    : {
-                        margin: "0",
-                        cursor: "default",
-                        boxShadow: "none",
-                        backgroundColor: "#bbb",
-                      }
-                }
-                onclick={
-                  Number(nasmgBalance) < Number(amount)
-                    ? null
-                    : Number(amount) > 0
-                    ? stake
-                    : null
-                }
-              />
+              currentAllowance >= amount ? (
+                <Button
+                  value={
+                    Number(nasmgBalance) < Number(amount)
+                      ? "Not enough tokens"
+                      : Number(amount) > 0
+                      ? "Deposit"
+                      : "Enter the amount"
+                  }
+                  style={
+                    Number(nasmgBalance) < Number(amount)
+                      ? {
+                          margin: "0",
+                          cursor: "default",
+                          boxShadow: "none",
+                          backgroundColor: "#bbb",
+                        }
+                      : Number(amount) > 0
+                      ? { margin: "0", backgroundColor: "rgb(205, 171, 239)" }
+                      : {
+                          margin: "0",
+                          cursor: "default",
+                          boxShadow: "none",
+                          backgroundColor: "#bbb",
+                        }
+                  }
+                  onclick={
+                    Number(nasmgBalance) < Number(amount)
+                      ? null
+                      : Number(amount) > 0
+                      ? stake
+                      : null
+                  }
+                />
+              ) : (
+                <Button
+                  value={"Approve"}
+                  style={{
+                    margin: "0",
+                    backgroundColor: "rgb(205, 171, 239)",
+                  }}
+                  onclick={Number(amount) > 0 ? approve : null}
+                />
+              )
             ) : (
               <Button
                 value={
