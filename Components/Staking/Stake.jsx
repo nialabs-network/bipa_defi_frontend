@@ -4,6 +4,7 @@ import Button from "../../Components/Reusables/Button";
 import { useState, useEffect } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import stakingPool from "./stakingPool";
+import { toast } from "react-toastify";
 
 export default function Stake({ styles, toggle, selected }) {
   const { web3State } = useWeb3Context();
@@ -163,9 +164,11 @@ export default function Stake({ styles, toggle, selected }) {
 
         <div
           className={styles.flex}
-          onClick={() => {
-            toggle("stake");
-          }}
+          onClick={
+            address
+              ? () => toggle("stake")
+              : () => toast.error("Connect Wallet")
+          }
         >
           <div className={styles.logo}>
             <div className={styles.stakeLogo}>

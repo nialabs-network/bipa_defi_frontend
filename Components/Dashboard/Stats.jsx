@@ -24,7 +24,7 @@ export default function Stats({ styles, allPoolsTVL }) {
           {nasmgMatic ? (
             <CountUp end={Math.floor(nasmgMatic * nasmgSupply)} />
           ) : (
-            "fetching..."
+            0
           )}
         </p>
       </div>
@@ -38,7 +38,7 @@ export default function Stats({ styles, allPoolsTVL }) {
               decimals={6}
             />
           ) : (
-            "fetching..."
+            0
           )}
         </p>
       </div>
