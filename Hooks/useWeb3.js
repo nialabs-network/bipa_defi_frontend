@@ -37,6 +37,11 @@ export const useWeb3 = () => {
           method: "eth_requestAccounts",
         });
         const network = await web3Provider.eth.net.getId();
+        if (network !== 137) {
+          toast.error("Please switch your to Polygon Mainnet");
+          appContext.setLoadingState(false, "");
+          return;
+        }
         const balance = await web3Provider.eth.getBalance(address[0]);
         const contracts = {
           lock: {

@@ -59,7 +59,7 @@ export default function Dashboard() {
     try {
       const currentBlock = await web3Provider.eth.getBlockNumber();
       const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: currentBlock - 9000,
+        fromBlock: currentBlock - 1000,
         toBlock: "latest",
       });
       eventRef.current = [...stakeEvents];
@@ -222,7 +222,6 @@ export default function Dashboard() {
   if (events)
     return (
       <div className={styles.dashboardContainer}>
-        <div>graphql query</div>
         <Stats styles={styles} allPoolsTVL={stakeTVL + tvl} />
         <section className={styles.charts}>
           <div className={`${styles.chart} glass`} style={{ border: "none" }}>

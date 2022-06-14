@@ -151,11 +151,16 @@
   transition: 100ms transform linear;
 }
 @media screen and (max-width: 1160px) {
-  .depositContainer {
-    flex-direction: column;
-  }
+  // .depositContainer {
+  //   flex-direction: column;
+  // }
 }
 @media screen and (max-width: 768px) {
+  .depositContainer {
+    .inputArea {
+      padding: 0;
+    }
+  }
   .accordion_button {
     margin: 0 auto;
   }

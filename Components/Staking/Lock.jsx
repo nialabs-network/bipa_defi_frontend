@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import periods from "./lockPools";
+import { toast } from "react-toastify";
 export default function Lock({ styles, toggle, selected }) {
   const [amount, setAmount] = useState("");
   const [isLock, setIsLock] = useState(true); //toggle lock and unlock
@@ -39,23 +40,29 @@ export default function Lock({ styles, toggle, selected }) {
   }
 
   useEffect(() => {
+    function getTVL() {
+      Object.keys(periods).forEach(async (key) => {
+        const tvl = address
+          ? await contracts.lock[key].methods.totalValueLocked().call()
+          : "0";
+        document.getElementById(key)
+          ? (document.getElementById(key).innerText =
+              "TVL: " +
+              (address ? web3Provider.utils.fromWei(tvl, "ether") : "0"))
+          : null;
+      });
+    }
     if (address) {
       try {
+        setLockOf(null);
         getBlockchainData();
         allowanceCheck();
-        Object.keys(periods).forEach((key) => {
-          contracts.lock[key].methods
-            .totalValueLocked()
-            .call()
-            .then(
-              (res) =>
-                (document.getElementById(key).innerText =
-                  "TVL: " + web3Provider.utils.fromWei(res, "ether"))
-            );
-        });
+        getTVL();
       } catch (e) {
         console.log(e);
       }
+    } else {
+      getTVL();
     }
   }, [address, selected, amount, isLock]);
   async function approve() {
@@ -147,7 +154,11 @@ export default function Lock({ styles, toggle, selected }) {
           <span className={styles.label}>LOCK</span>
           <div
             className={styles.flex}
-            onClick={() => toggle(periods[key].period)}
+            onClick={
+              address
+                ? () => toggle(periods[key].period)
+                : () => toast.error("Connect Wallet")
+            }
           >
             <div className={styles.logo}>
               <div className={styles.stakeLogo}>
