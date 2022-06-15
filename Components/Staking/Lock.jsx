@@ -27,11 +27,9 @@ export default function Lock({ styles, toggle, selected }) {
           .lockOf(address)
           .call();
         let claimableRewards;
-        if (lockOf.lockedAmount > 0) {
-          claimableRewards = await contracts.lock[selected].methods
-            .claimableRewards()
-            .call({ from: address });
-        }
+        claimableRewards = await contracts.lock[selected].methods
+          .claimableRewards()
+          .call({ from: address });
         setLockOf({ ...lockOf, claimableRewards });
       }
     } catch (e) {
