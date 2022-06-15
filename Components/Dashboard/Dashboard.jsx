@@ -59,7 +59,7 @@ export default function Dashboard() {
     try {
       const currentBlock = await web3Provider.eth.getBlockNumber();
       const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: currentBlock - 1000,
+        fromBlock: currentBlock - 9000,
         toBlock: "latest",
       });
       eventRef.current = [...stakeEvents];
@@ -122,7 +122,7 @@ export default function Dashboard() {
         localStorage.setItem("priceFeed", JSON.stringify(feed));
       });
   }, [address]);
-  console.log(priceFeed);
+  console.log(events);
   useEffect(() => {
     let poolEventsArr = [];
     let eachPoolEvents = [];
@@ -244,7 +244,7 @@ export default function Dashboard() {
           </div>
           <div className={`${styles.chart} glass`} style={{ border: "none" }}>
             <h3>TVL (Flexible)</h3>
-            <p>{stakeTVL + tvl} NASMG</p>
+            <p>{stakeTVL + tvl} </p>
 
             <div className={styles.chartContainer}>
               <ResponsiveContainer>

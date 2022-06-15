@@ -270,7 +270,7 @@ export default function Lock({ styles, toggle, selected }) {
                   type="number"
                   className={styles.formInput}
                   value={
-                    web3Provider
+                    web3Provider && lockOf
                       ? web3Provider.utils.fromWei(lockOf.lockedAmount, "ether")
                       : ""
                   }
