@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAppContext, useWeb3Context } from "../../Contexts";
 import periods from "./lockPools";
 import { toast } from "react-toastify";
+import { BN } from "bn.js";
 export default function Lock({ styles, toggle, selected }) {
   const [amount, setAmount] = useState("");
   const [isLock, setIsLock] = useState(true); //toggle lock and unlock
@@ -14,8 +15,11 @@ export default function Lock({ styles, toggle, selected }) {
   const [lockOf, setLockOf] = useState(null);
   const [nasmgBalance, setNasmgBalance] = useState("1");
   const [currentAllowance, setCurrentAllowance] = useState("");
+
   async function getBlockchainData() {
+    console.log("getting blockchain data");
     try {
+      console.log(selected && selected !== "stake");
       if (selected && selected !== "stake") {
         const balance = await contracts.NASMG.methods.balanceOf(address).call();
         setNasmgBalance(
@@ -412,21 +416,19 @@ export default function Lock({ styles, toggle, selected }) {
                         )
                       : "0"}{" "}
                     {lockOf
-                      ? Number(
-                          web3Provider?.utils.fromWei(
-                            (
-                              periods[key].lockPeriod *
-                              Math.trunc(
-                                periods[key].interestPerSecond *
-                                  Number(
-                                    web3Provider.utils.fromWei(
-                                      lockOf.lockedAmount,
-                                      "ether"
-                                    )
-                                  )
-                              )
-                            ).toString(),
-                            "ether"
+                      ? (
+                          Number(
+                            web3Provider.utils.fromWei(
+                              new BN(periods[key].lockPeriod, 10)
+                                .mul(new BN(periods[key].interestPerSecond, 10))
+                                .toString()
+                            )
+                          ) *
+                          Number(
+                            web3Provider.utils.fromWei(
+                              lockOf.lockedAmount,
+                              "ether"
+                            )
                           )
                         ).toFixed(6)
                       : "0"}
