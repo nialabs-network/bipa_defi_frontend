@@ -42,12 +42,12 @@ export default function Stats({ styles, allPoolsTVL }) {
           )}
         </p>
       </div>
-      <div className={`${styles.stat} ${styles.glassMob}`}>
+      {/* <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>APR</p>
         <p className={styles.value}>
           <CountUp end={100} />%
         </p>
-      </div>
+      </div> */}
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>Total Value Locked</p>
         <p className={styles.value}>

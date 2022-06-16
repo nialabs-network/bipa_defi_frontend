@@ -62,6 +62,7 @@ export default function Dashboard() {
         fromBlock: currentBlock - 9000,
         toBlock: "latest",
       });
+      console.log(stakeEvents, "stake events");
       eventRef.current = [...stakeEvents];
       localStorage.setItem("stakeEvents", JSON.stringify(eventRef.current));
       setEvents(eventRef.current);
@@ -219,6 +220,8 @@ export default function Dashboard() {
       });
     }
   }
+  console.log(parsedData, "parsed data  ");
+  console.log(chartData, "chartdata");
   if (events)
     return (
       <div className={styles.dashboardContainer}>
