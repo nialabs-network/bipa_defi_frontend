@@ -6,6 +6,7 @@ import { useAppContext, useWeb3Context } from "../../Contexts";
 import periods from "./lockPools";
 import { toast } from "react-toastify";
 import { BN } from "bn.js";
+import { getPrice, getMaticPrice } from "../Swap/quote";
 export default function Lock({ styles, toggle, selected }) {
   const [amount, setAmount] = useState("");
   const [isLock, setIsLock] = useState(true); //toggle lock and unlock
@@ -15,6 +16,7 @@ export default function Lock({ styles, toggle, selected }) {
   const [lockOf, setLockOf] = useState(null);
   const [nasmgBalance, setNasmgBalance] = useState("1");
   const [currentAllowance, setCurrentAllowance] = useState("");
+  const token = { ticker: "NASMG", amount };
 
   async function getBlockchainData() {
     console.log("getting blockchain data");
@@ -83,13 +85,48 @@ export default function Lock({ styles, toggle, selected }) {
     }
     setLoadingState(false, "");
   }
-  async function lock(amount) {
-    const gasPrice = await web3Provider.eth.getGasPrice();
-    console.log(gasPrice, "gasprice before lock");
+
+  async function lock() {
     try {
       setLoadingState(true, "Locking");
+      const gasPrice = await web3Provider.eth.getGasPrice();
+      console.log(gasPrice, "gasprice before lock");
+      const price = await getPrice(token, web3Provider);
+      const matic = await getMaticPrice(web3Provider);
+      const diboInterestForPeriod = await contracts.lock[selected].methods
+        .diboInterestForPeriod()
+        .call();
+      const diboPrice = await contracts.lock[selected].methods
+        .diboPriceKRW()
+        .call();
+      const lockPeriod = await contracts.lock[selected].methods
+        .lockPeriod()
+        .call();
+      const oracle = await contracts.KRWexrate.methods.latestAnswer().call();
+      const USDKRW = Number((1 / (oracle / 10 ** 8)).toFixed(2));
+      console.log(USDKRW, "korean won");
+      const dollarValueOfStake = matic * price;
+      console.log(matic, "matic/usd");
+      console.log(price, "nasmg/matic");
+      console.log(matic * price);
+      const KRWvalueOfStake = dollarValueOfStake * USDKRW;
+      console.log(dollarValueOfStake, "dollar value of stake");
+      console.log(KRWvalueOfStake, "stake value in KRW");
+      const diboInterest =
+        (KRWvalueOfStake / 100) *
+        web3Provider.utils.fromWei(diboInterestForPeriod, "ether");
+      console.log(diboInterest, "dibo interest based on krw stake value");
+      const diboRewardsAmount =
+        diboInterest / web3Provider.utils.fromWei(diboPrice, "ether"); //tokens to be sent
+      console.log(diboRewardsAmount, "dibo tokens to receive");
+      const diboPerSecond = new BN(
+        web3Provider.utils.toWei(String(diboRewardsAmount.toFixed(18)), "ether")
+      )
+        .div(new BN(lockPeriod))
+        .toString();
+      console.log(diboPerSecond);
       await contracts.lock[selected].methods
-        .lock(web3Provider.utils.toWei(amount, "ether"))
+        .lock(web3Provider.utils.toWei(amount, "ether"), diboPerSecond)
         .send({ from: address, gasPrice });
       setLoadingState(false, "");
       setAmount("");
@@ -304,14 +341,14 @@ export default function Lock({ styles, toggle, selected }) {
                 ) : currentAllowance >= amount ? (
                   <Button
                     value={
-                      Number(amount) <= 0
+                      Number(amount) < 1
                         ? "Enter the amount"
                         : Number(amount) > Number(nasmgBalance)
                         ? "Not enough tokens"
                         : "Lock"
                     }
                     style={
-                      Number(amount) <= 0
+                      Number(amount) < 1
                         ? {
                             margin: "0",
                             cursor: "default",
@@ -332,7 +369,7 @@ export default function Lock({ styles, toggle, selected }) {
                         ? null
                         : Number(amount) > Number(nasmgBalance)
                         ? null
-                        : () => lock(amount)
+                        : () => lock()
                     }
                   />
                 ) : (
@@ -476,6 +513,7 @@ export default function Lock({ styles, toggle, selected }) {
                     : "Nothing to claim"
                 }
                 style={
+                  lockOf !== null &&
                   lockOf?.claimableRewards !== "0" &&
                   lockOf?.lockedAmount !== "0"
                     ? {
@@ -492,10 +530,11 @@ export default function Lock({ styles, toggle, selected }) {
                       }
                 }
                 onclick={
-                  lockOf?.claimableRewards !== "0" &&
+                  lockOf &&
+                  (lockOf?.claimableRewards !== "0" &&
                   lockOf?.lockedAmount !== "0"
                     ? claim
-                    : null
+                    : null)
                 }
               />
             </div>

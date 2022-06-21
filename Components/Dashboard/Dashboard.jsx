@@ -137,6 +137,7 @@ export default function Dashboard() {
             toBlock: "latest",
           }
         );
+        console.log(poolEvents, period);
         poolEventsArr = poolEventsArr.concat(poolEvents);
         localStorage.setItem("poolEvents", JSON.stringify(poolEventsArr));
         eachPoolEvents = eachPoolEvents.concat({ period, poolEvents });
@@ -228,7 +229,7 @@ export default function Dashboard() {
         <Stats styles={styles} allPoolsTVL={stakeTVL + tvl} />
         <section className={styles.charts}>
           <div className={`${styles.chart} glass`} style={{ border: "none" }}>
-            <h3>Total value locked</h3>
+            <h3>Test chart</h3>
             <p>
               $
               {priceFeed.length > 0

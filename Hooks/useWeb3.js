@@ -18,6 +18,7 @@ import lock30Abi from "./lock30Abi";
 import lock90Abi from "./lock90Abi";
 import lock180Abi from "./lock180Abi";
 import lock365Abi from "./lock365Abi";
+import { exRateAbi } from "./exrateAbi";
 export const useWeb3 = () => {
   const [web3State, dispatch] = useReducer(web3Reducer, web3InitialState);
   const { provider, web3Provider, address, balance, network, contracts } =
@@ -73,6 +74,10 @@ export const useWeb3 = () => {
           DIBO: new web3Provider.eth.Contract(
             erc20,
             process.env.NEXT_PUBLIC_DIBO_ADDRESS
+          ),
+          KRWexrate: new web3Provider.eth.Contract(
+            exRateAbi,
+            process.env.NEXT_PUBLIC_ORACLE_KRW
           ),
         };
         dispatch({
