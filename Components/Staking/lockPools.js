@@ -4,7 +4,7 @@ const periods = {
     period: 30,
     interest: "1.25%",
     diboInterest: "3%",
-    lockPeriod: "300",
+    lockPeriod: "2592000",
     interestPerSecond: "4822530865",
     color: "#9A86A4",
   },
