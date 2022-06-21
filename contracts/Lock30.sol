@@ -22,11 +22,13 @@ contract Lock30 {
         uint256 lastClaim;
         uint256 nasmgPaidOutRewards;
         uint256 diboPaidOutRewards;
+        uint256 diboInterestPerSecond;
     }
 
     IERC20Token private nasmgToken;
     IERC20Token private diboToken;
-    uint256 private diboInterestPerSecond = 11574074075; //formula: 10^18 * (interest/100) / lockPeriod
+    uint256 public diboInterestForPeriod = 3000000000000000000;
+    uint256 public diboPriceKRW = 1250000000000000000000;
     uint256 private nasmgInterestPerSecond = 4822530865; //formula: 10^18 * (interest/100) / lockPeriod
     address public owner;
     address[] private stakers;
@@ -57,7 +59,14 @@ contract Lock30 {
     function setDiboInterest(uint256 _newInterest) public returns (bool) {
         require(msg.sender == owner, "You are not the owner of the contract");
         require(_newInterest > 0, "Interest should be more than 0");
-        diboInterestPerSecond = _newInterest;
+        diboInterestForPeriod = _newInterest;
+        return true;
+    }
+
+    function setDiboPriceKRW(uint256 _newPrice) public returns (bool) {
+        require(msg.sender == owner, "You are not the owner of the contract");
+        require(_newPrice > 0, "Interest should be more than 0");
+        diboPriceKRW = _newPrice;
         return true;
     }
 
@@ -68,19 +77,20 @@ contract Lock30 {
         return true;
     }
 
-    function lock(uint256 _amount) public {
+    function lock(uint256 _amount, uint256 _diboInterestPerSecond) public {
         require(
             lockOf[msg.sender].lockedAmount == 0,
             "You have already staked"
         );
-        require(_amount > 0, "You cannot stake nothing");
+        require(_amount >= 1e18, "You cannot stake nothing");
         lockOf[msg.sender] = StakingInfo(
             msg.sender,
             _amount,
             block.timestamp,
             block.timestamp,
             lockOf[msg.sender].nasmgPaidOutRewards,
-            lockOf[msg.sender].diboPaidOutRewards
+            lockOf[msg.sender].diboPaidOutRewards,
+            _diboInterestPerSecond
         );
         nasmgToken.transferFrom(msg.sender, address(this), _amount);
         totalValueLocked = totalValueLocked + _amount;
@@ -106,9 +116,8 @@ contract Lock30 {
         uint256 diboPeriod = lockOf[msg.sender].lockTime +
             lockPeriod -
             lockOf[msg.sender].lastClaim;
-        uint256 diboReward = diboInterestPerSecond *
-            diboPeriod *
-            (lockOf[msg.sender].lockedAmount / 1e18);
+        uint256 diboReward = lockOf[msg.sender].diboInterestPerSecond *
+            diboPeriod;
 
         if (diboReward > 0) {
             diboToken.transferFrom(owner, msg.sender, diboReward);
@@ -146,9 +155,7 @@ contract Lock30 {
             period = block.timestamp - lockOf[msg.sender].lastClaim;
             lockOf[msg.sender].lastClaim = block.timestamp;
         }
-        uint256 reward = period *
-            diboInterestPerSecond *
-            (lockOf[msg.sender].lockedAmount / 1e18);
+        uint256 reward = period * lockOf[msg.sender].diboInterestPerSecond;
         diboToken.transferFrom(owner, msg.sender, reward);
         lockOf[msg.sender].diboPaidOutRewards =
             lockOf[msg.sender].diboPaidOutRewards +
@@ -156,24 +163,20 @@ contract Lock30 {
     }
 
     function claimableRewards() public view returns (uint256) {
-        require(lockOf[msg.sender].lockedAmount > 0);
-        uint256 period;
-        if (block.timestamp >= lockOf[msg.sender].lockTime + lockPeriod) {
-            period =
-                (lockOf[msg.sender].lockTime + lockPeriod) -
-                lockOf[msg.sender].lastClaim;
-        } else {
-            period = block.timestamp - lockOf[msg.sender].lastClaim;
-        }
-        uint256 claimableReward;
         if (lockOf[msg.sender].lockedAmount > 0) {
-            claimableReward =
-                period *
-                diboInterestPerSecond *
-                (lockOf[msg.sender].lockedAmount / 1e18);
+            uint256 period;
+            if (block.timestamp >= lockOf[msg.sender].lockTime + lockPeriod) {
+                period =
+                    (lockOf[msg.sender].lockTime + lockPeriod) -
+                    lockOf[msg.sender].lastClaim;
+            } else {
+                period = block.timestamp - lockOf[msg.sender].lastClaim;
+            }
+            uint256 claimableReward;
+            claimableReward = period * lockOf[msg.sender].diboInterestPerSecond;
+            return claimableReward;
         } else {
-            claimableReward = 0;
+            return 0;
         }
-        return claimableReward;
     }
 }
