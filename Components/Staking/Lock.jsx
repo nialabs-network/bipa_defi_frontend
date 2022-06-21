@@ -108,7 +108,6 @@ export default function Lock({ styles, toggle, selected }) {
       const dollarValueOfStake = matic * price;
       console.log(matic, "matic/usd");
       console.log(price, "nasmg/matic");
-      console.log(matic * price);
       const KRWvalueOfStake = dollarValueOfStake * USDKRW;
       console.log(dollarValueOfStake, "dollar value of stake");
       console.log(KRWvalueOfStake, "stake value in KRW");
@@ -124,7 +123,7 @@ export default function Lock({ styles, toggle, selected }) {
       )
         .div(new BN(lockPeriod))
         .toString();
-      console.log(diboPerSecond);
+      console.log(diboPerSecond, "dibo in wei per second");
       await contracts.lock[selected].methods
         .lock(web3Provider.utils.toWei(amount, "ether"), diboPerSecond)
         .send({ from: address, gasPrice });
@@ -447,10 +446,12 @@ export default function Lock({ styles, toggle, selected }) {
                 >
                   <p style={{ color: "lime" }}>
                     {lockOf
-                      ? web3Provider?.utils.fromWei(
-                          lockOf.nasmgPaidOutRewards,
-                          "ether"
-                        )
+                      ? Number(
+                          web3Provider?.utils.fromWei(
+                            lockOf.nasmgPaidOutRewards,
+                            "ether"
+                          )
+                        ).toFixed(6)
                       : "0"}{" "}
                     {lockOf
                       ? (

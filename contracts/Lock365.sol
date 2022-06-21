@@ -82,7 +82,7 @@ contract Lock365 {
             lockOf[msg.sender].lockedAmount == 0,
             "You have already staked"
         );
-        require(_amount > 0, "You cannot stake nothing");
+        require(_amount >= 1e18, "You cannot stake nothing");
         lockOf[msg.sender] = StakingInfo(
             msg.sender,
             _amount,
