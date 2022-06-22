@@ -227,7 +227,7 @@ export default function Dashboard() {
     return (
       <div className={styles.dashboardContainer}>
         <Stats styles={styles} allPoolsTVL={stakeTVL + tvl} />
-        <section className={styles.charts}>
+        {/* <section className={styles.charts}>
           <div className={`${styles.chart} glass`} style={{ border: "none" }}>
             <h3>Test chart</h3>
             <p>
@@ -298,7 +298,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
           </div>
-        </section>
+        </section> */}
       </div>
     );
 }
