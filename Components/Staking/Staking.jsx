@@ -1,5 +1,6 @@
 import Stake from "./Stake";
 import Lock from "./Lock";
+import ExistingLocks from "./ExistingLocks";
 import styles from "./Staking.module.scss";
 import { useState } from "react";
 export default function Staking() {
@@ -28,6 +29,8 @@ export default function Staking() {
         ></span>
       </div>
       <Lock styles={styles} toggle={toggle} selected={selected} />
+
+      <ExistingLocks styles={styles} toggle={toggle} selected={selected} />
     </section>
   );
 }
