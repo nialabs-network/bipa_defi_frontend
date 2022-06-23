@@ -28,7 +28,7 @@ contract Lock365 {
     IERC20Token private nasmgToken;
     IERC20Token private diboToken;
     uint256 public diboInterestForPeriod = 100000000000000000000;
-    uint256 private diboPriceKRW = 1250000000000000000000; //formula: 10^18 * (interest/100) / lockPeriod
+    uint256 public diboPriceKRW = 1250000000000000000000; //formula: 10^18 * (interest/100) / lockPeriod
     uint256 private nasmgInterestPerSecond = 8219178083; //formula: 10^18 * (interest/100) / lockPeriod
     address public owner;
     address[] private stakers;
