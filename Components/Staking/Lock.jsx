@@ -49,11 +49,17 @@ export default function Lock({ styles, toggle, selected }) {
         const tvl = address
           ? await contracts.lock[key].methods.totalValueLocked().call()
           : "0";
+        const diboInterest = address
+          ? await contracts.lock[key].methods.diboInterestForPeriod().call()
+          : 0;
         document.getElementById(key)
           ? (document.getElementById(key).innerText =
               "TVL: " +
               (address ? web3Provider.utils.fromWei(tvl, "ether") : "0"))
           : null;
+        document.getElementById(key + "diboInterest").innerText =
+          web3Provider &&
+          web3Provider.utils.fromWei(diboInterest, "ether") + "%";
       });
     }
     if (address) {
@@ -228,7 +234,7 @@ export default function Lock({ styles, toggle, selected }) {
                 <p>Interest</p>
               </div>
               <div className={styles.values}>
-                <p>DIBO</p> <p>{periods[key].diboInterest}</p>
+                <p>DIBO</p> <p id={key + "diboInterest"}></p>
               </div>
             </div>
             <div className={styles.period}>
@@ -456,7 +462,7 @@ export default function Lock({ styles, toggle, selected }) {
                     {lockOf
                       ? (
                           Number(
-                            web3Provider.utils.fromWei(
+                            web3Provider?.utils.fromWei(
                               new BN(periods[key].lockPeriod, 10)
                                 .mul(new BN(periods[key].interestPerSecond, 10))
                                 .toString()
