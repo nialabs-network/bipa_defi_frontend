@@ -867,7 +867,7 @@ export default function ExistingLocks({ styles, toggle, selected }) {
     <>
       {address && (
         <div className={styles.separator}>
-          <h3 className={styles.title}>Existing Locks</h3>
+          <h3 className={styles.title}>Existing Locks ({address})</h3>
           <span
             className={styles.line}
             style={{ borderBottom: "4px #81c9e9 solid" }}
@@ -903,7 +903,7 @@ export default function ExistingLocks({ styles, toggle, selected }) {
                   </div>
                   <div className={styles.productTitle}>
                     <p className={styles.title}>NASMG + DIBO Lock</p>
-                    <p className={styles.amount} id={key + "existing"}></p>
+                    <p className={styles.amount}></p>
                   </div>
                   <div className={styles.productInterest}>
                     <p className={styles.interest}>{periods[key].interest}</p>

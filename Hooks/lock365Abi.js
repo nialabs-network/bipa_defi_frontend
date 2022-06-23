@@ -98,10 +98,28 @@ const lock365Abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "diboInterestForPeriod",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
         name: "_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_diboInterestPerSecond",
         type: "uint256",
       },
     ],
@@ -150,6 +168,11 @@ const lock365Abi = [
         name: "diboPaidOutRewards",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "diboInterestPerSecond",
+        type: "uint256",
+      },
     ],
     stateMutability: "view",
     type: "function",
@@ -189,6 +212,25 @@ const lock365Abi = [
       },
     ],
     name: "setDiboInterest",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_newPrice",
+        type: "uint256",
+      },
+    ],
+    name: "setDiboPriceKRW",
     outputs: [
       {
         internalType: "bool",
