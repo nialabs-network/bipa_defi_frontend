@@ -111,6 +111,19 @@ const lock365Abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "diboPriceKRW",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
