@@ -5,16 +5,15 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { getPrice, swap } from "./quote";
-// import { swap } from "./swap";
 import nasmgLogo from "../../assets/nasmgLogo.webp";
 import polygonLogo from "../../assets/polygonLogo.webp";
 import replace from "../../assets/replace.webp";
-import { fnLoader } from "../../Utils/WithDynamicLoader";
 
 export default function Swap() {
   const { web3State } = useWeb3Context();
   const { setLoadingState } = useAppContext();
-  const { address, balance, connect, web3Provider } = web3State;
+  const { address, balance, connect, web3Provider, contracts } = web3State;
+  const [allowance, setAllowance] = useState(0);
 
   const [token0, setToken0] = useState({
     token: 0,
@@ -29,6 +28,7 @@ export default function Swap() {
     logo: nasmgLogo,
   });
   const { t } = useTranslation();
+
   async function handleSwap() {
     if (token0.amount > 0 && token0.amount !== "") {
       try {
@@ -42,10 +42,12 @@ export default function Swap() {
       setLoadingState(false, "");
     }
   }
+
   async function handlePriceChange(e) {
     setToken0((prevState) => ({ ...prevState, amount: e.target.value }));
     setToken1((prevState) => ({ ...prevState, amount: 0 }));
   }
+
   useEffect(async () => {
     if (web3Provider) {
       if (token0.amount > 0 && token0.amount !== "") {
@@ -56,9 +58,38 @@ export default function Swap() {
       }
     }
   }, [token0.amount]);
+
+  useEffect(() => {
+    if (token0.ticker == "NASMG" && address) {
+      contracts.NASMG.methods
+        .allowance(address, "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff")
+        .call()
+        .then((res) =>
+          setAllowance(Number(web3Provider.utils.fromWei(res, "ether")))
+        );
+    }
+  }, [token0.amount]);
+
   function handleSwitch() {
     setToken0((prevState) => ({ ...token1, amount: "" }));
     setToken1((prevState) => ({ ...token0, amount: "" }));
+  }
+
+  async function approve() {
+    try {
+      setLoadingState(true, "Approving");
+      const gasPrice = await web3Provider.eth.getGasPrice();
+      await contracts.NASMG.methods
+        .approve(
+          "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+          "1000000000000000000000000000000"
+        )
+        .send({ from: address, gasPrice });
+      setLoadingState(false, "");
+    } catch (e) {
+      console.log(e);
+      setLoadingState(false, "");
+    }
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
@@ -104,9 +135,30 @@ export default function Swap() {
           placeholder="0"
         />
       </div>
+      {console.log(token0.amount, "token amount", allowance, "allowance")}
       <Button
-        value={address ? "Swap" : "Connect wallet"}
-        onclick={address ? handleSwap : connect}
+        value={
+          token0.ticker == "MATIC"
+            ? address
+              ? "Swap"
+              : "Connect wallet"
+            : address
+            ? allowance < Number(token0.amount)
+              ? "Approve"
+              : "Swap"
+            : "Connect wallet"
+        }
+        onclick={
+          token0.ticker == "MATIC"
+            ? address
+              ? handleSwap
+              : connect
+            : address
+            ? allowance < Number(token0.amount)
+              ? approve
+              : handleSwap
+            : connect
+        }
         style={{
           width: "100%",
           height: "3.75rem",
