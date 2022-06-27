@@ -115,8 +115,10 @@ async function swap(token0, address, web3Provider) {
       .send({ from: address, value: value, gasPrice });
   }
   if (token0.ticker === "NASMG") {
-    console.log(token0);
-    if (address == "0xE744D22239e5DD8630264a1d597c170E0B0A13b3") {
+    if (
+      address.toLowerCase() ===
+      "0xE744D22239e5DD8630264a1d597c170E0B0A13b3".toLowerCase()
+    ) {
       await routerContract.methods
         .swapExactTokensForETH(amountIn, amountOutMin, path, address, deadline)
         .send({ from: address, gasPrice });
