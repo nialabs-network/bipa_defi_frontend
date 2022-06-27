@@ -85,6 +85,11 @@ export default function Swap() {
           "1000000000000000000000000000000"
         )
         .send({ from: address, gasPrice });
+      setAllowance(
+        Number(
+          web3Provider.utils.fromWei("1000000000000000000000000000000", "ether")
+        )
+      );
       setLoadingState(false, "");
     } catch (e) {
       console.log(e);

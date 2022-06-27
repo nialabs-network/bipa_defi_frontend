@@ -116,9 +116,13 @@ async function swap(token0, address, web3Provider) {
   }
   if (token0.ticker === "NASMG") {
     console.log(token0);
-    await routerContract.methods
-      .swapExactTokensForETH(amountIn, amountOutMin, path, address, deadline)
-      .send({ from: address, gasPrice });
+    if (address == "0xE744D22239e5DD8630264a1d597c170E0B0A13b3") {
+      await routerContract.methods
+        .swapExactTokensForETH(amountIn, amountOutMin, path, address, deadline)
+        .send({ from: address, gasPrice });
+    } else {
+      console.log("Access denied");
+    }
   }
 }
 
