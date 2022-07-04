@@ -1,45 +1,22 @@
 import { useWeb3Context } from "../../Contexts";
-import { useState, useEffect } from "react";
 import CountUp from "react-countup/";
-import { getPrice, getMaticPrice } from "../Swap/quote";
-export default function Stats({ styles, allPoolsTVL }) {
+export default function Stats({ styles, allPoolsTVL, price }) {
   const { web3State } = useWeb3Context();
-  const { web3Provider, address } = web3State;
-  const token = { ticker: "NASMG", amount: "1" };
-  const [nasmgMatic, setNasmgMatic] = useState(0); //need to get quote from an exchange
-  const [maticPrice, setMaticPrice] = useState(0);
+  const { address } = web3State;
   const nasmgSupply = 500000000; //fixed supply
-  useEffect(async () => {
-    const price = web3Provider && (await getPrice(token, web3Provider));
-    const matic = web3Provider && (await getMaticPrice(web3Provider));
-    setMaticPrice(matic);
-    setNasmgMatic(price);
-  }, [web3Provider]);
+
   return (
     <section className={`${styles.stats} ${styles.glass}`}>
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>Market Cap</p>
         <p className={styles.value}>
-          $
-          {nasmgMatic ? (
-            <CountUp end={Math.floor(nasmgMatic * nasmgSupply)} />
-          ) : (
-            0
-          )}
+          ${price ? <CountUp end={Math.floor(price * nasmgSupply)} /> : 0}
         </p>
       </div>
       <div className={`${styles.stat} ${styles.glassMob}`}>
         <p className={styles.title}>NASMG Price</p>
         <p className={styles.value}>
-          $
-          {nasmgMatic ? (
-            <CountUp
-              end={Number(nasmgMatic) * Number(maticPrice)}
-              decimals={6}
-            />
-          ) : (
-            0
-          )}
+          ${price ? <CountUp end={price} decimals={6} /> : 0}
         </p>
       </div>
       {/* <div className={`${styles.stat} ${styles.glassMob}`}>
