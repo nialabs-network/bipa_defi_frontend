@@ -78,6 +78,7 @@ export default function Dashboard() {
     const dataBody = {};
     const headers = {
       "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
       Accept: "application/json",
     };
     let res = await ApiCaller.post(URL, dataBody, false, headers);
