@@ -14,9 +14,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-const token = document.head.querySelector('meta[name="csrf-token"]');
-
 export default function Dashboard() {
   const { web3State } = useWeb3Context();
   const { address, contracts, web3Provider } = web3State;
@@ -80,7 +77,6 @@ export default function Dashboard() {
     const URL = `https://admin.ato-nc.com/api/callPrices`;
     const dataBody = {};
     const headers = {
-      'X-CSRF-TOKEN': token.content,
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "access-control-allow-headers": "*",
