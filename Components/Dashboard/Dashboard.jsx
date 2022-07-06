@@ -6,6 +6,7 @@ import Stats from "./Stats";
 import periods from "../Staking/lockPools";
 import { getPrice, getMaticPrice } from "../Swap/quote";
 import { ApiCaller } from "./apiCaller";
+
 import {
   AreaChart,
   Area,
@@ -14,19 +15,34 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+
 export default function Dashboard() {
   const { web3State } = useWeb3Context();
   const { address, contracts, web3Provider } = web3State;
   const [stakeTVL, setStakeTVL] = useState(0);
   const [lockTVLs, setLockTVLs] = useState(periods);
-  const [events, setEvents] = useState([]);
-  const [poolEvents, setPoolEvents] = useState([]);
-  const [eachPoolEvents, setEachPoolEvents] = useState([]);
-  const [priceFeed, setPriceFeed] = useState({});
-  const eventRef = useRef([]);
+  const [parsedData, setParsedData] = useState("");
+  const [events, setEvents] = useState(
+    typeof window !== "undefined"
+      ? JSON.parse(
+          localStorage.getItem("events") ? localStorage.getItem("events") : "{}"
+        )
+      : {}
+  );
+  const [priceFeed, setPriceFeed] = useState(
+    typeof window !== "undefined"
+      ? JSON.parse(
+          localStorage.getItem("priceFeed")
+            ? localStorage.getItem("priceFeed")
+            : "{}"
+        )
+      : {}
+  );
+  console.log(events);
+  console.log(priceFeed, "priceFeed");
 
-  let parsedData = [];
-  let chartData = [];
+  // let parsedData = [];
+  // let chartData = [];
 
   const tvl = Object.keys(lockTVLs)
     .map((period) => lockTVLs[period])
@@ -35,6 +51,7 @@ export default function Dashboard() {
     address && getBlockchainData();
   }, [address]);
   async function getBlockchainData() {
+    //getting TOTAL VALUE LOCKED ACROSS ALL CONTRACTS
     contracts.stake.methods
       .totalValueLocked()
       .call()
@@ -59,19 +76,19 @@ export default function Dashboard() {
         .catch((e) => console.error(e));
     });
 
-    try {
-      const currentBlock = await web3Provider.eth.getBlockNumber();
-      const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
-        fromBlock: currentBlock - 9000,
-        toBlock: "latest",
-      });
-      console.log(stakeEvents, "stake events");
-      eventRef.current = [...stakeEvents];
-      localStorage.setItem("stakeEvents", JSON.stringify(eventRef.current));
-      setEvents(eventRef.current);
-    } catch (e) {
-      console.log(e);
-    }
+    // try {
+    //   const currentBlock = await web3Provider.eth.getBlockNumber();
+    //   const stakeEvents = await contracts.stake.getPastEvents("allEvents", {
+    //     fromBlock: currentBlock - 9000,
+    //     toBlock: "latest",
+    //   });
+    //   console.log(stakeEvents, "stake events");
+    //   eventRef.current = [...stakeEvents];
+    //   localStorage.setItem("stakeEvents", JSON.stringify(eventRef.current));
+    //   setEvents(eventRef.current);
+    // } catch (e) {
+    //   console.log(e);
+    // }
   }
   useEffect(async () => {
     const URL = `https://admin.ato-nc.com/api/callPrices`;
@@ -83,12 +100,7 @@ export default function Dashboard() {
       "Accept": "application/json",
     };
     let res = await ApiCaller.post(URL, dataBody, false, headers);
-    console.log(JSON.stringify(res.data.data));
-    // const res = JSON.parse(
-    //   `{"1":{"maticPrice":"0.482855","nasmgPrice":"1.46716","timestamp":"1656549727172"},"2":{"maticPrice":"0.482855","nasmgPrice":"1.46716","timestamp":"1656549730172"},"3":{"maticPrice":"0.482855","nasmgPrice":"1.46716","timestamp":"1656549724172"},"4":{"maticPrice":"0.482835","nasmgPrice":"1.46716","timestamp":"1656549721172"},"5":{"maticPrice":"0.482833","nasmgPrice":"1.46716","timestamp":"1656549718171"},"6":{"maticPrice":"0.482833","nasmgPrice":"1.46716","timestamp":"1656549715170"},"7":{"maticPrice":"0.482842","nasmgPrice":"1.46716","timestamp":"1656549712169"},"8":{"maticPrice":"0.482838","nasmgPrice":"1.46716","timestamp":"1656549709169"}}`
-    // );
     res = res.data.data;
-    console.log(res, "response");
     const feed =
       res &&
       Object.keys(res).map((point) => {
@@ -109,136 +121,139 @@ export default function Dashboard() {
         ];
         return {
           timestamp: Number(res[point]["timestamp"]),
-          time: `${date.getFullYear()}/${
-            date.getMonth() + 1
-          }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+          time: `${date.getHours()}:${date.getMinutes()}`,
           price: (
             Number(res[point]["maticPrice"]) * Number(res[point]["nasmgPrice"])
           ).toFixed(4),
         };
       });
-    console.log(
-      feed &&
-        feed.sort((a, b) => {
-          return a.timestamp - b.timestamp;
-        }),
-      "feed"
-    );
-    setPriceFeed(feed);
-    localStorage.setItem("priceFeed", JSON.stringify(feed));
+    feed &&
+      feed.sort((a, b) => {
+        return a.timestamp - b.timestamp;
+      });
 
-    // .then((res) => {
-    //   const feed = res.data.poolDayDatas.map((item) => {
-    //     return {
-    //       time: `${date.getDate()} ${months[date.getMonth()]}`,
-    //       price: item.token0Price.slice(0, item.token0Price.indexOf(".")),
-    //     };
-    //   });
-    //   console.log(feed, 'feed')
-    //   setPriceFeed(feed);
-    //   localStorage.setItem("priceFeed", JSON.stringify(feed));
-    // });
+    // feed && setPriceFeed(feed);
+    // feed && localStorage.setItem("priceFeed", JSON.stringify(feed));
+    console.log(res, "resPrice");
   }, []);
-  // console.log(events);
-  useEffect(() => {
-    let poolEventsArr = [];
-    let eachPoolEvents = [];
-    address &&
-      Object.keys(periods).forEach(async (period) => {
-        const currentBlock = await web3Provider.eth.getBlockNumber();
-        const poolEvents = await contracts.lock[period].getPastEvents(
-          "allEvents",
-          {
-            fromBlock: currentBlock - 9000,
-            toBlock: "latest",
-          }
-        );
-        console.log(poolEvents, period);
-        poolEventsArr = poolEventsArr.concat(poolEvents);
-        localStorage.setItem("poolEvents", JSON.stringify(poolEventsArr));
-        eachPoolEvents = eachPoolEvents.concat({ period, poolEvents });
-        setEachPoolEvents(eachPoolEvents);
-        setPoolEvents(poolEventsArr);
-      });
-  }, [address, eventRef.current.length]);
 
-  if (eachPoolEvents.length == 4) {
-    if (events.length > 0) {
-      eachPoolEvents.forEach((pool) =>
-        pool.poolEvents.forEach((event) => {
-          parsedData.push({
-            blockNumber: event.blockNumber,
-            pool: pool.period,
-            TVL: Number(
-              web3Provider?.utils.fromWei(
-                event.returnValues.totalValueLocked,
-                "ether"
-              )
-            ),
-          });
-        })
-      );
-      let parsedEvents = [];
-      if (events) {
-        parsedEvents = events.map((event) => {
-          const blockNumber = event.blockNumber;
-          const TVL = Number(
-            web3Provider?.utils.fromWei(event.returnValues.TVL, "ether")
-          );
-          return { blockNumber, TVL };
-        });
-      }
-      parsedEvents.forEach((event) => {
-        parsedData.push({
-          blockNumber: event.blockNumber,
-          pool: "staking",
-          TVL: event.TVL,
-        });
-      });
-      parsedData.sort((a, b) => {
-        return a.blockNumber - b.blockNumber;
-      });
-      parsedData.forEach((item, index) => {
-        let slicedReversed = chartData.slice(0, index).reverse();
-        chartData.push({
-          blockNumber: item.blockNumber,
-          30:
-            item.pool == "30"
-              ? item.TVL
-              : slicedReversed.length !== 0
-              ? slicedReversed[0][30]
-              : 0,
-          90:
-            item.pool == "90"
-              ? item.TVL
-              : slicedReversed.length !== 0
-              ? slicedReversed[0][90]
-              : 0,
-          180:
-            item.pool == "180"
-              ? item.TVL
-              : slicedReversed.length !== 0
-              ? slicedReversed[0][180]
-              : 0,
-          365:
-            item.pool == "365"
-              ? item.TVL
-              : slicedReversed.length !== 0
-              ? slicedReversed[0][365]
-              : 0,
-          staking:
-            item.pool == "staking"
-              ? item.TVL
-              : slicedReversed.length !== 0
-              ? slicedReversed[0]["staking"]
-              : 0,
-        });
-      });
-    }
-  }
-  // console.log(parsedData, "parsed data  ");
-  // console.log(chartData, "chartdata");
-  const [nasmgMatic, setNasmgMatic] = useState(0); //need to get quote from an exchange
+  useEffect(async () => {
+    const URL = `https://admin.ato-nc.com/api/callEvents`;
+    const pool_name = ["stake", "stake30", "stake90", "stake180", "stake365"];
+    const dataBody = pool_name;
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+    let res = await ApiCaller.post(URL, dataBody, false, headers);
+    res = res.data.data;
+    // res && localStorage.setItem("events", JSON.stringify(res));
+    // res && setEvents(res);
+    console.log(res, "res");
+  }, []);
+
+  //all pools events
+  // useEffect(() => {
+  //   let poolEventsArr = [];
+  //   let eachPoolEvents = [];
+  //   address &&
+  //     Object.keys(periods).forEach(async (period) => {
+  //       const currentBlock = await web3Provider.eth.getBlockNumber();
+  //       const poolEvents = await contracts.lock[period].getPastEvents(
+  //         "allEvents",
+  //         {
+  //           fromBlock: currentBlock - 9000,
+  //           toBlock: "latest",
+  //         }
+  //       );
+  //       console.log(poolEvents, period);
+  //       poolEventsArr = poolEventsArr.concat(poolEvents);
+  //       localStorage.setItem("poolEvents", JSON.stringify(poolEventsArr));
+  //       eachPoolEvents = eachPoolEvents.concat({ period, poolEvents });
+  //       setEachPoolEvents(eachPoolEvents);
+  //       setPoolEvents(poolEventsArr);
+  //     });
+  // }, [address, eventRef.current.length]);
+  //0x9aE247f8444B54Bc2f3a78EA934e96359B854d4c==staking
+  //creating data structure
+
+  // if (eachPoolEvents.length == 4) {
+  //   if (events.length > 0) {
+  //     eachPoolEvents.forEach((pool) =>
+  //       pool.poolEvents.forEach((event) => {
+  //         parsedData.push({
+  //           blockNumber: event.blockNumber,
+  //           pool: pool.period,
+  //           TVL: Number(
+  //             web3Provider?.utils.fromWei(
+  //               event.returnValues.totalValueLocked,
+  //               "ether"
+  //             )
+  //           ),
+  //         });
+  //       })
+  //     );
+  //     let parsedEvents = [];
+  //     if (events) {
+  //       parsedEvents = events.map((event) => {
+  //         const blockNumber = event.blockNumber;
+  //         const TVL = Number(
+  //           web3Provider?.utils.fromWei(event.returnValues.TVL, "ether")
+  //         );
+  //         return { blockNumber, TVL };
+  //       });
+  //     }
+  //     parsedEvents.forEach((event) => {
+  //       parsedData.push({
+  //         blockNumber: event.blockNumber,
+  //         pool: "staking",
+  //         TVL: event.TVL,
+  //       });
+  //     });
+  //     parsedData.sort((a, b) => {
+  //       return a.blockNumber - b.blockNumber;
+  //     });
+  //     parsedData.forEach((item, index) => {
+  //       let slicedReversed = chartData.slice(0, index).reverse();
+  //       chartData.push({
+  //         blockNumber: item.blockNumber,
+  //         30:
+  //           item.pool == "30"
+  //             ? item.TVL
+  //             : slicedReversed.length !== 0
+  //             ? slicedReversed[0][30]
+  //             : 0,
+  //         90:
+  //           item.pool == "90"
+  //             ? item.TVL
+  //             : slicedReversed.length !== 0
+  //             ? slicedReversed[0][90]
+  //             : 0,
+  //         180:
+  //           item.pool == "180"
+  //             ? item.TVL
+  //             : slicedReversed.length !== 0
+  //             ? slicedReversed[0][180]
+  //             : 0,
+  //         365:
+  //           item.pool == "365"
+  //             ? item.TVL
+  //             : slicedReversed.length !== 0
+  //             ? slicedReversed[0][365]
+  //             : 0,
+  //         staking:
+  //           item.pool == "staking"
+  //             ? item.TVL
+  //             : slicedReversed.length !== 0
+  //             ? slicedReversed[0]["staking"]
+  //             : 0,
+  //       });
+  //     });
+  //   }
+  // }
+
+  //getting dollar value of nasmg
+  const [nasmgMatic, setNasmgMatic] = useState(0);
   const [maticPrice, setMaticPrice] = useState(0);
   useEffect(async () => {
     const price =
@@ -248,6 +263,42 @@ export default function Dashboard() {
     setMaticPrice(matic);
     setNasmgMatic(price);
   }, [web3Provider]);
+
+  useEffect(() => {
+    const parsedData = Object.keys(events).map((event) => {
+      return {
+        blockNumber: events[event].blockNumber,
+        staking:
+          events[event].address.toLowerCase() ===
+          "0x9aE247f8444B54Bc2f3a78EA934e96359B854d4c".toLowerCase()
+            ? events[event].totalValueLocked
+            : null,
+        30:
+          events[event].address.toLowerCase() ===
+          "0x659bf87108BF9DE27043a22c51E43c58e9fE4356".toLowerCase()
+            ? events[event].totalValueLocked
+            : null,
+        90:
+          events[event].address.toLowerCase() ===
+          "0x9d6EFf597fe8826351171BE6A02aBc7062B89f9f".toLowerCase()
+            ? events[event].totalValueLocked
+            : null,
+        180:
+          events[event].address.toLowerCase() ===
+          "0x605Ca8Fbd72934A8EF1C6ba8144b31883AF80114".toLowerCase()
+            ? events[event].totalValueLocked
+            : null,
+        365:
+          events[event].address.toLowerCase() ===
+          "0x1a1ECF403446E37Bb4Ca71c2c30Df799b12982c3".toLowerCase()
+            ? events[event].totalValueLocked
+            : null,
+      };
+    });
+    console.log(parsedData, "parse");
+    setParsedData(parsedData);
+  }, [web3Provider]);
+
   return (
     <div className={styles.dashboardContainer}>
       <Stats
@@ -274,7 +325,7 @@ export default function Dashboard() {
 
           <div className={styles.chartContainer}>
             <ResponsiveContainer>
-              <AreaChart data={chartData}>
+              <AreaChart data={parsedData}>
                 <XAxis
                   dataKey="blockNumber"
                   tick={{ fill: "white", fontSize: "15" }}
