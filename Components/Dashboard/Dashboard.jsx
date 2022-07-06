@@ -139,8 +139,7 @@ export default function Dashboard() {
 
   useEffect(async () => {
     const URL = `https://admin.ato-nc.com/api/callEvents`;
-    const pool_name = ["stake", "stake30", "stake90", "stake180", "stake365"];
-    const dataBody = pool_name;
+    const dataBody = {};
     const headers = {
       "Content-Type": "application/json",
       Accept: "application/json",
