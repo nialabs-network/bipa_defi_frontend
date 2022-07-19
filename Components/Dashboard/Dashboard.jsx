@@ -109,7 +109,7 @@ export default function Dashboard() {
     let res = await ApiCaller.post(URL, false, headers);
     console.log(res, "call");
 
-    const data = res.data.map((event) => {
+    const data = res.data.data.map((event) => {
       return {
         blocknumber: event.blocknumber,
         staking: web3Provider?.utils.fromWei(
