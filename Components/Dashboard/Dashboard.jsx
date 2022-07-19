@@ -61,9 +61,7 @@ export default function Dashboard() {
     const dataBody = {};
     const headers = {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
-      "access-control-allow-headers": "*",
-      Accept: "application/json",
+      "Accept": "application/json"
     };
     let res = await ApiCaller.post(URL, dataBody, false, headers);
     res = res.data.data;
@@ -104,7 +102,7 @@ export default function Dashboard() {
     const URL = `https://admin.ato-nc.com/api/callEvents`;
     const headers = {
       "Content-Type": "application/json",
-      Accept: "application/json",
+      "Accept": "application/json"
     };
     let res = await ApiCaller.post(URL, false, headers);
     console.log(res, "call");
