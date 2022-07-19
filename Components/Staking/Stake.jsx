@@ -53,8 +53,6 @@ export default function Stake({ styles, toggle, selected }) {
   }
   async function stake() {
     const gasPrice = await web3Provider.eth.getGasPrice();
-    console.log(gasPrice, "gas price before stake");
-    console.log("stake strike");
     try {
       if (contracts.stake) {
         setLoadingState(true, "Staking");
@@ -94,7 +92,6 @@ export default function Stake({ styles, toggle, selected }) {
     const gasPrice = await web3Provider.eth.getGasPrice();
     if (contracts.stake) {
       try {
-        console.log("unstake");
         setLoadingState(true, "Unstaking");
         await contracts.stake.methods
           .unstakeTokens(web3Provider.utils.toWei(amount, "ether"))
