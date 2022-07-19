@@ -95,6 +95,7 @@ export default function Dashboard() {
       feed.sort((a, b) => {
         return a.timestamp - b.timestamp;
       });
+    setPriceFeed(feed);
     console.log(res, "resPrice");
   }, []);
 
