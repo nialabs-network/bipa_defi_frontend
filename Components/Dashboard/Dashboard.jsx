@@ -107,7 +107,7 @@ export default function Dashboard() {
       Accept: "application/json",
     };
     let res = await ApiCaller.post(URL, false, headers);
-    console.log(res, "call events response");
+    console.log(res, "call");
 
     const data = res.data.map((event) => {
       return {
