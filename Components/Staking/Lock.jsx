@@ -19,9 +19,7 @@ export default function Lock({ styles, toggle, selected }) {
   const token = { ticker: "NASMG", amount };
 
   async function getBlockchainData() {
-    console.log("getting blockchain data");
     try {
-      console.log(selected && selected !== "stake");
       if (selected && selected !== "stake") {
         const balance = await contracts.NASMG.methods.balanceOf(address).call();
         setNasmgBalance(
@@ -96,7 +94,6 @@ export default function Lock({ styles, toggle, selected }) {
     try {
       setLoadingState(true, "Locking");
       const gasPrice = await web3Provider.eth.getGasPrice();
-      console.log(gasPrice, "gasprice before lock");
       const price = await getPrice(token, web3Provider);
       const matic = await getMaticPrice(web3Provider);
       const diboInterestForPeriod = await contracts.lock[selected].methods
@@ -110,26 +107,18 @@ export default function Lock({ styles, toggle, selected }) {
         .call();
       const oracle = await contracts.KRWexrate.methods.latestAnswer().call();
       const USDKRW = Number((1 / (oracle / 10 ** 8)).toFixed(2));
-      console.log(USDKRW, "korean won");
       const dollarValueOfStake = matic * price;
-      console.log(matic, "matic/usd");
-      console.log(price, "nasmg/matic");
       const KRWvalueOfStake = dollarValueOfStake * USDKRW;
-      console.log(dollarValueOfStake, "dollar value of stake");
-      console.log(KRWvalueOfStake, "stake value in KRW");
       const diboInterest =
         (KRWvalueOfStake / 100) *
         web3Provider.utils.fromWei(diboInterestForPeriod, "ether");
-      console.log(diboInterest, "dibo interest based on krw stake value");
       const diboRewardsAmount =
         diboInterest / web3Provider.utils.fromWei(diboPrice, "ether"); //tokens to be sent
-      console.log(diboRewardsAmount, "dibo tokens to receive");
       const diboPerSecond = new BN(
         web3Provider.utils.toWei(String(diboRewardsAmount.toFixed(18)), "ether")
       )
         .div(new BN(lockPeriod))
         .toString();
-      console.log(diboPerSecond, "dibo in wei per second");
       await contracts.lock[selected].methods
         .lock(web3Provider.utils.toWei(amount, "ether"), diboPerSecond)
         .send({ from: address, gasPrice });

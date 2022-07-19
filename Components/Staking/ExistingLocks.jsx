@@ -834,7 +834,6 @@ export default function ExistingLocks({ styles, toggle, selected }) {
   }, [contracts]);
 
   async function getBlockchainData() {
-    console.log("getting blockchain data");
     try {
       Object.keys(periods).forEach(async (key) => {
         const lockOf = await contracts?.lock[key].methods
@@ -848,7 +847,6 @@ export default function ExistingLocks({ styles, toggle, selected }) {
       console.log(e);
     }
   }
-  console.log(lockOf);
 
   async function withdraw() {
     try {
