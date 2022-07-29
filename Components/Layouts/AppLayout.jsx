@@ -47,13 +47,6 @@ export default function AppLayout({ children }) {
             />
             : null
         }
-        {/* {arrList[0].map((v, i) => (
-          <Image
-            src={`${NEXT_PUBLIC_S3_URL}${v.image_url}`}
-            className={styles.banner}
-          />
-        ))
-        } */}
         {/* <div className={styles.banner}>Ad banner</div> */}
       </footer>
       {appState.loading ? (
