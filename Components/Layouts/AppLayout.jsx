@@ -44,7 +44,7 @@ export default function AppLayout({ children }) {
           viewRender
             ?
             <Image
-              src={`${NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
+              src={`${process.env.NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
               className={styles.banner}
             />
             : null
