@@ -6,7 +6,7 @@ import { loading } from "../../assets/exports";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import ApiCaller from '../Dashboard/apiCaller';
+import { ApiCaller } from '../Dashboard/apiCaller';
 
 export default function AppLayout({ children }) {
 
