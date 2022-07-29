@@ -4,11 +4,24 @@ import Navigation from "../Navigation/Navigation";
 import styles from "./AppLayout.module.scss";
 import { loading } from "../../assets/exports";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import ApiCaller from '../Dashboard/apiCaller';
+
 export default function AppLayout({ children }) {
   const { appState } = useAppContext();
   const [mobNav, setMobNav] = useState(false);
+
+  useEffect(() => {
+    const URL = `https://ato-nc.com/api/bannerinfo`;
+    const dataBody = {};
+    const headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    };
+    let res = await ApiCaller.post(URL, dataBody, false, headers);
+    console.log('배너...', res);
+  }, []);
   return (
     <>
       <Header mobNav={mobNav} setMobNav={setMobNav} />
