@@ -13,6 +13,7 @@ export default function AppLayout({ children }) {
   const { appState } = useAppContext();
   const [mobNav, setMobNav] = useState(false);
   const [arrList, setArrList] = useState([]);
+  const [viewRender, setViewRender] = useState(false);
 
   useEffect(() => {
     callBanner();
@@ -28,6 +29,7 @@ export default function AppLayout({ children }) {
     let res = await ApiCaller.post(URL, dataBody, false, headers);
     arrList.push(res.data.data);
     console.log('배너 리스트... : ', arrList);
+    setViewRender(!viewRender);
   }
 
   return (
@@ -38,6 +40,15 @@ export default function AppLayout({ children }) {
         <div className={styles.container}>{children}</div>
       </main>
       <footer className={styles.footer}>
+        {
+          viewRender
+            ?
+            <Image
+              src={`${NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
+              className={styles.banner}
+            />
+            : null
+        }
         {/* {arrList[0].map((v, i) => (
           <Image
             src={`${NEXT_PUBLIC_S3_URL}${v.image_url}`}
@@ -45,7 +56,7 @@ export default function AppLayout({ children }) {
           />
         ))
         } */}
-        <div className={styles.banner}>Ad banner</div>
+        {/* <div className={styles.banner}>Ad banner</div> */}
       </footer>
       {appState.loading ? (
         <motion.div
