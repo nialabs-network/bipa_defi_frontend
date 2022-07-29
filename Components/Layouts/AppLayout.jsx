@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ApiCaller } from '../Dashboard/apiCaller';
+import { s3Loader } from '../../Utils/WithDynamicLoader';
 
 export default function AppLayout({ children }) {
 
@@ -49,6 +50,7 @@ export default function AppLayout({ children }) {
                   <Image
                     src={`${process.env.NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
                     className={styles.banner}
+                    loader={s3Loader}
                   />
                   : null
               }
