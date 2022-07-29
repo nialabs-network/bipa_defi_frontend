@@ -38,14 +38,14 @@ export default function AppLayout({ children }) {
         <div className={styles.container}>{children}</div>
       </main>
       <footer className={styles.footer}>
-        {arrList[0].map((v, i) => (
+        {/* {arrList[0].map((v, i) => (
           <Image
             src={`${NEXT_PUBLIC_S3_URL}${v.image_url}`}
             className={styles.banner}
           />
         ))
-        }
-        {/* <div className={styles.banner}>Ad banner</div> */}
+        } */}
+        <div className={styles.banner}>Ad banner</div>
       </footer>
       {appState.loading ? (
         <motion.div
