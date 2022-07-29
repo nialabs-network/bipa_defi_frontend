@@ -42,10 +42,17 @@ export default function AppLayout({ children }) {
           appState.loading
             ? null
             :
-            <Image
-              src={`${process.env.NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
-              className={styles.banner}
-            />
+            <>
+              {
+                arrList.length !== 0
+                  ?
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
+                    className={styles.banner}
+                  />
+                  : null
+              }
+            </>
         }
         {/* <div className={styles.banner}>Ad banner</div> */}
       </footer>
