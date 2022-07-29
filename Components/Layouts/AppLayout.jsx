@@ -9,10 +9,15 @@ import { motion } from "framer-motion";
 import ApiCaller from '../Dashboard/apiCaller';
 
 export default function AppLayout({ children }) {
+
   const { appState } = useAppContext();
   const [mobNav, setMobNav] = useState(false);
 
   useEffect(() => {
+    callBanner();
+  }, []);
+
+  const callBanner = async () => {
     const URL = `https://ato-nc.com/api/bannerinfo`;
     const dataBody = {};
     const headers = {
@@ -21,7 +26,8 @@ export default function AppLayout({ children }) {
     };
     let res = await ApiCaller.post(URL, dataBody, false, headers);
     console.log('배너...', res);
-  }, []);
+  }
+
   return (
     <>
       <Header mobNav={mobNav} setMobNav={setMobNav} />
