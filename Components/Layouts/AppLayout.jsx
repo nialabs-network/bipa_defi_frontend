@@ -39,13 +39,13 @@ export default function AppLayout({ children }) {
       </main>
       <footer className={styles.footer}>
         {
-          arrList.length !== 0
-            ?
+          appState.loading
+            ? null
+            :
             <Image
               src={`${process.env.NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
               className={styles.banner}
             />
-            : null
         }
         {/* <div className={styles.banner}>Ad banner</div> */}
       </footer>
