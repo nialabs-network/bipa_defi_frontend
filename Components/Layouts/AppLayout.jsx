@@ -12,6 +12,7 @@ export default function AppLayout({ children }) {
 
   const { appState } = useAppContext();
   const [mobNav, setMobNav] = useState(false);
+  const [arrList, setArrList] = useState([]);
 
   useEffect(() => {
     callBanner();
@@ -25,7 +26,8 @@ export default function AppLayout({ children }) {
       "Accept": "application/json"
     };
     let res = await ApiCaller.post(URL, dataBody, false, headers);
-    console.log('배너...', res);
+    arrList.push(res.data.data);
+    console.log('배너 리스트... : ', arrList);
   }
 
   return (
@@ -36,7 +38,14 @@ export default function AppLayout({ children }) {
         <div className={styles.container}>{children}</div>
       </main>
       <footer className={styles.footer}>
-        <div className={styles.banner}>Ad banner</div>
+        {arrList[0].map((v, i) => (
+          <Image
+            src={`${NEXT_PUBLIC_S3_URL}${v.image_url}`}
+            className={styles.banner}
+          />
+        ))
+        }
+        {/* <div className={styles.banner}>Ad banner</div> */}
       </footer>
       {appState.loading ? (
         <motion.div
