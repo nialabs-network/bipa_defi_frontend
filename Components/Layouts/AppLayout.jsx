@@ -48,7 +48,7 @@ export default function AppLayout({ children }) {
                 arrList.length !== 0
                   ?
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_S3_URL}${arrList[0][1].image_url}`}
+                    src={`${arrList[0][1].image_url}`}
                     className={styles.banner}
                     loader={s3Loader}
                   />
