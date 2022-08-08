@@ -17,22 +17,23 @@ export default function AppLayout({ children }) {
   const [innerWidth, setInnerWidth] = useState();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setInnerWidth(screen.width);
-    }
+    callBanner();
   }, []);
 
-  // const callBanner = async () => {
-  //   const URL = `https://ato-nc.com/api/bannerinfo`;
-  //   const dataBody = {};
-  //   const headers = {
-  //     "Content-Type": "application/json",
-  //     "Accept": "application/json"
-  //   };
-  //   let res = await ApiCaller.post(URL, dataBody, false, headers);
-  //   arrList.push(res.data.data);
-  //   console.log('배너 리스트... : ', arrList);
-  // }
+  const callBanner = async () => {
+
+    setInnerWidth(screen.width);
+
+    const URL = `https://ato-nc.com/api/bannerinfo`;
+    const dataBody = {};
+    const headers = {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    };
+    let res = await ApiCaller.post(URL, dataBody, false, headers);
+    arrList.push(res.data.data);
+    console.log('배너 리스트... : ', arrList);
+  }
 
   return (
     <>
@@ -51,13 +52,13 @@ export default function AppLayout({ children }) {
                 innerWidth > 760
                   ?
                   <Image
-                    src={`https://bipabucket.s3.ap-northeast-2.amazonaws.com/image/jeonwoochi_banner_web.png`}
+                    src={`${arrList[0][1].image_url}`}
                     className={styles.banner}
                     loader={s3Loader}
                   />
                   :
                   <Image
-                    src={`https://bipabucket.s3.ap-northeast-2.amazonaws.com/image/jeonwoochi_banner_mobile.png`}
+                    src={`${arrList[0][1].image_url}`}
                     className={styles.banner}
                     loader={s3Loader}
                   />
