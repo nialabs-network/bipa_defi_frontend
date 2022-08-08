@@ -57,25 +57,12 @@ export default function AppLayout({ children }) {
               {
                 arrList.length !== 0
                   ?
-                  <>
-                    {
-                      innerWidth > 760
-                        ?
-                        <Image
-                          src={`${arrList[0][1].image_url}`}
-                          className={styles.banner}
-                          loader={s3Loader}
-                          onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
-                        />
-                        :
-                        <Image
-                          src={`${arrList[0][2].image_url}`}
-                          className={styles.banner}
-                          loader={s3Loader}
-                          onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
-                        />
-                    }
-                  </>
+                  <Image
+                    src={innerWidth > 760 ? `${arrList[0][1].image_url}` : `${arrList[0][2].image_url}`}
+                    className={styles.banner}
+                    loader={s3Loader}
+                    onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
+                  />
                   : null
               }
             </>
