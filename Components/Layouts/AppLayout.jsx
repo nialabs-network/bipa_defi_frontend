@@ -14,12 +14,13 @@ export default function AppLayout({ children }) {
   const { appState } = useAppContext();
   const [mobNav, setMobNav] = useState(false);
   const [arrList, setArrList] = useState([]);
+  const [innerWidth, setInnerWidth] = useState();
 
-  let screenWidth = screen.width;
-
-  // useEffect(() => {
-  //   callBanner();
-  // }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setInnerWidth(screen.width);
+    }
+  }, []);
 
   // const callBanner = async () => {
   //   const URL = `https://ato-nc.com/api/bannerinfo`;
@@ -47,7 +48,7 @@ export default function AppLayout({ children }) {
             :
             <>
               {
-                screenWidth > 760
+                innerWidth > 760
                   ?
                   <Image
                     src={`https://bipabucket.s3.ap-northeast-2.amazonaws.com/image/jeonwoochi_banner_web.png`}
