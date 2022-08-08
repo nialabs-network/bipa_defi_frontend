@@ -17,7 +17,9 @@ export default function AppLayout({ children }) {
   const [innerWidth, setInnerWidth] = useState();
 
   useEffect(() => {
-    callBanner();
+    if (typeof window !== "undefined") {
+      callBanner();
+    }
   }, []);
 
   const callBanner = async () => {
