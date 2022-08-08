@@ -37,6 +37,10 @@ export default function AppLayout({ children }) {
     console.log('배너 리스트... : ', arrList);
   }
 
+  useEffect(() => {
+    console.log(`witdh 체크... : ${innerWidth}`);
+  }, [innerWidth]);
+
   return (
     <>
       <Header mobNav={mobNav} setMobNav={setMobNav} />
@@ -61,13 +65,14 @@ export default function AppLayout({ children }) {
                           src={`${arrList[0][1].image_url}`}
                           className={styles.banner}
                           loader={s3Loader}
-                        // onClick={() => window.open(`${process.env.REACT_APP_INSTALL_META_CHROME}`, '_blank')}
+                          onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
                         />
                         :
                         <Image
-                          src={`${arrList[0][1].image_url}`}
+                          src={`${arrList[0][2].image_url}`}
                           className={styles.banner}
                           loader={s3Loader}
+                          onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
                         />
                     }
                   </>
