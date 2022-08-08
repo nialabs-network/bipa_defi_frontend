@@ -51,19 +51,27 @@ export default function AppLayout({ children }) {
             :
             <>
               {
-                innerWidth > 760
+                arrList.length !== 0
                   ?
-                  <Image
-                    src={`${arrList[0][1].image_url}`}
-                    className={styles.banner}
-                    loader={s3Loader}
-                  />
-                  :
-                  <Image
-                    src={`${arrList[0][1].image_url}`}
-                    className={styles.banner}
-                    loader={s3Loader}
-                  />
+                  <>
+                    {
+                      innerWidth > 760
+                        ?
+                        <Image
+                          src={`${arrList[0][1].image_url}`}
+                          className={styles.banner}
+                          loader={s3Loader}
+                        // onClick={() => window.open(`${process.env.REACT_APP_INSTALL_META_CHROME}`, '_blank')}
+                        />
+                        :
+                        <Image
+                          src={`${arrList[0][1].image_url}`}
+                          className={styles.banner}
+                          loader={s3Loader}
+                        />
+                    }
+                  </>
+                  : null
               }
             </>
         }
