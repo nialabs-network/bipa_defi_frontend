@@ -14,6 +14,8 @@ import loading from "./loading.gif";
 import car from "./car.webp";
 import bag from "./bag.webp";
 import city from "./city.webp";
+import pLogo from './jeonwoochi_banner_web.png';
+import mLogo from './jeonwoochi_banner_mobile.png';
 
 export {
   logo,
@@ -32,4 +34,6 @@ export {
   car,
   bag,
   city,
+  pLogo,
+  mLogo
 };

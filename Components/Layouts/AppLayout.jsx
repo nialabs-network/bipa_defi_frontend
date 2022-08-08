@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ApiCaller } from '../Dashboard/apiCaller';
 import { s3Loader } from '../../Utils/WithDynamicLoader';
+import { pLogo, mLogo } from "../../assets/exports";
 
 export default function AppLayout({ children }) {
 
@@ -58,7 +59,7 @@ export default function AppLayout({ children }) {
                 arrList.length !== 0
                   ?
                   <Image
-                    src={innerWidth > 760 ? `${arrList[0][1].image_url}` : `${arrList[0][2].image_url}`}
+                    src={innerWidth > 760 ? pLogo : mLogo}
                     className={styles.banner}
                     loader={s3Loader}
                     onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
