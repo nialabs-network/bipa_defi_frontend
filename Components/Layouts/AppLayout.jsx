@@ -59,9 +59,11 @@ export default function AppLayout({ children }) {
                 arrList.length !== 0
                   ?
                   <Image
-                    src={innerWidth > 760 ? pLogo : mLogo}
+                    src={innerWidth > 760 ? pLogo.src : mLogo.src}
+                    width={innerWidth > 760 ? pLogo.width : mLogo.width}
+                    height={innerWidth > 760 ? pLogo.height : mLogo.height}
                     className={styles.banner}
-                    loader={s3Loader}
+                    // loader={s3Loader}
                     onClick={() => window.open(`${process.env.NEXT_PUBLIC_BIPA3_URL}`, '_blank')}
                   />
                   : null
